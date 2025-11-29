@@ -1,0 +1,88 @@
+_target_: src.models.llm_module.LLMSpeechModule
+
+# general hyperparameters
+lr_start: 0.02
+lr_end: 0.02
+n_units: 1024
+n_layers: 5
+n_classes: 40
+n_input_features: 256
+dropout: 0.4
+gaussian_smooth_width: 2.0
+stride_len: 4
+kernel_len: 32
+bidirectional: False
+l2_decay: 1e-5
+seed: 0
+
+# LLM guidance
+llm_weight: 0.3
+llm_model_name: gpt-oss-20b
+llm_enabled: false
+llm_max_new_tokens: 64
+llm_temperature: 0.0
+phoneme_labels:
+  - <blank>
+  - AA
+  - AE
+  - AH
+  - AO
+  - AW
+  - AY
+  - B
+  - CH
+  - D
+  - DH
+  - EH
+  - ER
+  - EY
+  - F
+  - G
+  - HH
+  - IH
+  - IY
+  - JH
+  - K
+  - L
+  - M
+  - N
+  - NG
+  - OW
+  - OY
+  - P
+  - R
+  - S
+  - SH
+  - T
+  - TH
+  - UH
+  - UW
+  - V
+  - W
+  - Y
+  - Z
+  - ZH
+
+optimizer:
+  _target_: torch.optim.Adam
+  _partial_: true
+  lr: ${..lr_start}
+  weight_decay: ${..l2_decay}
+
+scheduler: null
+
+net:
+  _target_: src.models.components.gru_decoder.GRUDecoder
+  neural_dim: ${..n_input_features}
+  n_classes: ${..n_classes}
+  hidden_dim: ${..n_units}
+  layer_dim: ${..n_layers}
+  nDays: 24
+  dropout: ${..dropout}
+  strideLen: ${..stride_len}
+  kernelLen: ${..kernel_len}
+  gaussianSmoothWidth: ${..gaussian_smooth_width}
+  bidirectional: ${..bidirectional}
+
+# compile model for faster training with pytorch 2.0
+compile: false

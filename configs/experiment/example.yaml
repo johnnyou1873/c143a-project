@@ -23,14 +23,14 @@ trainer:
 
 model:
   # override top-level speech model hyperparameters
-  lr_start: 0.02
-  lr_end: 0.005
-  n_units: 256
+  lr_start: 0.1
+  lr_end: 0.02
+  n_units: 64
   n_layers: 5
   dropout: 0.2
   gaussian_smooth_width: 0
-  stride_len: 4
-  kernel_len: 32
+  stride_len: 8
+  kernel_len: 64
   bidirectional: false
   l2_decay: 1e-5
   seed: ${seed}
