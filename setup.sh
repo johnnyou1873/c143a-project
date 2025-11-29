@@ -3,4 +3,4 @@ uv venv -p 3.13
 source .venv/bin/activate
 uv pip install pip
 pip install -r requirements.txt
-echo "Virtual environment setup complete. Please add allDatasets.pkl to the data/ directory. Run 'python train.py experiment=example' to start training."
+echo "Virtual environment setup complete. Please add allDatasets.pkl to the data/ directory. Run 'python src/train.py experiment=example' to start training."
