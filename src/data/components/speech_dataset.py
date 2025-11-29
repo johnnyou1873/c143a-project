@@ -48,7 +48,8 @@ class SpeechDataset(Dataset):
 def speech_collate_fn(batch):
     """Pad variable length sequences for CTC training."""
     neural, labels, neural_lens, label_lens, days = zip(*batch)
-    neural_padded = pad_sequence(neural, batch_first=True, padding_value=0.0)
+    # pad to the max length in the batch (matches reference implementation)
+    neural_padded = pad_sequence(neural, batch_first=True, padding_value=0)
     label_padded = pad_sequence(labels, batch_first=True, padding_value=0)
 
     return (
