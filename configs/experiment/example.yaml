@@ -25,10 +25,10 @@ model:
   # override top-level speech model hyperparameters
   lr_start: 0.02
   lr_end: 0.02
-  n_units: 64
+  n_units: 1024
   n_layers: 5
-  dropout: 0.2
-  gaussian_smooth_width: 0.2
+  dropout: 0.4
+  gaussian_smooth_width: 2.0
   stride_len: 4
   kernel_len: 32
   bidirectional: false

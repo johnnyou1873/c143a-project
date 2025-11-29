@@ -1,8 +1,9 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Tuple
 
 import torch
 from lightning import LightningModule
 from torchmetrics import MeanMetric
+from edit_distance import SequenceMatcher
 
 
 class SpeechModule(LightningModule):
@@ -72,8 +73,6 @@ class SpeechModule(LightningModule):
         self.save_hyperparameters(logger=False, ignore=["net"])
 
         self.net = net
-
-        # CTC objective over variable length sequences (explicit mean reduction to match reference)
         self.ctc_loss = torch.nn.CTCLoss(blank=0, reduction="mean", zero_infinity=True)
 
         # track average losses
@@ -104,8 +103,36 @@ class SpeechModule(LightningModule):
         """Compute GRU input lengths after striding."""
         stride = self.net.strideLen
         kernel = self.net.kernelLen
-        lengths = (neural_lens - kernel) // stride + 1
-        return torch.clamp(lengths, min=1)
+        lengths = torch.div(neural_lens - kernel, stride, rounding_mode="floor")
+        return lengths.to(torch.int32)
+
+    def _ctc_greedy_decode(
+        self, logits: torch.Tensor, input_lengths: torch.Tensor
+    ) -> List[List[int]]:
+        """Greedy CTC decode with collapse + blank removal."""
+        preds = logits.argmax(dim=-1)
+        sequences: List[List[int]] = []
+        for seq, length in zip(preds, input_lengths):
+            trimmed = seq[: int(length)]
+            collapsed = torch.unique_consecutive(trimmed)
+            decoded = [int(t) for t in collapsed.tolist() if int(t) != 0]
+            sequences.append(decoded)
+        return sequences
+
+    def _token_error_rate(
+        self, pred_tokens: List[List[int]], labels: torch.Tensor, label_lens: torch.Tensor
+    ) -> float:
+        """Compute CER via edit distance on token sequences."""
+        total_edit_distance = 0
+        total_seq_length = 0
+        for pred, target, tgt_len in zip(pred_tokens, labels, label_lens):
+            true_seq = target[: int(tgt_len)].tolist()
+            matcher = SequenceMatcher(a=true_seq, b=pred)
+            total_edit_distance += matcher.distance()
+            total_seq_length += len(true_seq)
+        if total_seq_length == 0:
+            return 0.0
+        return total_edit_distance / total_seq_length
 
     def _compute_loss(
         self,
@@ -115,10 +142,9 @@ class SpeechModule(LightningModule):
         label_lens: torch.Tensor,
         days: torch.Tensor,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        """Compute the CTC loss for a batch and return logits and input lengths for reuse."""
-        logits = self.forward(neural, days)  # (batch, time', classes)
-        log_probs = logits.log_softmax(dim=-1).transpose(0, 1)  # (time', batch, classes)
-
+        """Forward pass + CTC loss."""
+        logits = self.forward(neural, days)
+        log_probs = logits.log_softmax(dim=-1).transpose(0, 1)
         input_lengths = self._compute_input_lengths(neural_lens).to(logits.device)
         loss = self.ctc_loss(log_probs, labels, input_lengths, label_lens)
         return loss, logits, input_lengths
@@ -177,51 +203,6 @@ class SpeechModule(LightningModule):
     def on_test_epoch_end(self) -> None:
         """Lightning hook that is called when a test epoch ends."""
         pass
-
-    def _ctc_greedy_decode(
-        self, logits: torch.Tensor, input_lengths: torch.Tensor
-    ) -> list[list[int]]:
-        """Greedy CTC decoding with blank removal and collapsing repeats (SequenceMatcher style)."""
-        preds = logits.argmax(dim=-1)  # (batch, time)
-        sequences = []
-        for seq, length in zip(preds, input_lengths):
-            # trim to valid length, collapse repeats, drop blanks (0)
-            trimmed = seq[: int(length)]
-            collapsed = torch.unique_consecutive(trimmed)
-            decoded = [int(t.item()) for t in collapsed if int(t.item()) != 0]
-            sequences.append(decoded)
-        return sequences
-
-    def _token_error_rate(
-        self, pred_tokens: list[list[int]], labels: torch.Tensor, label_lens: torch.Tensor
-    ) -> float:
-        """Compute normalized edit distance between predicted and target token sequences."""
-        total_dist = 0
-        total_length = 0
-        for pred, target, tgt_len in zip(pred_tokens, labels, label_lens):
-            tgt_seq = target[: int(tgt_len)].tolist()
-            total_dist += self._levenshtein(pred, tgt_seq)
-            total_length += len(tgt_seq)
-        if total_length == 0:
-            return 0.0
-        return float(total_dist) / float(total_length)
-
-    @staticmethod
-    def _levenshtein(source: list[int], target: list[int]) -> int:
-        """Simple Levenshtein distance for token sequences."""
-        if len(source) < len(target):
-            source, target = target, source
-
-        previous_row = list(range(len(target) + 1))
-        for i, src_token in enumerate(source, start=1):
-            current_row = [i]
-            for j, tgt_token in enumerate(target, start=1):
-                insertions = previous_row[j] + 1
-                deletions = current_row[j - 1] + 1
-                substitutions = previous_row[j - 1] + (src_token != tgt_token)
-                current_row.append(min(insertions, deletions, substitutions))
-            previous_row = current_row
-        return previous_row[-1]
 
     def setup(self, stage: str) -> None:
         """Lightning hook that is called at the beginning of fit (train + validate), validate,
