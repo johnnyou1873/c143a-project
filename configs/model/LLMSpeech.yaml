@@ -17,7 +17,8 @@ seed: 0
 
 # LLM guidance
 llm_weight: 0.3
-llm_model_name: gpt-oss-20b
+# Set LLM model name to choose different pretrained LLMs
+llm_model_name: gemma3:270m
 llm_enabled: false
 llm_max_new_tokens: 64
 llm_temperature: 0.0

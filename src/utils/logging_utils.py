@@ -8,6 +8,19 @@ from src.utils import pylogger
 log = pylogger.RankedLogger(__name__, rank_zero_only=True)
 
 
+def _get_llm_param_count(model: Any) -> int:
+    """Return parameter count of an optional LLM attached via `model.llm_corrector.model`."""
+    llm_corrector = getattr(model, "llm_corrector", None)
+    llm_model = getattr(llm_corrector, "model", None)
+    if llm_model is None or not hasattr(llm_model, "parameters"):
+        return 0
+    try:
+        return sum(p.numel() for p in llm_model.parameters())
+    except Exception:
+        # be robust if the external model does not expose parameters cleanly
+        return 0
+
+
 @rank_zero_only
 def log_hyperparameters(object_dict: Dict[str, Any]) -> None:
     """Controls which config parts are saved by Lightning loggers.
@@ -40,6 +53,12 @@ def log_hyperparameters(object_dict: Dict[str, Any]) -> None:
     hparams["model/params/non_trainable"] = sum(
         p.numel() for p in model.parameters() if not p.requires_grad
     )
+    llm_params = _get_llm_param_count(model)
+    if llm_params:
+        # LLM is used only for inference; treat it as non-trainable but include in totals.
+        hparams["model/params/total"] += llm_params
+        hparams["model/params/non_trainable"] += llm_params
+        hparams["model/params/llm_total"] = llm_params
 
     hparams["data"] = cfg["data"]
     hparams["trainer"] = cfg["trainer"]

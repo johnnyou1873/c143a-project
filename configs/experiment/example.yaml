@@ -18,22 +18,19 @@ seed: 12345
 
 trainer:
   min_epochs: 1 # prevents early stopping
-  # max_epochs: 100
-  max_epochs: 1
+  max_epochs: 100
   gradient_clip_val: 0.5
 
 model:
   # override top-level speech model hyperparameters
-  lr_start: 0.1
+  lr_start: 0.02
   lr_end: 0.02
-  # n_units: 64
-  n_units: 1
-  # n_layers: 5
-  n_layers: 1
+  n_units: 64
+  n_layers: 5
   dropout: 0.2
-  gaussian_smooth_width: 0
-  stride_len: 8
-  kernel_len: 64
+  gaussian_smooth_width: 0.2
+  stride_len: 4
+  kernel_len: 32
   bidirectional: false
   l2_decay: 1e-5
   seed: ${seed}
