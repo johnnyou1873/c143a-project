@@ -113,7 +113,7 @@ class SpeechDataModule(LightningDataModule):
 
         self.data_train = SpeechDataset(data["train"], transform=self.transforms)
         self.data_val = SpeechDataset(data["test"])
-        self.data_test = SpeechDataset(data["test"])
+        self.data_test = SpeechDataset(data["test"]) # the actual test set is only available during evaluation phase
 
         self.n_days = self.n_days or self.data_train.n_days
 

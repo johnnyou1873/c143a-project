@@ -123,6 +123,12 @@ class SpeechModule(LightningModule):
         loss = self.ctc_loss(log_probs, labels, input_lengths, label_lens)
         return loss, logits, input_lengths
 
+    def model_step(self, batch: Tuple[torch.Tensor, ...]) -> torch.Tensor:
+        """Shared forward-loss computation used by evaluation hooks."""
+        neural, labels, neural_lens, label_lens, days = batch
+        loss, _, _ = self._compute_loss(neural, labels, neural_lens, label_lens, days)
+        return loss
+
     def training_step(self, batch: Tuple[torch.Tensor, ...], batch_idx: int) -> torch.Tensor:
         """Perform a single training step on a batch of data from the training set."""
         neural, labels, neural_lens, label_lens, days = batch
