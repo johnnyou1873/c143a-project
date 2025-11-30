@@ -8,6 +8,8 @@ max_epochs: 25
 accelerator: cuda
 devices: 1
 
+logger: wandb
+
 # mixed precision for extra speed-up
 # precision: 16
 
