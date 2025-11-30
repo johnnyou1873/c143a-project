@@ -80,6 +80,7 @@ class SpeechModule(LightningModule):
         self.val_loss = MeanMetric()
         self.test_loss = MeanMetric()
         self.val_cer = MeanMetric()
+        self.test_cer = MeanMetric()
 
     def forward(self, neural: torch.Tensor, days: torch.Tensor) -> torch.Tensor:
         """Perform a forward pass through the network.
@@ -98,6 +99,7 @@ class SpeechModule(LightningModule):
         self.val_loss.reset()
         self.test_loss.reset()
         self.val_cer.reset()
+        self.test_cer.reset()
 
     def _compute_input_lengths(self, neural_lens: torch.Tensor) -> torch.Tensor:
         """Compute GRU input lengths after striding."""
@@ -194,11 +196,20 @@ class SpeechModule(LightningModule):
 
     def test_step(self, batch: Tuple[torch.Tensor, ...], batch_idx: int) -> None:
         """Perform a single test step on a batch of data from the test set."""
-        loss = self.model_step(batch)
-
-        # update and log metrics
+        neural, labels, neural_lens, label_lens, days = batch
+        loss, logits, input_lengths = self._compute_loss(
+            neural, labels, neural_lens, label_lens, days
+        )
+        
+        #loss = self.model_step(batch)
         self.test_loss(loss)
         self.log("test/loss", self.test_loss, on_step=False, on_epoch=True, prog_bar=True)
+        # update and log metrics
+        with torch.no_grad():
+            pred_tokens = self._ctc_greedy_decode(logits, input_lengths)
+            cer_value = self._token_error_rate(pred_tokens, labels, label_lens)
+            self.test_cer(cer_value)
+            self.log("test/cer", self.test_cer, on_step=False, on_epoch=True, prog_bar=True)
 
     def on_test_epoch_end(self) -> None:
         """Lightning hook that is called when a test epoch ends."""
