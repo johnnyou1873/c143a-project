@@ -49,6 +49,10 @@ class GRUDecoder(nn.Module):
         for x in range(nDays):
             self.dayWeights.data[x, :, :] = torch.eye(neural_dim)
 
+        # Layer normalization 
+        norm_dim = hidden_dim * 2 if bidirectional else hidden_dim
+        self.layerNorm = nn.LayerNorm(norm_dim)
+
         # GRU layers
         self.gru_decoder = nn.GRU(
             (neural_dim) * self.kernelLen,
@@ -121,6 +125,9 @@ class GRUDecoder(nn.Module):
             ).requires_grad_()
 
         hid, _ = self.gru_decoder(stridedInputs, h0.detach())
+
+        # normalize
+        hid = self.layerNorm(hid)
 
         # get seq
         seq_out = self.fc_decoder_out(hid)
