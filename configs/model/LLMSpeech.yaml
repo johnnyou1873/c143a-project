@@ -16,12 +16,14 @@ l2_decay: 1e-5
 seed: 0
 
 # LLM guidance
-llm_weight: 0.3
-# Set LLM model name to choose different pretrained LLMs, ex: gpt-oss-20b
-llm_model_name: gemma3:270m
-llm_enabled: false
-llm_max_new_tokens: 64
-llm_temperature: 0.0
+llm_weight: 0.8
+llm_model_name: gemma3:4b
+llm_enabled: True
+llm_max_new_tokens: 150
+llm_temperature: 0.5
+llm_prompt: >
+  You are assisting with English phoneme recognition. Given a rough phoneme prediction,
+  return a cleaned list of phonemes using only the provided set.
 phoneme_labels:
   - <blank>
   - AA
