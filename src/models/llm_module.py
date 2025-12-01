@@ -6,6 +6,8 @@ import torch
 from lightning import LightningModule
 from torchmetrics import MeanMetric
 
+import wandb
+
 log = logging.getLogger(__name__)
 
 
