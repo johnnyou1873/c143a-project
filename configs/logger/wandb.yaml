@@ -7,7 +7,7 @@ wandb:
   offline: False
   id: null # pass correct id to resume experiment!
   anonymous: null # enable anonymous logging
-  project: "speech_bci"
+  project: "speech-bci"
   entity: "zhi-leo-zhang-ucla"
   log_model: True # upload lightning ckpts
   prefix: "" # a string to put at the beginning of metric keys
