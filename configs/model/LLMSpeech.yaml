@@ -65,12 +65,16 @@ phoneme_labels:
   - ZH
 
 optimizer:
-  _target_: torch.optim.Adam
+  _target_: torch.optim.AdamW
   _partial_: true
   lr: ${..lr_start}
   weight_decay: ${..l2_decay}
 
-scheduler: null
+scheduler:
+  _target_: torch.optim.lr_scheduler.CosineAnnealingLR
+  _partial_: true
+  T_max: ${trainer.max_epochs}
+  eta_min: ${..lr_end}
 
 net:
   _target_: src.models.components.gru_decoder.GRUDecoder

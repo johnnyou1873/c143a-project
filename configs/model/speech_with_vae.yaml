@@ -1,4 +1,4 @@
-_target_: src.models.speech_module.SpeechModule
+_target_: src.models.speech_module_with_vae.SpeechModuleVAE
 
 # general hyperparameters
 lr_start: 0.00025
@@ -29,7 +29,7 @@ scheduler:
   eta_min: ${..lr_end}
 
 net:
-  _target_: src.models.components.gru_decoder.GRUDecoder
+  _target_: src.models.components.gru_decoder_with_vae.GRUDecoderVAE
   neural_dim: ${..n_input_features}
   n_classes: ${..n_classes}
   hidden_dim: ${..n_units}
