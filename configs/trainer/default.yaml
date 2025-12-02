@@ -11,7 +11,7 @@ devices: 1
 logger: wandb
 
 # mixed precision for extra speed-up
-# precision: 16
+precision: 16-mixed
 
 logger: wandb
 
