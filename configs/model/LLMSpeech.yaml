@@ -1,4 +1,4 @@
-_target_: src.models.llm_module.LLMSpeechModule
+_target_: src.models.ps2s_module.PS2SSpeechModule
 
 # general hyperparameters
 lr_start: 0.0003
@@ -15,15 +15,13 @@ bidirectional: False
 l2_decay: 1e-5
 seed: 0
 
-# LLM guidance
-llm_weight: 0.8
-llm_model_name: gemma3:4b
-llm_enabled: True
-llm_max_new_tokens: 150
-llm_temperature: 0.5
-llm_prompt: >
-  You are assisting with English phoneme recognition. Given a rough phoneme prediction,
-  return a cleaned list of phonemes using only the provided set.
+# Phoneme-to-phoneme seq2seq guidance
+ps2s_weight: 0.5
+ps2s_enabled: True
+ps2s_model_path: notebooks/data/phoneme_seq2seq.pt
+ps2s_device: null
+ps2s_max_len: 128
+min_base_weight: 0.2
 phoneme_labels:
   - <blank>
   - AA

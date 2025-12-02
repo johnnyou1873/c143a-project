@@ -24,9 +24,9 @@ trainer:
 
 model:
   # override top-level speech model hyperparameters
-  # lr_start: 0.001
-  # lr_end: 0.0001
-  # n_units: 1024
+  lr_start: 1e-3
+  lr_end: 1e-6
+  n_units: 1024
   # n_layers: 5
   # dropout: 0.4
   # gaussian_smooth_width: 2.0
@@ -37,14 +37,14 @@ model:
   # seed: ${seed}
   # compile: False # disable compile for debugging
   # LLM guidance
-  llm_enabled: True
+  llm_enabled: False
   llm_weight: 0.8
   llm_model_name: gemma3:4b
   llm_max_new_tokens: 150
   llm_temperature: 0.5
   llm_prompt: >
     You are assisting with English phoneme recognition. Given a rough phoneme prediction,
-    return a cleaned list of phonemes using only the provided set.
+    return a cleaned list of phonemes, looking for sequences that form valid English words.
 
 # datamodule overrides
 data: {}
