@@ -5,15 +5,15 @@
 
 defaults:
   - override /data: speech
-  - override /model: LLMSpeech
+  - override /model: speech_with_asr
   - override /callbacks: default
   - override /trainer: default
-  - override /logger: csv
+  - override /logger: wandb
 
 # all parameters below will be merged with parameters from default configurations set above
 # this allows you to overwrite only specified parameters
 
-tags: ["speech", "gru_decoder"]
+tags: ["speech", "gru_decoder", "parakeet"]
 
 # seed: 0
 
@@ -24,9 +24,12 @@ trainer:
 
 model:
   # override top-level speech model hyperparameters
-  # lr_start: 0.001
-  # lr_end: 0.0001
-  # n_units: 1024
+  lr_start: 1e-3
+  lr_end: 1e-5
+  n_units: 256
+  asr_model_id: nvidia/parakeet-tdt-0.6b-v2
+  # set to False to fine-tune the ASR encoder
+  freeze_asr: False
   # n_layers: 5
   # dropout: 0.4
   # gaussian_smooth_width: 2.0
@@ -36,15 +39,6 @@ model:
   # l2_decay: 0.1
   # seed: ${seed}
   # compile: False # disable compile for debugging
-  # LLM guidance
-  llm_enabled: True
-  llm_weight: 0.8
-  llm_model_name: gemma3:4b
-  llm_max_new_tokens: 150
-  llm_temperature: 0.5
-  llm_prompt: >
-    You are assisting with English phoneme recognition. Given a rough phoneme prediction,
-    return a cleaned list of phonemes using only the provided set.
 
 # datamodule overrides
 data: {}
