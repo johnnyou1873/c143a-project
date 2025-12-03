@@ -23,4 +23,5 @@ rich            # beautiful text formatting in terminal
 pytest          # tests
 edit_distance   # sequence edit distance for CER
 ollama          # local LLM inference
+transformers    # simplify setup for warm up in LR scheduler
 # sh            # for running bash commands in some tests (linux/macos only)
