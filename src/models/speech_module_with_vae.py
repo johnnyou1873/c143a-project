@@ -77,8 +77,8 @@ class SpeechModuleVAE(LightningModule):
         self.net = net
         self.recon_loss_weight = 0.01
         
-        self.kl_loss_weight_global = 0.001
-        self.kl_loss_weight_local = 0.00001
+        self.kl_loss_weight_global = 0.00001
+        self.kl_loss_weight_local = 0.001
         self.ctc_loss = torch.nn.CTCLoss(blank=0, reduction="mean", zero_infinity=True)
 
         # track average losses
