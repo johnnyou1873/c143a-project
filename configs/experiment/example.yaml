@@ -26,13 +26,10 @@ model:
   # override top-level speech model hyperparameters
   lr_start: 3e-4
   lr_end: 3e-5
-  n_units: 1024
-  asr_model_id: data/parakeet-tdt-0.6b-v2-hf/parakeet-tdt-0.6b-v2.nemo
-  asr_local_files_only: True
+  n_units: 256
+  asr_model_id: nvidia/parakeet-tdt-0.6b-v2
   # set to False to fine-tune the ASR encoder
   freeze_asr: True
-  # enable processor load if your snapshot includes it; HF hub will provide it automatically
-  load_asr_processor: False
   # n_layers: 5
   # dropout: 0.4
   # gaussian_smooth_width: 2.0
