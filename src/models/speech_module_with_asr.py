@@ -26,6 +26,13 @@ class TransformerMapping(torch.nn.Module):
         dropout: float = 0.1,
     ) -> None:
         super().__init__()
+        # Ensure d_model is divisible by nhead for MultiheadAttention
+        if d_model < nhead:
+            d_model = nhead
+        if d_model % nhead != 0:
+            d_model = (d_model // nhead) * nhead
+            if d_model == 0:
+                d_model = nhead
         dim_feedforward = dim_feedforward or d_model * 2
         self.input_proj = torch.nn.Linear(in_dim, d_model)
         encoder_layer = torch.nn.TransformerEncoderLayer(

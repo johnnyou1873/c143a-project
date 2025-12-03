@@ -23,7 +23,6 @@ ps2s_device: null
 ps2s_max_len: 128
 min_base_weight: 0.2
 phoneme_labels:
-  - <blank>
   - AA
   - AE
   - AH
