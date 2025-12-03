@@ -308,3 +308,7 @@ configs/local/default.yaml
 
 # Aim logging
 .aim
+
+# Notebook data
+notebook/data/
+notebook/checkpoints/

@@ -56,7 +56,7 @@ data:
 
 logger:
   wandb:
-    name: "GRU256 ASR Fine-Tune"
+    name: "GRU512 TF ASR Freeze"
     tags: ${tags}
     group: "speech"
   aim:
