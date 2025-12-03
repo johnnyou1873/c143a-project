@@ -1,0 +1,1345 @@
+C:\Users\johnn\AppData\Local\Temp\ipykernel_14368\3875417296.py:59: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast(enabled=scaler.is_enabled()):
+c:\Users\johnn\Desktop\EC ENGR C143A\c143a-project\.venv\lib\site-packages\torch\nn\functional.py:6044: UserWarning: Support for mismatched key_padding_mask and attn_mask is deprecated. Use same type for both instead.
+  warnings.warn(
+c:\Users\johnn\Desktop\EC ENGR C143A\c143a-project\.venv\lib\site-packages\torch\nn\functional.py:6044: UserWarning: Support for mismatched key_padding_mask and attn_mask is deprecated. Use same type for both instead.
+  warnings.warn(
+epoch 0: train_loss=2.8867 | val_loss=2.5472 | lr=0.000050
+[val example] noisy:        AH L N AE M S EH D AY F AO R ER D T AY K M B T AE TH IY TH S B M OW M N T K EY M AY T T AE P AH P Z AA N DH AH D AO R
+[val example] target:       AH L AE M S EH D AY F AO R DH AH TH ER D T AY M B AH T AE T DH IH S M OW M AH N T K EY M AH L AY T T AE P AH P AA N DH AH D AO R
+[val example] corrected:    AY M AE T M AY M AY D AH N D AH N T M AY M AY M AE T S T ER S T AH N D M AY M AY M AY M AY T ER M AY M AY M
+[val example] plain text:   A lamb!" said I, for the third time, but, at this moment, came a light tap upon the door.
+[val example] noisy:        AH L N AE M S EH D AY F AO R ER D T AY K M B T AE TH IY TH S B M OW M N T K EY M AY T T AE P AH P Z AA N DH AH D AO R
+[val example] target:       AH L AE M S EH D AY F AO R DH AH TH ER D T AY M B AH T AE T DH IH S M OW M AH N T K EY M AH L AY T T AE P AH P AA N DH AH D AO R
+[val example] corrected:    AY M AE T M AY M AY D AH N D AH N T M AY M AY M AE T S T ER S T AH N D M AY M AY M AY M AY T ER M AY M AY M
+[val example] plain text:   A lamb!" said I, for the third time, but, at this moment, came a light tap upon the door.
+epoch 1: train_loss=2.5237 | val_loss=2.4450 | lr=0.000100
+[val example] noisy:        IY AE D IH D F R OY EY M D T UW G EH T AW IY AW N UW N AY T S IH IY
+[val example] target:       W IY HH AE D IH T F R EY M D T UW G EH T AW ER M AE N T UW N AY T S IY
+[val example] corrected:    AY D IH T UW N IY D IH T UW M IY N AW T UW D AW T UW M IY
+[val example] plain text:   We had it framed to get our man to-night--see?
+epoch 1: train_loss=2.5237 | val_loss=2.4450 | lr=0.000100
+[val example] noisy:        IY AE D IH D F R OY EY M D T UW G EH T AW IY AW N UW N AY T S IH IY
+[val example] target:       W IY HH AE D IH T F R EY M D T UW G EH T AW ER M AE N T UW N AY T S IY
+[val example] corrected:    AY D IH T UW N IY D IH T UW M IY N AW T UW D AW T UW M IY
+[val example] plain text:   We had it framed to get our man to-night--see?
+epoch 2: train_loss=2.4330 | val_loss=2.2722 | lr=0.000150
+epoch 2: train_loss=2.4330 | val_loss=2.2722 | lr=0.000150
+[val example] noisy:        N AY K AE P DH UH SH T AW S IH M Z F AH M K HH IH M AH N D HH IY T AE ER AE K OY AH G AE N S T DH AH F EH N SH S
+[val example] target:       M AY K P UH SH T S IH M Z F R AH M HH IH M AH N D HH IY S T AE G ER D B AE K AH G EH N S T DH AH F EH N S
+[val example] corrected:    AY N AE K SH UH K T M AY M AE N S T AH N D HH IH Z DH AH F AO R M AH N D IH S T ER K AE N AH N S T AH M
+[val example] plain text:   Mike pushed Simms from him, and he staggered back against the fence.
+[val example] noisy:        N AY K AE P DH UH SH T AW S IH M Z F AH M K HH IH M AH N D HH IY T AE ER AE K OY AH G AE N S T DH AH F EH N SH S
+[val example] target:       M AY K P UH SH T S IH M Z F R AH M HH IH M AH N D HH IY S T AE G ER D B AE K AH G EH N S T DH AH F EH N S
+[val example] corrected:    AY N AE K SH UH K T M AY M AE N S T AH N D HH IH Z DH AH F AO R M AH N D IH S T ER K AE N AH N S T AH M
+[val example] plain text:   Mike pushed Simms from him, and he staggered back against the fence.
+epoch 3: train_loss=2.1712 | val_loss=1.8426 | lr=0.000200
+epoch 3: train_loss=2.1712 | val_loss=1.8426 | lr=0.000200
+[val example] noisy:        IH N D IY D UH Z D UW Y UW TH N IH NG DH AE T IY AH W IH AH UH D Z IY M L AE AY K ER IH S AH K UW N S AH K R Z IY D P IY AO R AE OY N AE IH NG G IH SH JH AE JH B AH IH DH AH NG S S K IY M B IY W AW T W K AH D
+[val example] target:       IH N D IY D AY D UW Y UW TH IH NG K DH AE T AH W IH K AH D S K IY M L AY K DH IH S K AE N S AH K S IY D B IH F AO R AE N IH NG G L IH SH JH AH JH B AH T IH F DH AH S K IY M B IY N AA T W IH K AH D
+[val example] corrected:    IH N D IY D UW D Z Y UW TH IH NG DH AE T W IY AH N D IH NG K AH M IY Z AH L AY K AE Z IH NG K S AH N D IY K R UW S IY P R IH NG K AH N D IH NG K AE N S AH M IY W IH DH AH B IY K AH N D IH NG K AE T S
+[val example] plain text:   Indeed I do." "You think that a wicked scheme like this can succeed before an English judge?" "But if the scheme be not wicked?
+[val example] noisy:        IH N D IY D UH Z D UW Y UW TH N IH NG DH AE T IY AH W IH AH UH D Z IY M L AE AY K ER IH S AH K UW N S AH K R Z IY D P IY AO R AE OY N AE IH NG G IH SH JH AE JH B AH IH DH AH NG S S K IY M B IY W AW T W K AH D
+[val example] target:       IH N D IY D AY D UW Y UW TH IH NG K DH AE T AH W IH K AH D S K IY M L AY K DH IH S K AE N S AH K S IY D B IH F AO R AE N IH NG G L IH SH JH AH JH B AH T IH F DH AH S K IY M B IY N AA T W IH K AH D
+[val example] corrected:    IH N D IY D UW D Z Y UW TH IH NG DH AE T W IY AH N D IH NG K AH M IY Z AH L AY K AE Z IH NG K S AH N D IY K R UW S IY P R IH NG K AH N D IH NG K AE N S AH M IY W IH DH AH B IY K AH N D IH NG K AE T S
+[val example] plain text:   Indeed I do." "You think that a wicked scheme like this can succeed before an English judge?" "But if the scheme be not wicked?
+epoch 4: train_loss=1.8741 | val_loss=1.6544 | lr=0.000250
+epoch 4: train_loss=1.8741 | val_loss=1.6544 | lr=0.000250
+[val example] noisy:        DH F IH S M L IH AY NG G AH L D V R S R DH AH B AA G EH R IY AH N S B AO R D ER IH NG AA N AH B IH Z AH N T AY N EH M P AY ER
+[val example] target:       DH IH S M IH NG G AH L D R EY S AA R DH AH B AH L G EH R IY AH N Z B AO R D ER IH NG AA N DH AH B IH Z AH N T AY N EH M P AY ER
+[val example] corrected:    DH IH S IH M L AY G IH NG AH V D R AA S DH AH B R EH G R IY AH N D B R AO S ER D IH NG AH N B IH N AH T ER Z AY N M EH N T ER
+[val example] plain text:   This mingled race are the Bulgarians bordering on the Byzantine empire.
+[val example] noisy:        DH F IH S M L IH AY NG G AH L D V R S R DH AH B AA G EH R IY AH N S B AO R D ER IH NG AA N AH B IH Z AH N T AY N EH M P AY ER
+[val example] target:       DH IH S M IH NG G AH L D R EY S AA R DH AH B AH L G EH R IY AH N Z B AO R D ER IH NG AA N DH AH B IH Z AH N T AY N EH M P AY ER
+[val example] corrected:    DH IH S IH M L AY G IH NG AH V D R AA S DH AH B R EH G R IY AH N D B R AO S ER D IH NG AH N B IH N AH T ER Z AY N M EH N T ER
+[val example] plain text:   This mingled race are the Bulgarians bordering on the Byzantine empire.
+epoch 5: train_loss=1.7600 | val_loss=1.5801 | lr=0.000300
+epoch 5: train_loss=1.7600 | val_loss=1.5801 | lr=0.000300
+[val example] noisy:        SH UH R L IY IH T R W UH AH D EH V B IH B EH T ER T UW F EY S AH D R IH AH K AH L T IY
+[val example] target:       SH UH R L IY IH T W UH D HH AE V B IH N B EH T ER T UW F EY S DH AH D IH F AH K AH L T IY
+[val example] corrected:    SH UH R L IY IH T W UH D AH V EH R B IH T B EH T ER F EY S AH D IH R AH L IY
+[val example] plain text:   Surely it would have been better to face the difficulty?
+[val example] noisy:        SH UH R L IY IH T R W UH AH D EH V B IH B EH T ER T UW F EY S AH D R IH AH K AH L T IY
+[val example] target:       SH UH R L IY IH T W UH D HH AE V B IH N B EH T ER T UW F EY S DH AH D IH F AH K AH L T IY
+[val example] corrected:    SH UH R L IY IH T W UH D AH V EH R B IH T B EH T ER F EY S AH D IH R AH L IY
+[val example] plain text:   Surely it would have been better to face the difficulty?
+epoch 6: train_loss=1.7012 | val_loss=1.5315 | lr=0.000350
+epoch 6: train_loss=1.7012 | val_loss=1.5315 | lr=0.000350
+[val example] noisy:        T IH Z AE T AH DH AH B AA T AH M AH V L AY W IY JH M HH AH S T K IH G IH N AH N D D AE T AE AH T AA
+[val example] target:       IH T IH Z AE T DH AH B AA T AH M AH V L AY F W IY M AH S T B IH G IH N AH N D N AA T AE T DH AH T AA P
+[val example] corrected:    IH T IH Z AE T DH AH B AA T AH V M AY L IY W AH N HH IY S T K AH M IH N D IH N D AE T AH N D AE T
+[val example] plain text:   It is at the bottom of life we must begin, and not at the top.
+[val example] noisy:        T IH Z AE T AH DH AH B AA T AH M AH V L AY W IY JH M HH AH S T K IH G IH N AH N D D AE T AE AH T AA
+[val example] target:       IH T IH Z AE T DH AH B AA T AH M AH V L AY F W IY M AH S T B IH G IH N AH N D N AA T AE T DH AH T AA P
+[val example] corrected:    IH T IH Z AE T DH AH B AA T AH V M AY L IY W AH N HH IY S T K AH M IH N D IH N D AE T AH N D AE T
+[val example] plain text:   It is at the bottom of life we must begin, and not at the top.
+epoch 7: train_loss=1.6634 | val_loss=1.5073 | lr=0.000400
+epoch 7: train_loss=1.6634 | val_loss=1.5073 | lr=0.000400
+[val example] noisy:        IH S AY D DH UH AE T L OW N L IY ER L T DH DH D AH R K HH EH R R AH N Z NG N M AY AH HH EH D
+[val example] target:       B IH S AY D Z DH AE T L OW N L IY G ER L W IH DH DH AH D AA R K HH EH R R AH N Z IH N M AY HH EH D
+[val example] corrected:    IH S AY D DH AE T L OW N L IY L IY DH ER T DH AH K R EH R HH EH R AH N Z AH N D M AY HH EH D
+[val example] plain text:   Besides, that lonely girl with the dark hair runs in my head.
+[val example] noisy:        IH S AY D DH UH AE T L OW N L IY ER L T DH DH D AH R K HH EH R R AH N Z NG N M AY AH HH EH D
+[val example] target:       B IH S AY D Z DH AE T L OW N L IY G ER L W IH DH DH AH D AA R K HH EH R R AH N Z IH N M AY HH EH D
+[val example] corrected:    IH S AY D DH AE T L OW N L IY L IY DH ER T DH AH K R EH R HH EH R AH N Z AH N D M AY HH EH D
+[val example] plain text:   Besides, that lonely girl with the dark hair runs in my head.
+epoch 8: train_loss=1.6418 | val_loss=1.4849 | lr=0.000450
+epoch 8: train_loss=1.6418 | val_loss=1.4849 | lr=0.000450
+[val example] noisy:        S M B EY B IY B AH D M AH JH T D R IH M S P EH P K T F AH CH L IY
+[val example] target:       S AH M B EY B IY B AH D M AH T ER D R IH S P EH K T F AH L IY
+[val example] corrected:    S M EY B IY B AH T M AH N D T R IH M P S EH K T P AH L F IY CH
+[val example] plain text:   Some baby!" Bud muttered respectfully.
+[val example] noisy:        S M B EY B IY B AH D M AH JH T D R IH M S P EH P K T F AH CH L IY
+[val example] target:       S AH M B EY B IY B AH D M AH T ER D R IH S P EH K T F AH L IY
+[val example] corrected:    S M EY B IY B AH T M AH N D T R IH M P S EH K T P AH L F IY CH
+[val example] plain text:   Some baby!" Bud muttered respectfully.
+epoch 9: train_loss=1.6208 | val_loss=1.4642 | lr=0.000500
+epoch 9: train_loss=1.6208 | val_loss=1.4642 | lr=0.000500
+[val example] noisy:        Y EH S B AH T W R T D UW UW W AA OY N T M IY T T UW UW AA W N AY T AO ER S AH JH EH S ER CH AH N Z EH D V AY EH N IY TH IH NG OW HH N L IY S P IY K T EH D L UH K B AW HH IH M AH NG N D HH Z AY Z R EH S T AE AA N DH AH G R AE NG D UW IY AE N N OW
+[val example] target:       Y EH S B AH T W AH T D UW Y UW W AA N T M IY T UW D UW W AY T UW AO F ER S AH JH EH S CH AH N Z AE D V AY S EH N IY TH IH NG OW N L IY S P IY K T EH D L UH K T AH B AW T HH IH M AH N D HH IH Z AY Z R EH S T AH D AA N DH AH G R AE N D P IY AE N OW
+[val example] corrected:    Y EH S B AH T W AA R T UW W AA Z T UW M IY T UW T UW W AA N T AY ER S AH JH EH N S ER CH AH N D Z EH V ER IY N AY TH IH NG HH IY L OW N D S IY K UH D B IY K L EH K T HH IH M AH N D HH IH Z S EH R AH N D DH AE T S AH G R AE N D
+[val example] plain text:   Yes; but what do you want me to do?" "Why, to offer suggestions, advice, anything--only speak." Ted looked about him, and his eyes rested on the grand piano.
+[val example] noisy:        Y EH S B AH T W R T D UW UW W AA OY N T M IY T T UW UW AA W N AY T AO ER S AH JH EH S ER CH AH N Z EH D V AY EH N IY TH IH NG OW HH N L IY S P IY K T EH D L UH K B AW HH IH M AH NG N D HH Z AY Z R EH S T AE AA N DH AH G R AE NG D UW IY AE N N OW
+[val example] target:       Y EH S B AH T W AH T D UW Y UW W AA N T M IY T UW D UW W AY T UW AO F ER S AH JH EH S CH AH N Z AE D V AY S EH N IY TH IH NG OW N L IY S P IY K T EH D L UH K T AH B AW T HH IH M AH N D HH IH Z AY Z R EH S T AH D AA N DH AH G R AE N D P IY AE N OW
+[val example] corrected:    Y EH S B AH T W AA R T UW W AA Z T UW M IY T UW T UW W AA N T AY ER S AH JH EH N S ER CH AH N D Z EH V ER IY N AY TH IH NG HH IY L OW N D S IY K UH D B IY K L EH K T HH IH M AH N D HH IH Z S EH R AH N D DH AE T S AH G R AE N D
+[val example] plain text:   Yes; but what do you want me to do?" "Why, to offer suggestions, advice, anything--only speak." Ted looked about him, and his eyes rested on the grand piano.
+epoch 10: train_loss=1.5984 | val_loss=1.4447 | lr=0.000550
+epoch 10: train_loss=1.5984 | val_loss=1.4447 | lr=0.000550
+[val example] noisy:        HH N EH ER S P OW K M AH JH T UW EH S N IY W AH N AO DH OW HH IY W AA Z K AA N S T AH N T L IY W S OW S AY IH T IY N
+[val example] target:       HH IY N EH V ER S P OW K M AH CH T UW EH N IY W AH N AO L DH OW HH IY W AA Z K AA N S T AH N T L IY IH N S OW S AY IH T IY
+[val example] corrected:    HH EH N ER S P OW K AH M T UW S EH N IY W AH N AO R DH OW HH IY W AA Z K AA N S T AH N T S L IY W IH DH S AY T IH N S IY
+[val example] plain text:   He never spoke much to any one, although he was constantly in society.
+[val example] noisy:        HH N EH ER S P OW K M AH JH T UW EH S N IY W AH N AO DH OW HH IY W AA Z K AA N S T AH N T L IY W S OW S AY IH T IY N
+[val example] target:       HH IY N EH V ER S P OW K M AH CH T UW EH N IY W AH N AO L DH OW HH IY W AA Z K AA N S T AH N T L IY IH N S OW S AY IH T IY
+[val example] corrected:    HH EH N ER S P OW K AH M T UW S EH N IY W AH N AO R DH OW HH IY W AA Z K AA N S T AH N T S L IY W IH DH S AY T IH N S IY
+[val example] plain text:   He never spoke much to any one, although he was constantly in society.
+epoch 11: train_loss=1.5759 | val_loss=1.4287 | lr=0.000600
+[val example] noisy:        M IY N W AY L AO L W AA Z K AH F Y UW S ZH AH N
+[val example] target:       M IY N W AY L AO L W AA Z K AH N F Y UW ZH AH N
+[val example] corrected:    M IY N W AY L AO L W AA Z K AH F Y UW S AH N
+[val example] plain text:   Meanwhile all was confusion.
+epoch 11: train_loss=1.5759 | val_loss=1.4287 | lr=0.000600
+[val example] noisy:        M IY N W AY L AO L W AA Z K AH F Y UW S ZH AH N
+[val example] target:       M IY N W AY L AO L W AA Z K AH N F Y UW ZH AH N
+[val example] corrected:    M IY N W AY L AO L W AA Z K AH F Y UW S AH N
+[val example] plain text:   Meanwhile all was confusion.
+epoch 12: train_loss=1.5543 | val_loss=1.4104 | lr=0.000650
+epoch 12: train_loss=1.5543 | val_loss=1.4104 | lr=0.000650
+[val example] noisy:        DH AH IH F EH K S T P R AH D D UW S T ZH AY W L Y M D Z S HH EH T G ER W AA S R IH AA B K AH B AH L
+[val example] target:       DH AH IH F EH K T P R AH D UW S T B AY W IH L Y AH M Z L EH T ER W AA Z R IH M AA R K AH B AH L
+[val example] corrected:    DH AH IH F EH K S T P R AH D T UW S AY W UH D L AY M Z HH EH D S T ER G AA R W IH DH AH B AA K AH B AH L
+[val example] plain text:   730] The effect produced by William's letter was remarkable.
+[val example] noisy:        DH AH IH F EH K S T P R AH D D UW S T ZH AY W L Y M D Z S HH EH T G ER W AA S R IH AA B K AH B AH L
+[val example] target:       DH AH IH F EH K T P R AH D UW S T B AY W IH L Y AH M Z L EH T ER W AA Z R IH M AA R K AH B AH L
+[val example] corrected:    DH AH IH F EH K S T P R AH D T UW S AY W UH D L AY M Z HH EH D S T ER G AA R W IH DH AH B AA K AH B AH L
+[val example] plain text:   730] The effect produced by William's letter was remarkable.
+epoch 13: train_loss=1.5282 | val_loss=1.3729 | lr=0.000700
+epoch 13: train_loss=1.5282 | val_loss=1.3729 | lr=0.000700
+[val example] noisy:        DH AH S K IY N ER F AA L OW D F AH N D IY CH R IY P S UW DH AH K AA M AH AW N K AO R S K AE S T K EY NG F R OW K W N AH G D S AH S P IY SH AH S G L AE IH S IH AE T DH AH AH DH AH N JH D B UH OW M EY N T EY JH IH NG AH UW M OW S IH P EH N AH T R AH AH L JH S AY L AH N S AH
+[val example] target:       DH AH S K IH N ER F AA L OW D AH N D IY CH P AA R T IY P ER S UW D DH AH K AA M AH N K AO R S K AE S T IH NG F R IY K W AH N T AH N D S AH S P IH SH AH S G L AE N S IH Z AE T DH AH AH DH ER AH N D B OW TH M EY N T EY N IH NG AH M OW S T IH M P EH N AH T R AH B AH L S AY L AH N S
+[val example] corrected:    DH AH S K IY N F ER L OW D AH N D IY CH AH N D R IY P S AH K AA M AH N K AO R S K AE S K T R EY K F AO R W AH N D S AH G R IY S P AH L IH SH AH N S AE T DH AH S IH N DH AH B AH T EY JH AH N D M EY N JH IH NG T UW M OW S AH P AH L IH N S AH L AH N S AH L AH N S
+[val example] plain text:   The Skinner followed, and each party pursued the common course, casting frequent and suspicious glances at the other, and both maintaining a most impenetrable silence.
+[val example] noisy:        DH AH S K IY N ER F AA L OW D F AH N D IY CH R IY P S UW DH AH K AA M AH AW N K AO R S K AE S T K EY NG F R OW K W N AH G D S AH S P IY SH AH S G L AE IH S IH AE T DH AH AH DH AH N JH D B UH OW M EY N T EY JH IH NG AH UW M OW S IH P EH N AH T R AH AH L JH S AY L AH N S AH
+[val example] target:       DH AH S K IH N ER F AA L OW D AH N D IY CH P AA R T IY P ER S UW D DH AH K AA M AH N K AO R S K AE S T IH NG F R IY K W AH N T AH N D S AH S P IH SH AH S G L AE N S IH Z AE T DH AH AH DH ER AH N D B OW TH M EY N T EY N IH NG AH M OW S T IH M P EH N AH T R AH B AH L S AY L AH N S
+[val example] corrected:    DH AH S K IY N F ER L OW D AH N D IY CH AH N D R IY P S AH K AA M AH N K AO R S K AE S K T R EY K F AO R W AH N D S AH G R IY S P AH L IH SH AH N S AE T DH AH S IH N DH AH B AH T EY JH AH N D M EY N JH IH NG T UW M OW S AH P AH L IH N S AH L AH N S AH L AH N S
+[val example] plain text:   The Skinner followed, and each party pursued the common course, casting frequent and suspicious glances at the other, and both maintaining a most impenetrable silence.
+epoch 14: train_loss=1.4707 | val_loss=1.2328 | lr=0.000750
+epoch 14: train_loss=1.4707 | val_loss=1.2328 | lr=0.000750
+[val example] noisy:        Y UW M OY IY N OW JH AH S T AE ER S K D AH F EH D ER EY N SH AH OY HH AH K AO R D Z
+[val example] target:       Y UW M IY N JH AH S T AE S K T UW S IY K AH N F EH D ER EY SH AH N R AH K AO R D Z
+[val example] corrected:    Y UW M IY N OW JH AH S T AE K S ER D AH F EH N D ER EY SH AH N AH V HH AO R D Z
+[val example] plain text:   You mean just ask to see Confederation records?
+[val example] noisy:        Y UW M OY IY N OW JH AH S T AE ER S K D AH F EH D ER EY N SH AH OY HH AH K AO R D Z
+[val example] target:       Y UW M IY N JH AH S T AE S K T UW S IY K AH N F EH D ER EY SH AH N R AH K AO R D Z
+[val example] corrected:    Y UW M IY N OW JH AH S T AE K S ER D AH F EH N D ER EY SH AH N AH V HH AO R D Z
+[val example] plain text:   You mean just ask to see Confederation records?
+epoch 15: train_loss=1.3313 | val_loss=1.0986 | lr=0.000800
+epoch 15: train_loss=1.3313 | val_loss=1.0986 | lr=0.000800
+[val example] noisy:        IH K AO R S AH V AA M HH AE NG Z AH V ER D UW DH AE AH IH V S T N DH Y UW SH AH W W AH L W EH Z HH S OW K L OW S L K AH N V K EY D IY ER AY V D AO IH ER N EY F IY L AH D ZH AE L V IY AH AH N R D B IY IH ZH D IY D W V AA Z D UW CH IY S F AO R W ER D IH D B AY DH N K AH M IH T P IY
+[val example] target:       IH N K AO R S AH V T AY M HH AE V IH NG S AH F ER D T UW DH AH IH K S T EH N T Y UW ZH AH W AH L W EH N S OW K L OW S L IY K AH N V EY D HH IY ER AY V D IH N F IH L AH D EH L F IY AH AH N D B IY IH NG EY D IH D W AA Z D UW L IY F AO R W ER D IH D B AY DH AH K AH M IH T IY
+[val example] corrected:    IH K AO R S AH V M AE NG Z AH V ER D DH AH AE T IH V S T UW DH AH Y UW W AH L W EH L HH OW S K L OW S K L OW K AH N D K EY V ER D IY V ER AY D IH N F AO R L IY AH V L IY AH N D R IY AH N D B IY D IH D W AA Z V IH S T UW F AO R D ER W IH DH AH B AY N D IH K AH M P IY
+[val example] plain text:   In course of time, having suffered to the extent usual when so closely conveyed, he arrived in Philadelphia, and being aided, was duly forwarded by the Committee.
+[val example] noisy:        IH K AO R S AH V AA M HH AE NG Z AH V ER D UW DH AE AH IH V S T N DH Y UW SH AH W W AH L W EH Z HH S OW K L OW S L K AH N V K EY D IY ER AY V D AO IH ER N EY F IY L AH D ZH AE L V IY AH AH N R D B IY IH ZH D IY D W V AA Z D UW CH IY S F AO R W ER D IH D B AY DH N K AH M IH T P IY
+[val example] target:       IH N K AO R S AH V T AY M HH AE V IH NG S AH F ER D T UW DH AH IH K S T EH N T Y UW ZH AH W AH L W EH N S OW K L OW S L IY K AH N V EY D HH IY ER AY V D IH N F IH L AH D EH L F IY AH AH N D B IY IH NG EY D IH D W AA Z D UW L IY F AO R W ER D IH D B AY DH AH K AH M IH T IY
+[val example] corrected:    IH K AO R S AH V M AE NG Z AH V ER D DH AH AE T IH V S T UW DH AH Y UW W AH L W EH L HH OW S K L OW S K L OW K AH N D K EY V ER D IY V ER AY D IH N F AO R L IY AH V L IY AH N D R IY AH N D B IY D IH D W AA Z V IH S T UW F AO R D ER W IH DH AH B AY N D IH K AH M P IY
+[val example] plain text:   In course of time, having suffered to the extent usual when so closely conveyed, he arrived in Philadelphia, and being aided, was duly forwarded by the Committee.
+epoch 16: train_loss=1.2312 | val_loss=1.0312 | lr=0.000850
+epoch 16: train_loss=1.2312 | val_loss=1.0312 | lr=0.000850
+[val example] noisy:        DH OW AH S K EY AE DH L EH AH V OW IY P R IH NG W IH DH AE R AH EY SH AH EH B OW L AA S AH M Z AH N P D M Y UW Z K F SH L AH D IH DH DH AH ER W F L ER Z AH N D DH AH EH R W AW IH DH N M EH L IY Z V ER N AH L
+[val example] target:       DH AH S K EY M DH AH L AH V L IY S P R IH NG W IH DH AH R AH SH AH V B L AA S AH M Z AH N D M Y UW Z IH K F L AH D IH NG DH AH ER TH W IH DH F L AW ER Z AH N D DH AH EH R W IH DH M EH L AH D IY Z V ER N AH L
+[val example] corrected:    DH OW AH S K EY M DH EH L AH V OW P IY R IH NG W IH DH DH AH R EY SH AH N B EH L OW S AH M P AH N D M UW Z K L AY F AH L D DH AH W ER L Z AH N D DH AH EH R W IH DH DH EH R W IH DH M EH N IY Z AH V ER L
+[val example] plain text:   Thus came the lovely spring with a rush of blossoms and music, Flooding the earth with flowers, and the air with melodies vernal.
+[val example] noisy:        DH OW AH S K EY AE DH L EH AH V OW IY P R IH NG W IH DH AE R AH EY SH AH EH B OW L AA S AH M Z AH N P D M Y UW Z K F SH L AH D IH DH DH AH ER W F L ER Z AH N D DH AH EH R W AW IH DH N M EH L IY Z V ER N AH L
+[val example] target:       DH AH S K EY M DH AH L AH V L IY S P R IH NG W IH DH AH R AH SH AH V B L AA S AH M Z AH N D M Y UW Z IH K F L AH D IH NG DH AH ER TH W IH DH F L AW ER Z AH N D DH AH EH R W IH DH M EH L AH D IY Z V ER N AH L
+[val example] corrected:    DH OW AH S K EY M DH EH L AH V OW P IY R IH NG W IH DH DH AH R EY SH AH N B EH L OW S AH M P AH N D M UW Z K L AY F AH L D DH AH W ER L Z AH N D DH AH EH R W IH DH DH EH R W IH DH M EH N IY Z AH V ER L
+[val example] plain text:   Thus came the lovely spring with a rush of blossoms and music, Flooding the earth with flowers, and the air with melodies vernal.
+epoch 17: train_loss=1.1620 | val_loss=0.9854 | lr=0.000900
+epoch 17: train_loss=1.1620 | val_loss=0.9854 | lr=0.000900
+[val example] noisy:        DH EH N AE F R IH K AA IH L B IY DH EH R T UW G F T UW N UW R EY S Z HH DH R T R AE ZH ER ZH Z DH AE F R Z EH TH CH ER ER IY Z HH AE V B IH AH K Y UW M Y AH L AW T IH D UW N HH ER B TH EH T W
+[val example] target:       DH EH N AE F R IH K AA W IH L B IY DH EH R T UW AO F ER T UW N UW R EY S AH Z DH AH T R EH ZH ER Z DH AE T F AO R S EH N CH ER IY Z HH AE V B IH N AH K Y UW M Y AH L EY T IH NG IH N HH ER B R EH S T
+[val example] corrected:    DH EH N AE F R IH K AA L IH B IY DH EH R T UW G OW T UW N UW R EY S HH IH Z DH EH R T R AE DH ER Z DH AE T F R EH Z ER CH ER Z HH IY HH AE V B IH N Y UW K AH M Y UW L D AW T IH D N UW HH ER B EH T
+[val example] plain text:   Then, Africa will be there to offer to new races the treasures that for centuries have been accumulating in her breast.
+[val example] noisy:        DH EH N AE F R IH K AA IH L B IY DH EH R T UW G F T UW N UW R EY S Z HH DH R T R AE ZH ER ZH Z DH AE F R Z EH TH CH ER ER IY Z HH AE V B IH AH K Y UW M Y AH L AW T IH D UW N HH ER B TH EH T W
+[val example] target:       DH EH N AE F R IH K AA W IH L B IY DH EH R T UW AO F ER T UW N UW R EY S AH Z DH AH T R EH ZH ER Z DH AE T F AO R S EH N CH ER IY Z HH AE V B IH N AH K Y UW M Y AH L EY T IH NG IH N HH ER B R EH S T
+[val example] corrected:    DH EH N AE F R IH K AA L IH B IY DH EH R T UW G OW T UW N UW R EY S HH IH Z DH EH R T R AE DH ER Z DH AE T F R EH Z ER CH ER Z HH IY HH AE V B IH N Y UW K AH M Y UW L D AW T IH D N UW HH ER B EH T
+[val example] plain text:   Then, Africa will be there to offer to new races the treasures that for centuries have been accumulating in her breast.
+epoch 18: train_loss=1.1057 | val_loss=0.9959 | lr=0.000950
+epoch 18: train_loss=1.1057 | val_loss=0.9959 | lr=0.000950
+[val example] noisy:        IY S M M AY D AE S HH IY TH Z B T L UH K T IH M B EH R AH V S T K L S IH NG F ER S T AE T F DH T EY B AH L R DH EH D AE T M AO AH D DH EH N AE T M IH UW S ER B CH R AW N R V G Z IH F B EH G NG S AH M AA D IY T UW T EH L HH IH M W AH T T UW S AA
+[val example] target:       HH IY S M AY L D AE Z HH IY R OW Z B AH T L UH K T IH M B EH R AH S T G L AE N S IH NG F ER S T AE T DH AH T EY B AH L DH EH N AE T M IY AH N D DH EH N AE T M IH S T ER B R AW N R IH G AE Z IH F B EH G IH NG S AH M B AA D IY T UW T EH L HH IH M W AH T T UW S EY
+[val example] corrected:    HH IY S M AY M D AE S HH IY TH IH NG Z B AH T L UH K T IH M B EH R AH V S T R IH K S L IH NG F ER S T AE T DH AH B EY T AH L DH AE T M AO R DH AE T DH AH EH N D AE T M IH S T ER B R AW N D F R AH M B IH G AE S AH M D T UW B IY T UW L EH T HH IH M W AH T S T UW DH AH S T AA
+[val example] plain text:   He smiled as he rose, but looked embarrassed, glancing first at the table, then at me, and then at Mr Brownrigg, as if begging somebody to tell him what to say.
+[val example] noisy:        IY S M M AY D AE S HH IY TH Z B T L UH K T IH M B EH R AH V S T K L S IH NG F ER S T AE T F DH T EY B AH L R DH EH D AE T M AO AH D DH EH N AE T M IH UW S ER B CH R AW N R V G Z IH F B EH G NG S AH M AA D IY T UW T EH L HH IH M W AH T T UW S AA
+[val example] target:       HH IY S M AY L D AE Z HH IY R OW Z B AH T L UH K T IH M B EH R AH S T G L AE N S IH NG F ER S T AE T DH AH T EY B AH L DH EH N AE T M IY AH N D DH EH N AE T M IH S T ER B R AW N R IH G AE Z IH F B EH G IH NG S AH M B AA D IY T UW T EH L HH IH M W AH T T UW S EY
+[val example] corrected:    HH IY S M AY M D AE S HH IY TH IH NG Z B AH T L UH K T IH M B EH R AH V S T R IH K S L IH NG F ER S T AE T DH AH B EY T AH L DH AE T M AO R DH AE T DH AH EH N D AE T M IH S T ER B R AW N D F R AH M B IH G AE S AH M D T UW B IY T UW L EH T HH IH M W AH T S T UW DH AH S T AA
+[val example] plain text:   He smiled as he rose, but looked embarrassed, glancing first at the table, then at me, and then at Mr Brownrigg, as if begging somebody to tell him what to say.
+epoch 19: train_loss=1.0484 | val_loss=0.9146 | lr=0.001000
+epoch 19: train_loss=1.0484 | val_loss=0.9146 | lr=0.001000
+[val example] noisy:        DH AH M AO R SH IY TH T V ER IH T DH AH M AO ER UW SH UH R SH EY IY F EH Z T DH AE T M IH S T ER
+[val example] target:       DH AH M AO R SH IY TH AO T OW V ER IH T DH AH M AO R SH UH R SH IY F EH L T DH AE T M IH S T ER
+[val example] corrected:    DH AH M AO R SH IY TH AO T ER IH T DH AH M AO R SH UH R SH IY F EH L T DH AE T M IH S T ER
+[val example] plain text:   The more she thought over it, the more sure she felt that Mr.
+[val example] noisy:        DH AH M AO R SH IY TH T V ER IH T DH AH M AO ER UW SH UH R SH EY IY F EH Z T DH AE T M IH S T ER
+[val example] target:       DH AH M AO R SH IY TH AO T OW V ER IH T DH AH M AO R SH UH R SH IY F EH L T DH AE T M IH S T ER
+[val example] corrected:    DH AH M AO R SH IY TH AO T ER IH T DH AH M AO R SH UH R SH IY F EH L T DH AE T M IH S T ER
+[val example] plain text:   The more she thought over it, the more sure she felt that Mr.
+epoch 20: train_loss=1.0178 | val_loss=0.8776 | lr=0.000994
+epoch 20: train_loss=1.0178 | val_loss=0.8776 | lr=0.000994
+[val example] noisy:        Z IH T K EY M T UW R EH S T HH IY DH R L T AH V S AY T DH AH HH UH S AH IY B UH ZH AH AH EY D P L N JH D IH G N AH M AH NG DH AA IY AH N D ER G R OW TH
+[val example] target:       AE Z IH T K EY M T UW R EH S T HH IY TH R AH S T AH S AY D DH AH HH EY Z AH L B UH SH AH Z AH N D P L AH N JH D IH N AH M AH NG DH AH AH N D ER G R OW TH
+[val example] corrected:    S IH T K EY M T UW R EH S T HH IY R DH AH L AY T AH V S AY T DH AH HH UH D S AH B IY AH B AH L D EY P AH N D L IH JH D IH N AH M AH NG DH AH AA R D AH N D ER G R OW TH
+[val example] plain text:   As it came to rest he thrust aside the hazel bushes and plunged in among the undergrowth.
+[val example] noisy:        Z IH T K EY M T UW R EH S T HH IY DH R L T AH V S AY T DH AH HH UH S AH IY B UH ZH AH AH EY D P L N JH D IH G N AH M AH NG DH AA IY AH N D ER G R OW TH
+[val example] target:       AE Z IH T K EY M T UW R EH S T HH IY TH R AH S T AH S AY D DH AH HH EY Z AH L B UH SH AH Z AH N D P L AH N JH D IH N AH M AH NG DH AH AH N D ER G R OW TH
+[val example] corrected:    S IH T K EY M T UW R EH S T HH IY R DH AH L AY T AH V S AY T DH AH HH UH D S AH B IY AH B AH L D EY P AH N D L IH JH D IH N AH M AH NG DH AH AA R D AH N D ER G R OW TH
+[val example] plain text:   As it came to rest he thrust aside the hazel bushes and plunged in among the undergrowth.
+epoch 21: train_loss=0.9736 | val_loss=0.8281 | lr=0.000989
+epoch 21: train_loss=0.9736 | val_loss=0.8281 | lr=0.000989
+[val example] noisy:        M IH S ER IY R AH N D S P AY S IY M D S ER IH NG AH P IH N M IY AH G EH N AH N D S IY K IH NG F AE AW T L G T
+[val example] target:       M IH Z ER IY AH N D S P AY T S IY M D S ER JH IH NG AH P IH N M IY AH G EH N AH N D S IY K IH NG AE N AW T L EH T
+[val example] corrected:    M IH S T ER IY R AH N D S P AY S IY M D S ER IH NG AH P IH N M IY AH G EH N AH N D S IY K IH NG F AE K T L IY
+[val example] plain text:   Misery and spite seemed surging up in me again and seeking an outlet.
+[val example] noisy:        M IH S ER IY R AH N D S P AY S IY M D S ER IH NG AH P IH N M IY AH G EH N AH N D S IY K IH NG F AE AW T L G T
+[val example] target:       M IH Z ER IY AH N D S P AY T S IY M D S ER JH IH NG AH P IH N M IY AH G EH N AH N D S IY K IH NG AE N AW T L EH T
+[val example] corrected:    M IH S T ER IY R AH N D S P AY S IY M D S ER IH NG AH P IH N M IY AH G EH N AH N D S IY K IH NG F AE K T L IY
+[val example] plain text:   Misery and spite seemed surging up in me again and seeking an outlet.
+epoch 22: train_loss=0.9422 | val_loss=0.8106 | lr=0.000983
+[val example] noisy:        IH T AH N T Z T R HH SH AW T EY IH D
+[val example] target:       IH T IH Z AH N T T R UW HH IY SH AW T IH D
+[val example] corrected:    IH T AH N T S T R EY SH AW T IH D
+[val example] plain text:   It isn't true!" he shouted.
+epoch 22: train_loss=0.9422 | val_loss=0.8106 | lr=0.000983
+[val example] noisy:        IH T AH N T Z T R HH SH AW T EY IH D
+[val example] target:       IH T IH Z AH N T T R UW HH IY SH AW T IH D
+[val example] corrected:    IH T AH N T S T R EY SH AW T IH D
+[val example] plain text:   It isn't true!" he shouted.
+epoch 23: train_loss=0.9209 | val_loss=0.7970 | lr=0.000978
+epoch 23: train_loss=0.9209 | val_loss=0.7970 | lr=0.000978
+[val example] noisy:        Y T UW TH AO T Y EY W UH D M AE S ER M IY D IY T AH N T Y B W EH AY M D M T EH NG S T ER AH V UW B OW TH
+[val example] target:       Y UW TH AO T Y UW W UH D M AE S T ER M IY D IH D AH N T Y UW W EH L AY M M AE S T ER AH V Y UW B OW TH
+[val example] corrected:    Y UW TH AO T Y UW W UH D M AE S T ER M IY D IY AH N D Y UW W EH L AY M D T EH L S T ER AH V B OW TH
+[val example] plain text:   You thought you would master me, didn't you?" "Well, I'm master of you both.
+[val example] noisy:        Y T UW TH AO T Y EY W UH D M AE S ER M IY D IY T AH N T Y B W EH AY M D M T EH NG S T ER AH V UW B OW TH
+[val example] target:       Y UW TH AO T Y UW W UH D M AE S T ER M IY D IH D AH N T Y UW W EH L AY M M AE S T ER AH V Y UW B OW TH
+[val example] corrected:    Y UW TH AO T Y UW W UH D M AE S T ER M IY D IY AH N D Y UW W EH L AY M D T EH L S T ER AH V B OW TH
+[val example] plain text:   You thought you would master me, didn't you?" "Well, I'm master of you both.
+epoch 24: train_loss=0.8992 | val_loss=0.7732 | lr=0.000972
+[val example] noisy:        HH IY S D R AH K AH L AY AH AW N D HH L D DH AO AA M CH UW DH AH AW N D
+[val example] target:       HH IY S T R AH K AH L AY T AH N D HH EH L D DH AH M AE CH T UW DH AH G R AW N D
+[val example] corrected:    HH IY S T R AH K AH L AY AH N D HH OW L D DH AH M UW CH DH AH AW N D
+[val example] plain text:   He struck a light, and held the match to the ground.
+epoch 24: train_loss=0.8992 | val_loss=0.7732 | lr=0.000972
+[val example] noisy:        HH IY S D R AH K AH L AY AH AW N D HH L D DH AO AA M CH UW DH AH AW N D
+[val example] target:       HH IY S T R AH K AH L AY T AH N D HH EH L D DH AH M AE CH T UW DH AH G R AW N D
+[val example] corrected:    HH IY S T R AH K AH L AY AH N D HH OW L D DH AH M UW CH DH AH AW N D
+[val example] plain text:   He struck a light, and held the match to the ground.
+epoch 25: train_loss=0.8799 | val_loss=0.7589 | lr=0.000967
+epoch 25: train_loss=0.8799 | val_loss=0.7589 | lr=0.000967
+[val example] noisy:        AY M IY N W AH T AY S EY DH EH T W AH N IY S P OW G AH V ER HH NG N OW P R AY AH T SH M D AH AH R EH S D ZH IY T UH K HH ER OW TH IY UW L AO R D M T R K IH T AH ZH P T W IH D
+[val example] target:       AY M IY N W AH T AY S EY DH AE T W EH N SH IY S P OW K AH V HH ER HH AE V IH NG N OW P R AY V AH T IH N T AH R EH S T SH IY T UH K HH ER OW TH T UW Y UW L AO R D M AA R K IH N T ER AH P T IH D
+[val example] corrected:    AY M IY N W AH T AY S EY DH AE T W AH N S P OW K AH V ER HH AE N D OW P R AY AH T SH IY M AH N D AH R EH S T SH IY T UH K HH ER OW N L IY T UW AO L R EH D M IH S T R AH SH T W IH DH D IH D
+[val example] plain text:   I mean what I say: that when she spoke of her having no private interest--" "She took her oath to you?" Lord Mark interrupted.
+[val example] noisy:        AY M IY N W AH T AY S EY DH EH T W AH N IY S P OW G AH V ER HH NG N OW P R AY AH T SH M D AH AH R EH S D ZH IY T UH K HH ER OW TH IY UW L AO R D M T R K IH T AH ZH P T W IH D
+[val example] target:       AY M IY N W AH T AY S EY DH AE T W EH N SH IY S P OW K AH V HH ER HH AE V IH NG N OW P R AY V AH T IH N T AH R EH S T SH IY T UH K HH ER OW TH T UW Y UW L AO R D M AA R K IH N T ER AH P T IH D
+[val example] corrected:    AY M IY N W AH T AY S EY DH AE T W AH N S P OW K AH V ER HH AE N D OW P R AY AH T SH IY M AH N D AH R EH S T SH IY T UH K HH ER OW N L IY T UW AO L R EH D M IH S T R AH SH T W IH DH D IH D
+[val example] plain text:   I mean what I say: that when she spoke of her having no private interest--" "She took her oath to you?" Lord Mark interrupted.
+epoch 26: train_loss=0.8595 | val_loss=0.7399 | lr=0.000961
+epoch 26: train_loss=0.8595 | val_loss=0.7399 | lr=0.000961
+[val example] noisy:        DH IY Z T UW S IH T EY T S OW N L IY D IH F ER IH IH N AH IH NG G AE AH L R IH S P AE K T K W AH N T AH K IY HH AE Z AH AY M IH IH D S L EY V ER DH B TH AH T DH AH S T EY AH V OW HH AY OW HH AE P R OW HH IH B IH AH T D DH AH EH G Z IY S T N S AH Z L F Z AY IH DH TH N IH T Z S B AO R D ER Z
+[val example] target:       DH IY Z T UW S T EY T S OW N L IY D IH F ER IH N AH S IH NG G AH L R IH S P EH K T K AH N T AH K IY HH AE Z AH D M IH T IH D S L EY V ER IY B AH T DH AH S T EY T AH V OW HH AY OW HH AE Z P R OW HH IH B AH T AH D DH AH EH G Z IH S T AH N S AH V S L EY V Z W IH DH IH N IH T S B AO R D ER Z
+[val example] corrected:    DH IY Z T UW S IH T EY T S OW N L IY D IH F ER IH N AH TH IH NG K AH L R IH S P EH K T W AH N T AH K HH IY HH AE Z AH M AY IH D S L EY V ER DH AH B AH T DH AH S T EY T AH V HH OW P HH AE P R OW HH IH Z B IH T AH D DH AH G EH N S T S AH N Z F L AY Z IH N DH AH IH T S B AO R D ER Z
+[val example] plain text:   These two States only differ in a single respect; Kentucky has admitted slavery, but the State of Ohio has prohibited the existence of slaves within its borders.
+[val example] noisy:        DH IY Z T UW S IH T EY T S OW N L IY D IH F ER IH IH N AH IH NG G AE AH L R IH S P AE K T K W AH N T AH K IY HH AE Z AH AY M IH IH D S L EY V ER DH B TH AH T DH AH S T EY AH V OW HH AY OW HH AE P R OW HH IH B IH AH T D DH AH EH G Z IY S T N S AH Z L F Z AY IH DH TH N IH T Z S B AO R D ER Z
+[val example] target:       DH IY Z T UW S T EY T S OW N L IY D IH F ER IH N AH S IH NG G AH L R IH S P EH K T K AH N T AH K IY HH AE Z AH D M IH T IH D S L EY V ER IY B AH T DH AH S T EY T AH V OW HH AY OW HH AE Z P R OW HH IH B AH T AH D DH AH EH G Z IH S T AH N S AH V S L EY V Z W IH DH IH N IH T S B AO R D ER Z
+[val example] corrected:    DH IY Z T UW S IH T EY T S OW N L IY D IH F ER IH N AH TH IH NG K AH L R IH S P EH K T W AH N T AH K HH IY HH AE Z AH M AY IH D S L EY V ER DH AH B AH T DH AH S T EY T AH V HH OW P HH AE P R OW HH IH Z B IH T AH D DH AH G EH N S T S AH N Z F L AY Z IH N DH AH IH T S B AO R D ER Z
+[val example] plain text:   These two States only differ in a single respect; Kentucky has admitted slavery, but the State of Ohio has prohibited the existence of slaves within its borders.
+epoch 27: train_loss=0.8412 | val_loss=0.7229 | lr=0.000956
+[val example] noisy:        W AE L AY W AA AW Z JH ER AH S T TH IH NG K IH NG S
+[val example] target:       W EH L AY W AA Z JH AH S T TH IH NG K IH NG
+[val example] corrected:    W EH L AY W AA Z JH ER AH S T TH IH NG K IH NG S
+[val example] plain text:   Well, I was just thinking.
+epoch 27: train_loss=0.8412 | val_loss=0.7229 | lr=0.000956
+[val example] noisy:        W AE L AY W AA AW Z JH ER AH S T TH IH NG K IH NG S
+[val example] target:       W EH L AY W AA Z JH AH S T TH IH NG K IH NG
+[val example] corrected:    W EH L AY W AA Z JH ER AH S T TH IH NG K IH NG S
+[val example] plain text:   Well, I was just thinking.
+epoch 28: train_loss=0.8234 | val_loss=0.7082 | lr=0.000950
+epoch 28: train_loss=0.8234 | val_loss=0.7082 | lr=0.000950
+[val example] noisy:        AH T AO R W AH Z HH OW P AE N D AH K R AE TH K AH N D DH EH IH R W AE Z AH EH G L D IH P Z AH V S AH M TH IH NG B L UW AE V K R IH B AH N Z G EH K HH AH N B M EH R IY F EY S AA Z
+[val example] target:       DH AH D AO R W AA Z OW P AH N D AH K R AE K AH N D DH EH R W AA Z AH G L IH M P S AH V S AH M TH IH NG B L UW AH V R IH B AH N Z B L AE K HH EH R AH N D M EH R IY F EY S AH Z
+[val example] corrected:    B AH T AO R W AA Z HH OW P AH N D AH K R AE K AH N D DH EH R W AA Z AH G EH L D IH P S AH V S AH M TH IH NG B L UW K AE R IH B AH N Z G EH T AH N B EH R IY F EY S
+[val example] plain text:   The door was opened a crack and there was a glimpse of something blue, of ribbons, black hair, and merry faces.
+[val example] noisy:        AH T AO R W AH Z HH OW P AE N D AH K R AE TH K AH N D DH EH IH R W AE Z AH EH G L D IH P Z AH V S AH M TH IH NG B L UW AE V K R IH B AH N Z G EH K HH AH N B M EH R IY F EY S AA Z
+[val example] target:       DH AH D AO R W AA Z OW P AH N D AH K R AE K AH N D DH EH R W AA Z AH G L IH M P S AH V S AH M TH IH NG B L UW AH V R IH B AH N Z B L AE K HH EH R AH N D M EH R IY F EY S AH Z
+[val example] corrected:    B AH T AO R W AA Z HH OW P AH N D AH K R AE K AH N D DH EH R W AA Z AH G EH L D IH P S AH V S AH M TH IH NG B L UW K AE R IH B AH N Z G EH T AH N B EH R IY F EY S
+[val example] plain text:   The door was opened a crack and there was a glimpse of something blue, of ribbons, black hair, and merry faces.
+epoch 29: train_loss=0.8072 | val_loss=0.6942 | lr=0.000944
+epoch 29: train_loss=0.8072 | val_loss=0.6942 | lr=0.000944
+[val example] noisy:        DH IH S CH EH K Z T R AO D UW EY DH AH Y R D ER AH V IH N AH S JH AY
+[val example] target:       DH IH S CH EH K IH Z D R AO N T UW DH AH AO R D ER AH V IH G N AH S JH EY
+[val example] corrected:    DH IH S CH EH K S T R AO D T UW DH AH Y AO R D ER AH V IH N AH S JH AY
+[val example] plain text:   This check is drawn to the order of Ignace J.
+[val example] noisy:        DH IH S CH EH K Z T R AO D UW EY DH AH Y R D ER AH V IH N AH S JH AY
+[val example] target:       DH IH S CH EH K IH Z D R AO N T UW DH AH AO R D ER AH V IH G N AH S JH EY
+[val example] corrected:    DH IH S CH EH K S T R AO D T UW DH AH Y AO R D ER AH V IH N AH S JH AY
+[val example] plain text:   This check is drawn to the order of Ignace J.
+epoch 30: train_loss=0.7924 | val_loss=0.6854 | lr=0.000939
+epoch 30: train_loss=0.7924 | val_loss=0.6854 | lr=0.000939
+[val example] noisy:        HH IH Z IY T R UW P S W ER B R EY DH V DH K L L AE F T D IH N DH AH F EY S N AE V AE T AW AH L AY
+[val example] target:       HH IH Z T R UW P S W ER B R EY V DH EY L AE F T IH N DH AH F EY S AH V B AE T AH L
+[val example] corrected:    HH IH Z IY T R UW P S W ER B R EY DH AH K L AE F T IH N DH AH F EY S N AE V AH T AW ER
+[val example] plain text:   His troops were brave; they laughed in the face of battle.
+[val example] noisy:        HH IH Z IY T R UW P S W ER B R EY DH V DH K L L AE F T D IH N DH AH F EY S N AE V AE T AW AH L AY
+[val example] target:       HH IH Z T R UW P S W ER B R EY V DH EY L AE F T IH N DH AH F EY S AH V B AE T AH L
+[val example] corrected:    HH IH Z IY T R UW P S W ER B R EY DH AH K L AE F T IH N DH AH F EY S N AE V AH T AW ER
+[val example] plain text:   His troops were brave; they laughed in the face of battle.
+epoch 31: train_loss=0.7784 | val_loss=0.6752 | lr=0.000933
+[val example] noisy:        AH V DH AH W AO IH M L EH D S R P Y T AH AH L EH L IH V UH
+[val example] target:       AH V DH AH W IH M AH N L EH D D IH S R EH P Y AH T AH B AH L L IH V Z
+[val example] corrected:    AH V DH AH W AO R IH M L EH D S P R IH T AH L EH L IH V
+[val example] plain text:   Of the women, 181 led disreputable lives.
+epoch 31: train_loss=0.7784 | val_loss=0.6752 | lr=0.000933
+[val example] noisy:        AH V DH AH W AO IH M L EH D S R P Y T AH AH L EH L IH V UH
+[val example] target:       AH V DH AH W IH M AH N L EH D D IH S R EH P Y AH T AH B AH L L IH V Z
+[val example] corrected:    AH V DH AH W AO R IH M L EH D S P R IH T AH L EH L IH V
+[val example] plain text:   Of the women, 181 led disreputable lives.
+epoch 32: train_loss=0.7646 | val_loss=0.6612 | lr=0.000928
+epoch 32: train_loss=0.7646 | val_loss=0.6612 | lr=0.000928
+[val example] noisy:        B AY AH D P AY DH AH K EH R W ER IY CH AA D IH N Z B AA IH S T OW D AH P AA N JH EY V M Z AH N D DH AH N ER IH SH EH IH NG F G UW D W IH CH EH IY JH HH AE D G AA T B IH G AE N T D EH L AH P AA N HH IH M AH N T S D UW F HH IY W AA Z S OW F AA R R IH S T AO AE Z T B L IY B AH Z W G EH T G AH P AW T V B EH D
+[val example] target:       B AY AH N D B AY DH AH K EH R W IH CH HH AE D B IH N B IH S T OW D AH P AA N JH EY M Z AH N D DH AH N ER IH SH IH NG F UW D W IH CH HH IY HH AE D G AA T B IH G AE N T UW T EH L AH P AA N HH IH M AH N D S UW N HH IY W AA Z S OW F AA R R IH S T AO R D AE Z T UW B IY EY B AH L T UW G EH T AH P AW T AH V B EH D
+[val example] corrected:    B AY AH D B AY DH AH K EH R W ER IY CH AA R D IH N S P AA R T IH S T OW D AH P AA N JH EY M Z AH N D DH AH N ER IH SH IH NG F R UW D W IH CH EH N IY HH AE D G AA T B IH G AE N T EH L AH P AA N HH IH M AH N D S T UW F IY W AA Z S OW F AA R IH S T AO R AE Z T UW B IY B AH Z W EH N T AH P AW T AH V B EH D
+[val example] plain text:   By and by the care which had been bestowed upon James, and the nourishing food which he had got, began to tell upon him, and soon he was so far restored as to be able to get up out of bed.
+[val example] noisy:        B AY AH D P AY DH AH K EH R W ER IY CH AA D IH N Z B AA IH S T OW D AH P AA N JH EY V M Z AH N D DH AH N ER IH SH EH IH NG F G UW D W IH CH EH IY JH HH AE D G AA T B IH G AE N T D EH L AH P AA N HH IH M AH N T S D UW F HH IY W AA Z S OW F AA R R IH S T AO AE Z T B L IY B AH Z W G EH T G AH P AW T V B EH D
+[val example] target:       B AY AH N D B AY DH AH K EH R W IH CH HH AE D B IH N B IH S T OW D AH P AA N JH EY M Z AH N D DH AH N ER IH SH IH NG F UW D W IH CH HH IY HH AE D G AA T B IH G AE N T UW T EH L AH P AA N HH IH M AH N D S UW N HH IY W AA Z S OW F AA R R IH S T AO R D AE Z T UW B IY EY B AH L T UW G EH T AH P AW T AH V B EH D
+[val example] corrected:    B AY AH D B AY DH AH K EH R W ER IY CH AA R D IH N S P AA R T IH S T OW D AH P AA N JH EY M Z AH N D DH AH N ER IH SH IH NG F R UW D W IH CH EH N IY HH AE D G AA T B IH G AE N T EH L AH P AA N HH IH M AH N D S T UW F IY W AA Z S OW F AA R IH S T AO R AE Z T UW B IY B AH Z W EH N T AH P AW T AH V B EH D
+[val example] plain text:   By and by the care which had been bestowed upon James, and the nourishing food which he had got, began to tell upon him, and soon he was so far restored as to be able to get up out of bed.
+epoch 33: train_loss=0.7508 | val_loss=0.6522 | lr=0.000922
+[val example] noisy:        SH IY K T R JH AH S T Z EH G N DH R UW IY CH EY AH V EH S
+[val example] target:       SH IY K UH D JH AH S T S T AE G ER TH R UW IY CH D EY AH V EH S
+[val example] corrected:    SH IY K UH D R AH S T S EH N T DH EH R IH N CH EY N JH AH V EH S
+[val example] plain text:   She could just stagger through each day of S.
+epoch 33: train_loss=0.7508 | val_loss=0.6522 | lr=0.000922
+[val example] noisy:        SH IY K T R JH AH S T Z EH G N DH R UW IY CH EY AH V EH S
+[val example] target:       SH IY K UH D JH AH S T S T AE G ER TH R UW IY CH D EY AH V EH S
+[val example] corrected:    SH IY K UH D R AH S T S EH N T DH EH R IH N CH EY N JH AH V EH S
+[val example] plain text:   She could just stagger through each day of S.
+epoch 34: train_loss=0.7430 | val_loss=0.6465 | lr=0.000917
+epoch 34: train_loss=0.7430 | val_loss=0.6465 | lr=0.000917
+[val example] noisy:        V S EH R W IY AY K AO SH AE S EY IY W IY OW HH AH N D AH D AO R AH D K W IY Z T TH R UW Z
+[val example] target:       V EH R IY K AO SH AH S L IY HH IY OW P AH N D DH AH D AO R AH N D S K W IY Z D TH R UW
+[val example] corrected:    V EH R IY W AY K SH AE L S EY W IY HH AE D AH N D AH D AO R AH N D K W IY S T TH R UW Z
+[val example] plain text:   Very cautiously he opened the door and squeezed through.
+[val example] noisy:        V S EH R W IY AY K AO SH AE S EY IY W IY OW HH AH N D AH D AO R AH D K W IY Z T TH R UW Z
+[val example] target:       V EH R IY K AO SH AH S L IY HH IY OW P AH N D DH AH D AO R AH N D S K W IY Z D TH R UW
+[val example] corrected:    V EH R IY W AY K SH AE L S EY W IY HH AE D AH N D AH D AO R AH N D K W IY S T TH R UW Z
+[val example] plain text:   Very cautiously he opened the door and squeezed through.
+epoch 35: train_loss=0.7378 | val_loss=0.6448 | lr=0.000911
+epoch 35: train_loss=0.7378 | val_loss=0.6448 | lr=0.000911
+[val example] noisy:        P AA L IY N AH W AA UW Z AO R EH D IY HH ER IH AE IH NG T OY AH W SH AO R D HH IH AW JH
+[val example] target:       P AA L IY AE N AH W AA Z AO L R EH D IY HH ER IY IH NG T AH W AO R D HH IH M
+[val example] corrected:    P AA L IY N AH W AA Z AO R EH D IY HH ER IH NG T AH W AO R D HH IH M
+[val example] plain text:   Pollyanna was already hurrying toward him.
+[val example] noisy:        P AA L IY N AH W AA UW Z AO R EH D IY HH ER IH AE IH NG T OY AH W SH AO R D HH IH AW JH
+[val example] target:       P AA L IY AE N AH W AA Z AO L R EH D IY HH ER IY IH NG T AH W AO R D HH IH M
+[val example] corrected:    P AA L IY N AH W AA Z AO R EH D IY HH ER IH NG T AH W AO R D HH IH M
+[val example] plain text:   Pollyanna was already hurrying toward him.
+epoch 36: train_loss=0.7329 | val_loss=0.6360 | lr=0.000906
+epoch 36: train_loss=0.7329 | val_loss=0.6360 | lr=0.000906
+[val example] noisy:        DH AH F AO R M Y SH AH L EY AA R AE Z F AA L OW L EH T B IH B IY IY DH AH B ER D AH N W IH CH W UH D JH AH S D S NG AE F AY S T UW P R IH V AE N T EH L N AE N AH P AH L F R AH M UW V IY NG AH UW S T EH P D IY DH V AH D IH D N S HH IY K SH UH D T R V D L L IY IH F AA N L D IH D
+[val example] target:       DH AH F AO R M Y AH L EY AA R AE Z F AA L OW L EH T B IY B IY DH AH B ER D AH N W IH CH W UH D JH AH S T S AH F AY S T UW P R IH V EH N T AE N AE N AH M AH L F R AH M M UW V IH NG AH S T EH P D IY DH AH D IH S T AH N S HH IY K UH D T R AE V AH L D EY L IY IH F AH N L OW D IH D
+[val example] corrected:    DH AH F AO R M Y UW SH AH L AA R AE Z F AA L OW L EH T B IH L IY V DH AH B ER D AH N W IH CH W UH D JH AH S T AE F AY S T UW P R IH V EH N T EH L N AE N AH P AH L F R AH M V IY IH NG AH S T EH P T IH D DH AH D IH D N AH S HH IY K UH D T R AY V D L IY IH F AH N D IH T
+[val example] plain text:   The formulae are as follow:--Let b be the burden which would just suffice to prevent an animal from moving a step; d the distance he could travel daily if unloaded.
+[val example] noisy:        DH AH F AO R M Y SH AH L EY AA R AE Z F AA L OW L EH T B IH B IY IY DH AH B ER D AH N W IH CH W UH D JH AH S D S NG AE F AY S T UW P R IH V AE N T EH L N AE N AH P AH L F R AH M UW V IY NG AH UW S T EH P D IY DH V AH D IH D N S HH IY K SH UH D T R V D L L IY IH F AA N L D IH D
+[val example] target:       DH AH F AO R M Y AH L EY AA R AE Z F AA L OW L EH T B IY B IY DH AH B ER D AH N W IH CH W UH D JH AH S T S AH F AY S T UW P R IH V EH N T AE N AE N AH M AH L F R AH M M UW V IH NG AH S T EH P D IY DH AH D IH S T AH N S HH IY K UH D T R AE V AH L D EY L IY IH F AH N L OW D IH D
+[val example] corrected:    DH AH F AO R M Y UW SH AH L AA R AE Z F AA L OW L EH T B IH L IY V DH AH B ER D AH N W IH CH W UH D JH AH S T AE F AY S T UW P R IH V EH N T EH L N AE N AH P AH L F R AH M V IY IH NG AH S T EH P T IH D DH AH D IH D N AH S HH IY K UH D T R AY V D L IY IH F AH N D IH T
+[val example] plain text:   The formulae are as follow:--Let b be the burden which would just suffice to prevent an animal from moving a step; d the distance he could travel daily if unloaded.
+epoch 37: train_loss=0.7214 | val_loss=0.6243 | lr=0.000900
+[val example] noisy:        AY K IY L SH R IY K T G OW L AA T
+[val example] target:       AY K IH L SH R IY K T G OW L AA T
+[val example] corrected:    AY K IY L SH IY K UH D G OW L D
+[val example] plain text:   I kill!" shrieked Go-lat.
+epoch 37: train_loss=0.7214 | val_loss=0.6243 | lr=0.000900
+[val example] noisy:        AY K IY L SH R IY K T G OW L AA T
+[val example] target:       AY K IH L SH R IY K T G OW L AA T
+[val example] corrected:    AY K IY L SH IY K UH D G OW L D
+[val example] plain text:   I kill!" shrieked Go-lat.
+epoch 38: train_loss=0.7147 | val_loss=0.6252 | lr=0.000894
+epoch 38: train_loss=0.7147 | val_loss=0.6252 | lr=0.000894
+[val example] noisy:        IH T M AH S T B IY DH ER AH M OW S M AE G N IY F AH S AH D D IH N DH AH F ER L D D IH L AH D P EH N NG AH N AE F T AW
+[val example] target:       IH T M AH S T B IY DH AH M OW S T M AE G N IH F AH S AH N T IH N DH AH W ER L D D IH K AH N D P EH N IH NG T AH N L AE F T
+[val example] corrected:    IH T M AH S T B IY DH AH M OW S T M AE G N IY F AH S AH N D IH N DH AH F ER L D D IH L AH D P EH N IH NG AH N D AE F T ER
+[val example] plain text:   It must be the most magnificent in the world!" Dick and Pennington laughed.
+[val example] noisy:        IH T M AH S T B IY DH ER AH M OW S M AE G N IY F AH S AH D D IH N DH AH F ER L D D IH L AH D P EH N NG AH N AE F T AW
+[val example] target:       IH T M AH S T B IY DH AH M OW S T M AE G N IH F AH S AH N T IH N DH AH W ER L D D IH K AH N D P EH N IH NG T AH N L AE F T
+[val example] corrected:    IH T M AH S T B IY DH AH M OW S T M AE G N IY F AH S AH N D IH N DH AH F ER L D D IH L AH D P EH N IH NG AH N D AE F T ER
+[val example] plain text:   It must be the most magnificent in the world!" Dick and Pennington laughed.
+epoch 39: train_loss=0.7105 | val_loss=0.6195 | lr=0.000889
+epoch 39: train_loss=0.7105 | val_loss=0.6195 | lr=0.000889
+[val example] noisy:        W EH S T N Z IY S AA OW AH IH JH EH K SH AH N T UW IH T P CH R AH V AY D IH D Y UW AA R S AE T AH S F AY D
+[val example] target:       W EH S T AH N S IY Z N OW AH B JH EH K SH AH N T UW IH T P R AH V AY D IH D Y UW AA R S AE T AH S F AY D
+[val example] corrected:    W EH S T N OW S IY S AH M IH JH EH K SH AH N T UW IH T P R AH V AY D IH D Y UW AA R S AE T AH S F AY D
+[val example] plain text:   Weston sees no objection to it, provided you are satisfied.
+[val example] noisy:        W EH S T N Z IY S AA OW AH IH JH EH K SH AH N T UW IH T P CH R AH V AY D IH D Y UW AA R S AE T AH S F AY D
+[val example] target:       W EH S T AH N S IY Z N OW AH B JH EH K SH AH N T UW IH T P R AH V AY D IH D Y UW AA R S AE T AH S F AY D
+[val example] corrected:    W EH S T N OW S IY S AH M IH JH EH K SH AH N T UW IH T P R AH V AY D IH D Y UW AA R S AE T AH S F AY D
+[val example] plain text:   Weston sees no objection to it, provided you are satisfied.
+epoch 40: train_loss=0.7064 | val_loss=0.6190 | lr=0.000883
+epoch 40: train_loss=0.7064 | val_loss=0.6190 | lr=0.000883
+[val example] noisy:        F AO W SH IH Z T AH G N T DH AH F AA K S IY M T IY ER ZH UW SH V AH N D IH K AH SH AA L L R IY B AH T HH HH IY JH AE T DH AE T D AW N T TH AH S UH AO R AH V DH AH IY TH JH N EY SH AE
+[val example] target:       F AO R W AH N IH N S T AH N T DH AH F AA G S IY M D T UW M UW V AH N D TH IH K AH N AA D L IY B AH T HH IY S EH T DH AE T D AW N T UW DH AH S K AO R AH V DH AH IH M AE JH AH N EY SH AH N
+[val example] corrected:    F AO R SH IY IH Z T AH G EH N T UW DH AH F AA K S IY M D T UW SH IY P AH N D IH K AH L R IY B AH T HH IY HH AE D DH AE T D AW N T UW DH AH S T AO R AH V DH AH IY JH AH N EY SH AH N
+[val example] plain text:   For one instant the fog seemed to move and thicken oddly; but he set that down to the score of the imagination.
+[val example] noisy:        F AO W SH IH Z T AH G N T DH AH F AA K S IY M T IY ER ZH UW SH V AH N D IH K AH SH AA L L R IY B AH T HH HH IY JH AE T DH AE T D AW N T TH AH S UH AO R AH V DH AH IY TH JH N EY SH AE
+[val example] target:       F AO R W AH N IH N S T AH N T DH AH F AA G S IY M D T UW M UW V AH N D TH IH K AH N AA D L IY B AH T HH IY S EH T DH AE T D AW N T UW DH AH S K AO R AH V DH AH IH M AE JH AH N EY SH AH N
+[val example] corrected:    F AO R SH IY IH Z T AH G EH N T UW DH AH F AA K S IY M D T UW SH IY P AH N D IH K AH L R IY B AH T HH IY HH AE D DH AE T D AW N T UW DH AH S T AO R AH V DH AH IY JH AH N EY SH AH N
+[val example] plain text:   For one instant the fog seemed to move and thicken oddly; but he set that down to the score of the imagination.
+epoch 41: train_loss=0.7013 | val_loss=0.6166 | lr=0.000878
+[val example] noisy:        AY L AO NG T UW S IY P UW HH AE P IY
+[val example] target:       AY L AO NG T UW S IY Y UW HH AE P IY
+[val example] corrected:    AY L AO NG T UW S IY P UW R HH AE P IY
+[val example] plain text:   I long to see you happy .
+epoch 41: train_loss=0.7013 | val_loss=0.6166 | lr=0.000878
+[val example] noisy:        AY L AO NG T UW S IY P UW HH AE P IY
+[val example] target:       AY L AO NG T UW S IY Y UW HH AE P IY
+[val example] corrected:    AY L AO NG T UW S IY P UW R HH AE P IY
+[val example] plain text:   I long to see you happy .
+epoch 42: train_loss=0.6976 | val_loss=0.6149 | lr=0.000872
+[val example] noisy:        B AH T SH IY W AA Z M HH IH DH S T EY K AH N
+[val example] target:       B AH T SH IY W AA Z M IH S T EY K AH N
+[val example] corrected:    B AH T SH IY W AA Z M IH S T EY K AH N
+[val example] plain text:   But she was mistaken.
+epoch 42: train_loss=0.6976 | val_loss=0.6149 | lr=0.000872
+[val example] noisy:        B AH T SH IY W AA Z M HH IH DH S T EY K AH N
+[val example] target:       B AH T SH IY W AA Z M IH S T EY K AH N
+[val example] corrected:    B AH T SH IY W AA Z M IH S T EY K AH N
+[val example] plain text:   But she was mistaken.
+epoch 43: train_loss=0.6969 | val_loss=0.6074 | lr=0.000867
+epoch 43: train_loss=0.6969 | val_loss=0.6074 | lr=0.000867
+[val example] noisy:        F AO AA M AE OW M AH N T DH EY K D S S IY TH AH TH IH NG IH N DH AH F L IH K ER IH NG AE SH EH D OW Z DH AE Z EH W AY Z B Y K EY M M AO R HH K AH S T M D T UW DH AH HH AE F AY T DH EY T IH S K AH NG D W AH T IH L D DH EH M G V IH OY DH AA L AA R M AE W EH L NG
+[val example] target:       F AO R AH M OW M AH N T DH EY K UH D S IY N AH TH IH NG IH N DH AH F L IH K ER IH NG SH AE D OW Z DH EH N AE Z DH EH R AY Z B IH K EY M M AO R AH K AH S T AH M D T UW DH AH HH AE F L AY T DH EY D IH S K AH V ER D W AH T F IH L D DH EH M W IH DH AH L AA R M AE Z W EH L
+[val example] corrected:    F AO R AH M OW M AH N T DH EY K UH D S IY DH AH TH IH NG IH N DH AH F L IH K ER IH NG AE T DH OW Z DH AE T W AY Z B IH K EY M M AO R HH IY K AH S T M EY D T UW DH AH HH AE F AY T DH EY T IH S K AH N D W AH T IH L D EH M G IH V DH AH L AA R M AE N W EH L
+[val example] plain text:   For a moment, they could see nothing in the flickering shadows; then as their eyes became more accustomed to the half light, they discovered what filled them with alarm as well.
+[val example] noisy:        F AO AA M AE OW M AH N T DH EY K D S S IY TH AH TH IH NG IH N DH AH F L IH K ER IH NG AE SH EH D OW Z DH AE Z EH W AY Z B Y K EY M M AO R HH K AH S T M D T UW DH AH HH AE F AY T DH EY T IH S K AH NG D W AH T IH L D DH EH M G V IH OY DH AA L AA R M AE W EH L NG
+[val example] target:       F AO R AH M OW M AH N T DH EY K UH D S IY N AH TH IH NG IH N DH AH F L IH K ER IH NG SH AE D OW Z DH EH N AE Z DH EH R AY Z B IH K EY M M AO R AH K AH S T AH M D T UW DH AH HH AE F L AY T DH EY D IH S K AH V ER D W AH T F IH L D DH EH M W IH DH AH L AA R M AE Z W EH L
+[val example] corrected:    F AO R AH M OW M AH N T DH EY K UH D S IY DH AH TH IH NG IH N DH AH F L IH K ER IH NG AE T DH OW Z DH AE T W AY Z B IH K EY M M AO R HH IY K AH S T M EY D T UW DH AH HH AE F AY T DH EY T IH S K AH N D W AH T IH L D EH M G IH V DH AH L AA R M AE N W EH L
+[val example] plain text:   For a moment, they could see nothing in the flickering shadows; then as their eyes became more accustomed to the half light, they discovered what filled them with alarm as well.
+epoch 44: train_loss=0.6873 | val_loss=0.5988 | lr=0.000861
+epoch 44: train_loss=0.6873 | val_loss=0.5988 | lr=0.000861
+[val example] noisy:        AO R D R F AA P AH N D DH AE T T UW DH AH B EH Z S TH T AH F M B IH L IY F HH IY W AH Z IH N Y R TH UW M N AA D W AH N EH S B AH T DH T W AY S IH EH N DH AH L AE S D ER AH N D HH AE F
+[val example] target:       W AO R D R AA P AH N D DH AE T T UW DH AH B EH S T AH V M AY B IH L IY F HH IY W AA Z IH N Y AO R R UW M N AA T W AH N S B AH T T W AY S IH N DH AH L AE S T AW ER AH N D AH HH AE F
+[val example] corrected:    AO R D R AA P AH N D DH AE T T UW DH AH B EH S T AH V M AY B IH L IY V HH IY W AA Z IH N Y AO R M UW N AH N D W AH N EH S B AH T DH AE T W AY S IH N DH AH L AE S T ER AH N D HH AE F
+[val example] plain text:   Wardrop, and that to the best of my belief he was in your room, not once, but twice, in the last hour and a half.
+[val example] noisy:        AO R D R F AA P AH N D DH AE T T UW DH AH B EH Z S TH T AH F M B IH L IY F HH IY W AH Z IH N Y R TH UW M N AA D W AH N EH S B AH T DH T W AY S IH EH N DH AH L AE S D ER AH N D HH AE F
+[val example] target:       W AO R D R AA P AH N D DH AE T T UW DH AH B EH S T AH V M AY B IH L IY F HH IY W AA Z IH N Y AO R R UW M N AA T W AH N S B AH T T W AY S IH N DH AH L AE S T AW ER AH N D AH HH AE F
+[val example] corrected:    AO R D R AA P AH N D DH AE T T UW DH AH B EH S T AH V M AY B IH L IY V HH IY W AA Z IH N Y AO R M UW N AH N D W AH N EH S B AH T DH AE T W AY S IH N DH AH L AE S T ER AH N D HH AE F
+[val example] plain text:   Wardrop, and that to the best of my belief he was in your room, not once, but twice, in the last hour and a half.
+epoch 45: train_loss=0.6817 | val_loss=0.5930 | lr=0.000856
+[val example] noisy:        DH T R W AO R K IH N DH EH M SH EH R IY L AE T V
+[val example] target:       N EH V ER T UW W AO K IH N DH EH M HH EH R IY L AE F T
+[val example] corrected:    DH AH T R UW W AO R K IH N DH EH M SH EH R IY L AE F T
+[val example] plain text:   Never to walk in them." Harry laughed.
+epoch 45: train_loss=0.6817 | val_loss=0.5930 | lr=0.000856
+[val example] noisy:        DH T R W AO R K IH N DH EH M SH EH R IY L AE T V
+[val example] target:       N EH V ER T UW W AO K IH N DH EH M HH EH R IY L AE F T
+[val example] corrected:    DH AH T R UW W AO R K IH N DH EH M SH EH R IY L AE F T
+[val example] plain text:   Never to walk in them." Harry laughed.
+epoch 46: train_loss=0.6807 | val_loss=0.5913 | lr=0.000850
+epoch 46: train_loss=0.6807 | val_loss=0.5913 | lr=0.000850
+[val example] noisy:        Y HH UW D UW N AA T B L JH NG T UW DH IY Z P AA R T ZH S AY F AE N S IY N OW S AW ER UW
+[val example] target:       Y UW D UW N AA T B IH L AO NG T UW DH IY Z P AA R T S AY F AE N S IY N OW S ER
+[val example] corrected:    Y UW D UW N AA T B L AO NG T UW DH IY Z P AA R T S AY F AE N S IY N OW S ER
+[val example] plain text:   You do not belong to these parts, I fancy." "No, sir.
+[val example] noisy:        Y HH UW D UW N AA T B L JH NG T UW DH IY Z P AA R T ZH S AY F AE N S IY N OW S AW ER UW
+[val example] target:       Y UW D UW N AA T B IH L AO NG T UW DH IY Z P AA R T S AY F AE N S IY N OW S ER
+[val example] corrected:    Y UW D UW N AA T B L AO NG T UW DH IY Z P AA R T S AY F AE N S IY N OW S ER
+[val example] plain text:   You do not belong to these parts, I fancy." "No, sir.
+epoch 47: train_loss=0.6729 | val_loss=0.5833 | lr=0.000844
+epoch 47: train_loss=0.6729 | val_loss=0.5833 | lr=0.000844
+[val example] noisy:        M AE N IY CH IH UW T R AE N V AE S K W EH R DH AH P L M S IH Z N F D M EH N IY AY IH NG K IH T IH Z DH AH S T AH M AH K
+[val example] target:       M EH N IY CH IH L D R AH N AE S K W EH R DH AH P L EY S IH Z AH N D M EH N IY TH IH NG K IH T IH Z DH AH S T AH M AH K
+[val example] corrected:    M AE N IY CH IH NG T R AE N S K W EH R DH AH P L EY S IH Z AH N D M EH N IY TH IH NG K IH T IH Z DH AH S T AH M AH K
+[val example] plain text:   Many children ask where the place is, and many think it is the stomach.
+[val example] noisy:        M AE N IY CH IH UW T R AE N V AE S K W EH R DH AH P L M S IH Z N F D M EH N IY AY IH NG K IH T IH Z DH AH S T AH M AH K
+[val example] target:       M EH N IY CH IH L D R AH N AE S K W EH R DH AH P L EY S IH Z AH N D M EH N IY TH IH NG K IH T IH Z DH AH S T AH M AH K
+[val example] corrected:    M AE N IY CH IH NG T R AE N S K W EH R DH AH P L EY S IH Z AH N D M EH N IY TH IH NG K IH T IH Z DH AH S T AH M AH K
+[val example] plain text:   Many children ask where the place is, and many think it is the stomach.
+epoch 48: train_loss=0.6672 | val_loss=0.5807 | lr=0.000839
+epoch 48: train_loss=0.6672 | val_loss=0.5807 | lr=0.000839
+[val example] noisy:        HH ER HH IH M K AO L JH EH R P IY AH N DH OY EH N CH EH D IY G R EY OW V N S T L AY G HH IY W AA Z HH AE F D EH OY D
+[val example] target:       AY HH ER D HH IH M K AO L JH EH R IY AH N D DH EH N JH EH R IY G R OW N D L AY K HH IY W AA Z HH AE F D EH D
+[val example] corrected:    HH ER HH IH M K AO L JH EH R IY AH N DH EH N CH EH D IY G R EY V AH N S T L AY K HH IY W AA Z HH AE F D EH D
+[val example] plain text:   I heard him call Jerry, and then Jerry groaned like he was half dead.
+[val example] noisy:        HH ER HH IH M K AO L JH EH R P IY AH N DH OY EH N CH EH D IY G R EY OW V N S T L AY G HH IY W AA Z HH AE F D EH OY D
+[val example] target:       AY HH ER D HH IH M K AO L JH EH R IY AH N D DH EH N JH EH R IY G R OW N D L AY K HH IY W AA Z HH AE F D EH D
+[val example] corrected:    HH ER HH IH M K AO L JH EH R IY AH N DH EH N CH EH D IY G R EY V AH N S T L AY K HH IY W AA Z HH AE F D EH D
+[val example] plain text:   I heard him call Jerry, and then Jerry groaned like he was half dead.
+epoch 49: train_loss=0.6645 | val_loss=0.5831 | lr=0.000833
+[val example] noisy:        Y EH S EH AY IY D IH D T EY K DH AH S AH P ER
+[val example] target:       Y EH S AY D IH D T EY K DH AH S AH P ER
+[val example] corrected:    Y EH S AY D IH D T EY K DH AH S AH P ER
+[val example] plain text:   Yes, I _did_ take the supper.
+epoch 49: train_loss=0.6645 | val_loss=0.5831 | lr=0.000833
+[val example] noisy:        Y EH S EH AY IY D IH D T EY K DH AH S AH P ER
+[val example] target:       Y EH S AY D IH D T EY K DH AH S AH P ER
+[val example] corrected:    Y EH S AY D IH D T EY K DH AH S AH P ER
+[val example] plain text:   Yes, I _did_ take the supper.
+epoch 50: train_loss=0.6606 | val_loss=0.5773 | lr=0.000828
+epoch 50: train_loss=0.6606 | val_loss=0.5773 | lr=0.000828
+[val example] noisy:        AY W IH L G EH T D UW Y IH UW AE ER N DH HH T EY CH N W IH L R IH EY N IH F UW W IH L K IY P M IH T IH L DH AH T TH IY CH K
+[val example] target:       AY W IH L G EH T T UW Y UW AA N DH AH T IY EY CH AH N D W IH L R IH M EY N IH F Y UW W IH L K IY P M IY T IH L DH AH T IY EY CH
+[val example] corrected:    AY W IH L G EH T T UW Y UW AE N S ER DH AE T DH EY CH EY N JH W IH L R IH M EY N IH F Y UW W IH L K IY P M IH T IH L DH AH T IY CH
+[val example] plain text:   I will get to you on the 4th, and will remain if you will keep me till the 9th.
+[val example] noisy:        AY W IH L G EH T D UW Y IH UW AE ER N DH HH T EY CH N W IH L R IH EY N IH F UW W IH L K IY P M IH T IH L DH AH T TH IY CH K
+[val example] target:       AY W IH L G EH T T UW Y UW AA N DH AH T IY EY CH AH N D W IH L R IH M EY N IH F Y UW W IH L K IY P M IY T IH L DH AH T IY EY CH
+[val example] corrected:    AY W IH L G EH T T UW Y UW AE N S ER DH AE T DH EY CH EY N JH W IH L R IH M EY N IH F Y UW W IH L K IY P M IH T IH L DH AH T IY CH
+[val example] plain text:   I will get to you on the 4th, and will remain if you will keep me till the 9th.
+epoch 51: train_loss=0.6578 | val_loss=0.5752 | lr=0.000822
+epoch 51: train_loss=0.6578 | val_loss=0.5752 | lr=0.000822
+[val example] noisy:        N AY UW W AH T AE V ER M AY Z HH P AE IY V P IH N DH AH JH EH N ER L Z K R AY M Z HH IY HH AE D ER S ER T AH N L T AW M CH W IH T T UW L AE T DH EH M AW UW F AO R D L IH T EH K OW AE N
+[val example] target:       N OW W AH T EH V ER M AY T HH AE V B IH N DH AH JH EH N ER AH L Z K R AY M Z HH IY HH AE D S ER T AH N L IY T UW M AH CH W IH T T UW L EH T DH EH M S UW F AO R D IH T EH K SH AH N
+[val example] corrected:    N UW W AH T EH V ER M AY S P IY K AH V P IH N DH AH JH EH N ER AH L Z K R AY M Z HH IY HH AE D S ER T AH N L IY T AW N W IH CH IH T T UW L EH T DH EH M T UW F AO R D IH T EH K T AH N
+[val example] plain text:   No: whatever might have been the general's crimes, he had certainly too much wit to let them sue for detection.
+[val example] noisy:        N AY UW W AH T AE V ER M AY Z HH P AE IY V P IH N DH AH JH EH N ER L Z K R AY M Z HH IY HH AE D ER S ER T AH N L T AW M CH W IH T T UW L AE T DH EH M AW UW F AO R D L IH T EH K OW AE N
+[val example] target:       N OW W AH T EH V ER M AY T HH AE V B IH N DH AH JH EH N ER AH L Z K R AY M Z HH IY HH AE D S ER T AH N L IY T UW M AH CH W IH T T UW L EH T DH EH M S UW F AO R D IH T EH K SH AH N
+[val example] corrected:    N UW W AH T EH V ER M AY S P IY K AH V P IH N DH AH JH EH N ER AH L Z K R AY M Z HH IY HH AE D S ER T AH N L IY T AW N W IH CH IH T T UW L EH T DH EH M T UW F AO R D IH T EH K T AH N
+[val example] plain text:   No: whatever might have been the general's crimes, he had certainly too much wit to let them sue for detection.
+epoch 52: train_loss=0.6549 | val_loss=0.5707 | lr=0.000817
+epoch 52: train_loss=0.6549 | val_loss=0.5707 | lr=0.000817
+[val example] noisy:        AH M OW AH NG TH DH IY Z ER N EY M AH V AH B AE K IH NG UW AW S IH UW S TH W G EY L Z W EH R AH S DH AH M AH V AH IH IY W AA Z AH N T DH AH D EH Z AH G N SH AH N AH V S AY ER T AE N L AE D D Z AA V K AH S AW IH D ER AH B AA L F AE L Y UW
+[val example] target:       AH M AH NG DH IY Z W ER DH AH N EY M AH V AH B AE NG K IH NG HH AW S IH N N UW S AW TH W EY L Z W EH R AH S AH M AH V M AH N IY W AA Z AH N D DH AH D EH Z AH G N EY SH AH N AH V S ER T AH N L AE N D Z AH V K AH N S IH D ER AH B AH L V AE L Y UW
+[val example] corrected:    AH M OW M AH N TH IH NG DH IY Z ER N EY M AH V AH B AE K IH NG T UW S IH K S TH W EY L Z W EH R AH S DH AH M AH V AH V DH AH IH R W AA Z AH N T DH AH D EH Z AH G N EY SH AH N AH V S AY ER T AH N L AE D Z AH V K AH N S IH D ER AH B AH L F AE L Y UW
+[val example] plain text:   Among these were the name of a banking-house in New South Wales, where a sum of money was, and the designation of certain lands of considerable value.
+[val example] noisy:        AH M OW AH NG TH DH IY Z ER N EY M AH V AH B AE K IH NG UW AW S IH UW S TH W G EY L Z W EH R AH S DH AH M AH V AH IH IY W AA Z AH N T DH AH D EH Z AH G N SH AH N AH V S AY ER T AE N L AE D D Z AA V K AH S AW IH D ER AH B AA L F AE L Y UW
+[val example] target:       AH M AH NG DH IY Z W ER DH AH N EY M AH V AH B AE NG K IH NG HH AW S IH N N UW S AW TH W EY L Z W EH R AH S AH M AH V M AH N IY W AA Z AH N D DH AH D EH Z AH G N EY SH AH N AH V S ER T AH N L AE N D Z AH V K AH N S IH D ER AH B AH L V AE L Y UW
+[val example] corrected:    AH M OW M AH N TH IH NG DH IY Z ER N EY M AH V AH B AE K IH NG T UW S IH K S TH W EY L Z W EH R AH S DH AH M AH V AH V DH AH IH R W AA Z AH N T DH AH D EH Z AH G N EY SH AH N AH V S AY ER T AH N L AE D Z AH V K AH N S IH D ER AH B AH L F AE L Y UW
+[val example] plain text:   Among these were the name of a banking-house in New South Wales, where a sum of money was, and the designation of certain lands of considerable value.
+epoch 53: train_loss=0.6519 | val_loss=0.5660 | lr=0.000811
+epoch 53: train_loss=0.6519 | val_loss=0.5660 | lr=0.000811
+[val example] noisy:        IH F W T ER P T L UW DH AH L R AH K AW JH IY SH L L F EH AY N D DH AH AE B ER IH JH IH AH N AH L B L AE AA T S F NG AH D IH F ER AA N T AY L AH N D Z W AH N K F AH L D IH F ER AH N T
+[val example] target:       IH F W IY N AW T ER N T UW DH AH F L AO R AH W IY SH AE L F AY N D DH AH AE B ER IH JH AH N AH L P L AE N T S AH V DH AH D IH F ER AH N T AY L AH N D Z W AH N D ER F AH L IY D IH F ER AH N T
+[val example] corrected:    IH F W IY W ER P L EY T UW DH AH L AA R JH AH K AW N T IH D L IY F EH L F AH N D DH AH AE B ER IH JH IH N AH L B L AE K AH T S F AH D IH F ER AH N T AY L AH N D Z W AH N K AH L D IH F ER AH N T
+[val example] plain text:   If we now turn to the Flora, we shall find the aboriginal plants of the different islands wonderfully different.
+[val example] noisy:        IH F W T ER P T L UW DH AH L R AH K AW JH IY SH L L F EH AY N D DH AH AE B ER IH JH IH AH N AH L B L AE AA T S F NG AH D IH F ER AA N T AY L AH N D Z W AH N K F AH L D IH F ER AH N T
+[val example] target:       IH F W IY N AW T ER N T UW DH AH F L AO R AH W IY SH AE L F AY N D DH AH AE B ER IH JH AH N AH L P L AE N T S AH V DH AH D IH F ER AH N T AY L AH N D Z W AH N D ER F AH L IY D IH F ER AH N T
+[val example] corrected:    IH F W IY W ER P L EY T UW DH AH L AA R JH AH K AW N T IH D L IY F EH L F AH N D DH AH AE B ER IH JH IH N AH L B L AE K AH T S F AH D IH F ER AH N T AY L AH N D Z W AH N K AH L D IH F ER AH N T
+[val example] plain text:   If we now turn to the Flora, we shall find the aboriginal plants of the different islands wonderfully different.
+epoch 54: train_loss=0.6497 | val_loss=0.5641 | lr=0.000806
+epoch 54: train_loss=0.6497 | val_loss=0.5641 | lr=0.000806
+[val example] noisy:        AY W IH SH AW K UH R D EH L Y UW HH AW S N HH W S N K W AY AH T AH W IH N EH T F IH D HH AE Z B IH N IH T HH S Z B AY IH N AH G R R DH B L P AE S NG T UW M IY N AE V ER IY W EY S OW M EH N AA IY TH IH F Z HH AE V R K JH AH M T UW M IY T UW EH N JH OY
+[val example] target:       AY W IH SH AY K UH D T EH L Y UW HH AW N AY S AH N D K W AY AH T AH W IH N T ER IH T HH AE Z B IH N IH T HH AE Z B IH N AH G R EY T B L EH S IH NG T UW M IY IH N EH V ER IY W EY S OW M EH N IY TH IH NG Z HH AE V K AH M T UW M IY T UW EH N JH OY
+[val example] corrected:    AY W IH SH K UH D T EH L Y UW HH AW S IH N HH ER S EH N S K W AY AH T AH W IH N D OW IH T HH AE Z B IH N IH T HH AE Z B IH N AH G R EY T P L AE S T UW M IY N EH V ER IY W EY S OW M EH N IY TH IH NG Z HH AE V R IH K AH M T UW M IY T UW EH N JH OY
+[val example] plain text:   I wish I could tell you how nice and quiet a winter it has been; it has been a great blessing to me in every way, so many things have come to me to enjoy.
+[val example] noisy:        AY W IH SH AW K UH R D EH L Y UW HH AW S N HH W S N K W AY AH T AH W IH N EH T F IH D HH AE Z B IH N IH T HH S Z B AY IH N AH G R R DH B L P AE S NG T UW M IY N AE V ER IY W EY S OW M EH N AA IY TH IH F Z HH AE V R K JH AH M T UW M IY T UW EH N JH OY
+[val example] target:       AY W IH SH AY K UH D T EH L Y UW HH AW N AY S AH N D K W AY AH T AH W IH N T ER IH T HH AE Z B IH N IH T HH AE Z B IH N AH G R EY T B L EH S IH NG T UW M IY IH N EH V ER IY W EY S OW M EH N IY TH IH NG Z HH AE V K AH M T UW M IY T UW EH N JH OY
+[val example] corrected:    AY W IH SH K UH D T EH L Y UW HH AW S IH N HH ER S EH N S K W AY AH T AH W IH N D OW IH T HH AE Z B IH N IH T HH AE Z B IH N AH G R EY T P L AE S T UW M IY N EH V ER IY W EY S OW M EH N IY TH IH NG Z HH AE V R IH K AH M T UW M IY T UW EH N JH OY
+[val example] plain text:   I wish I could tell you how nice and quiet a winter it has been; it has been a great blessing to me in every way, so many things have come to me to enjoy.
+epoch 55: train_loss=0.6473 | val_loss=0.5632 | lr=0.000800
+[val example] noisy:        W NG UH CH D W OY Z AH N D G R AE S AE T M P
+[val example] target:       W UH D W AO T ER AH N D G R AE S AE T K AE M P
+[val example] corrected:    W UH D W AA Z AH N D G R AE S AE T M IY
+[val example] plain text:   Wood, water, and grass at camp.
+epoch 55: train_loss=0.6473 | val_loss=0.5632 | lr=0.000800
+[val example] noisy:        W NG UH CH D W OY Z AH N D G R AE S AE T M P
+[val example] target:       W UH D W AO T ER AH N D G R AE S AE T K AE M P
+[val example] corrected:    W UH D W AA Z AH N D G R AE S AE T M IY
+[val example] plain text:   Wood, water, and grass at camp.
+epoch 56: train_loss=0.6450 | val_loss=0.5608 | lr=0.000794
+epoch 56: train_loss=0.6450 | val_loss=0.5608 | lr=0.000794
+[val example] noisy:        N T R AE N S P AO R T N EH K S D UW DH EH D M Y IH K Z AO AH EH N S IH L V N IY AH OW Z AH N L D R HH OY IY AW W EY V D HH IH Z HH AE N D T UW HH IY IH Z F R EH N D Z HH UW Z T UH AA N IY AA D K V
+[val example] target:       AA N DH AH T R AE N S P AO R T N EH K S T T UW DH EH M D IH K S AO DH AH P EH N S IH L V EY N IY AH N Z AH N D HH IY W EY V D HH IH Z HH AE N D T UW HH IH Z F R EH N D Z HH UW S T UH D AA N DH AH D EH K
+[val example] corrected:    N AA T R AE N S P AO R T N EH K S T T UW DH EH M Y UW IH K S P EH N S IH V EH N IY AH V N OW Z AH N D R IH L IY W EY V D HH IH Z HH AE N D T UW HH IH Z F R EH N D Z HH UW Z T UH K AA N D IH K
+[val example] plain text:   On the transport next to them Dick saw the Pennsylvanians and he waved his hand to his friends who stood on the deck.
+[val example] noisy:        N T R AE N S P AO R T N EH K S D UW DH EH D M Y IH K Z AO AH EH N S IH L V N IY AH OW Z AH N L D R HH OY IY AW W EY V D HH IH Z HH AE N D T UW HH IY IH Z F R EH N D Z HH UW Z T UH AA N IY AA D K V
+[val example] target:       AA N DH AH T R AE N S P AO R T N EH K S T T UW DH EH M D IH K S AO DH AH P EH N S IH L V EY N IY AH N Z AH N D HH IY W EY V D HH IH Z HH AE N D T UW HH IH Z F R EH N D Z HH UW S T UH D AA N DH AH D EH K
+[val example] corrected:    N AA T R AE N S P AO R T N EH K S T T UW DH EH M Y UW IH K S P EH N S IH V EH N IY AH V N OW Z AH N D R IH L IY W EY V D HH IH Z HH AE N D T UW HH IH Z F R EH N D Z HH UW Z T UH K AA N D IH K
+[val example] plain text:   On the transport next to them Dick saw the Pennsylvanians and he waved his hand to his friends who stood on the deck.
+epoch 57: train_loss=0.6417 | val_loss=0.5572 | lr=0.000789
+epoch 57: train_loss=0.6417 | val_loss=0.5572 | lr=0.000789
+[val example] noisy:        AH N G D AE T K UH D M S AE D Z OY IH F AO L P R Z AE P AH Z SH AH N Z W ER ZH P R AE K T IH K AH L IY IH N ZH D IH F R AH N T W IY CH DH AA V DH AE M W IY SH UH D T AH G AH IY D UW K AO L T R UW UH N R W IH CH TH F AO ZH S AY
+[val example] target:       AH N D W AH T K UH D IH T M AE T ER IH F AO L P R AA P AH Z IH SH AH N Z W ER P R AE K T IH K AH L IY IH N D IH F R AH N T W IH CH AH V DH EH M W IY SH UH D AH G R IY T UW K AO L T R UW AO R W IH CH F AO L S
+[val example] corrected:    AH N D AE T K UH D M AE D Z IH F AO L P R EH Z AH N S AH Z W ER P R AE K T IH K AH L IY IH N D IH F R AH N T W IH CH DH AH M IY SH IY SH UH D AH G R IY D T UW K AO L T UW R UW N W IH CH F AO R S
+[val example] plain text:   And what could it matter, if all propositions were practically indifferent, which of them we should agree to call true or which false?
+[val example] noisy:        AH N G D AE T K UH D M S AE D Z OY IH F AO L P R Z AE P AH Z SH AH N Z W ER ZH P R AE K T IH K AH L IY IH N ZH D IH F R AH N T W IY CH DH AA V DH AE M W IY SH UH D T AH G AH IY D UW K AO L T R UW UH N R W IH CH TH F AO ZH S AY
+[val example] target:       AH N D W AH T K UH D IH T M AE T ER IH F AO L P R AA P AH Z IH SH AH N Z W ER P R AE K T IH K AH L IY IH N D IH F R AH N T W IH CH AH V DH EH M W IY SH UH D AH G R IY T UW K AO L T R UW AO R W IH CH F AO L S
+[val example] corrected:    AH N D AE T K UH D M AE D Z IH F AO L P R EH Z AH N S AH Z W ER P R AE K T IH K AH L IY IH N D IH F R AH N T W IH CH DH AH M IY SH IY SH UH D AH G R IY D T UW K AO L T UW R UW N W IH CH F AO R S
+[val example] plain text:   And what could it matter, if all propositions were practically indifferent, which of them we should agree to call true or which false?
+epoch 58: train_loss=0.6427 | val_loss=0.5583 | lr=0.000783
+epoch 58: train_loss=0.6427 | val_loss=0.5583 | lr=0.000783
+[val example] noisy:        AE NG G ER HH HH D F EH L T AH T N T T DH IH S B L EY AH V AY AY R DH T AH D AH N L IH F L AH AH D DH AH D AE W AY L AY OY AH V HH IH Z K AA N SH AH S NG AH S HH W IH DH AH AH W AY T IH N F ER N AH L L T
+[val example] target:       AE NG G ER HH IY HH AE D F EH L T B AH T N AA T DH IH S B L EY Z AH V AY R DH AE T S AH D AH N L IY F L AH D AH D DH AH T W AY L AY T AH V HH IH Z K AA N SH AH S N AH S W IH DH AH W AY T IH N F ER N AH L L AY T
+[val example] corrected:    AE NG G ER HH AE D F EH L T AH N D T UW DH IH S B L EY AH V AY R DH AH D AH N L IH F T AH D DH AH D EH D W AY L AY V HH IH Z K AA N SH AH S N AH S W IH DH DH AH W AY T IH N F ER N AH L T
+[val example] plain text:   Anger he had felt, but not _this_ blaze of ire that suddenly flooded the twilight of his consciousness with a white infernal light.
+[val example] noisy:        AE NG G ER HH HH D F EH L T AH T N T T DH IH S B L EY AH V AY AY R DH T AH D AH N L IH F L AH AH D DH AH D AE W AY L AY OY AH V HH IH Z K AA N SH AH S NG AH S HH W IH DH AH AH W AY T IH N F ER N AH L L T
+[val example] target:       AE NG G ER HH IY HH AE D F EH L T B AH T N AA T DH IH S B L EY Z AH V AY R DH AE T S AH D AH N L IY F L AH D AH D DH AH T W AY L AY T AH V HH IH Z K AA N SH AH S N AH S W IH DH AH W AY T IH N F ER N AH L L AY T
+[val example] corrected:    AE NG G ER HH AE D F EH L T AH N D T UW DH IH S B L EY AH V AY R DH AH D AH N L IH F T AH D DH AH D EH D W AY L AY V HH IH Z K AA N SH AH S N AH S W IH DH DH AH W AY T IH N F ER N AH L T
+[val example] plain text:   Anger he had felt, but not _this_ blaze of ire that suddenly flooded the twilight of his consciousness with a white infernal light.
+epoch 59: train_loss=0.6364 | val_loss=0.5559 | lr=0.000778
+epoch 59: train_loss=0.6364 | val_loss=0.5559 | lr=0.000778
+[val example] noisy:        IH N T R M IY T L D DH EH M AO L JH DH AE R T HH AE D AE P AH D OW T UW HH ER AH N D TH EY IH D AH N T OW W AH T V T UW R DH D F AY Z HH ER T UW UW
+[val example] target:       IH N T AY M SH IY T OW L D DH EH M AO L DH AE T HH AE D HH AE P AH N D T UW HH ER AH N D DH EY D IH D AH N T N OW W AH T T UW AE D V AY Z HH ER T UW D UW
+[val example] corrected:    IH N T R IY T OW L D DH EH M AO L DH AE T HH AE D HH AE P AH N D T UW HH ER AH N D DH EY D IH D AH N T N OW W AH T T UW R AY T F AY ER T UW
+[val example] plain text:   In time she told them all that had happened to her, and they didn't know what to advise her to do.
+[val example] noisy:        IH N T R M IY T L D DH EH M AO L JH DH AE R T HH AE D AE P AH D OW T UW HH ER AH N D TH EY IH D AH N T OW W AH T V T UW R DH D F AY Z HH ER T UW UW
+[val example] target:       IH N T AY M SH IY T OW L D DH EH M AO L DH AE T HH AE D HH AE P AH N D T UW HH ER AH N D DH EY D IH D AH N T N OW W AH T T UW AE D V AY Z HH ER T UW D UW
+[val example] corrected:    IH N T R IY T OW L D DH EH M AO L DH AE T HH AE D HH AE P AH N D T UW HH ER AH N D DH EY D IH D AH N T N OW W AH T T UW R AY T F AY ER T UW
+[val example] plain text:   In time she told them all that had happened to her, and they didn't know what to advise her to do.
+epoch 60: train_loss=0.6323 | val_loss=0.5508 | lr=0.000772
+epoch 60: train_loss=0.6323 | val_loss=0.5508 | lr=0.000772
+[val example] noisy:        IH F DH EH AW IH Z AH N AH DH M ER DH L AO NG D M L HH AW D UW W IH JH OW IY AH SH T M B HH AE B UH AH N S B D IH R DH L AO EY F Z K IH AH F K ER M D DH AH CH AH DH AW Z K L EY M T UW DH AH CH AY L IH D
+[val example] target:       IH F DH EH R IH Z AH N AH DH ER L AO NG D IH L EY HH AW D UW W IY N OW W AH T M EY HH AE P AH N B IH F AO R DH AH L AO HH AE Z K AH N F ER M D DH AH M AH DH ER Z K L EY M T UW DH AH CH AY L D
+[val example] corrected:    IH F DH EH R IH Z AH N AH DH ER L AO NG D M AY HH AW D UW W IH CH SH IY AH SH UH D HH AE V B IH N S P IH R D DH AH L AO NG Z K IH NG AH V K ER M D DH AH CH AH DH ER Z K L EY M T UW DH AH CH AY L D
+[val example] plain text:   If there is another long delay, how do we know what may happen before the law has confirmed the mother's claim to the child?
+[val example] noisy:        IH F DH EH AW IH Z AH N AH DH M ER DH L AO NG D M L HH AW D UW W IH JH OW IY AH SH T M B HH AE B UH AH N S B D IH R DH L AO EY F Z K IH AH F K ER M D DH AH CH AH DH AW Z K L EY M T UW DH AH CH AY L IH D
+[val example] target:       IH F DH EH R IH Z AH N AH DH ER L AO NG D IH L EY HH AW D UW W IY N OW W AH T M EY HH AE P AH N B IH F AO R DH AH L AO HH AE Z K AH N F ER M D DH AH M AH DH ER Z K L EY M T UW DH AH CH AY L D
+[val example] corrected:    IH F DH EH R IH Z AH N AH DH ER L AO NG D M AY HH AW D UW W IH CH SH IY AH SH UH D HH AE V B IH N S P IH R D DH AH L AO NG Z K IH NG AH V K ER M D DH AH CH AH DH ER Z K L EY M T UW DH AH CH AY L D
+[val example] plain text:   If there is another long delay, how do we know what may happen before the law has confirmed the mother's claim to the child?
+epoch 61: train_loss=0.6303 | val_loss=0.5463 | lr=0.000767
+[val example] noisy:        AO R D UW AY B IH L IY V EH N IY TH IY NG W T EH V ER Z
+[val example] target:       N AO R D UW AY B IH L IY V EH N IY TH IH NG W AH T EH V ER
+[val example] corrected:    AO R D UW AY B IH L IY V EH N IY TH IH NG W AH T EH V ER
+[val example] plain text:   Nor do I believe anything whatever.
+epoch 61: train_loss=0.6303 | val_loss=0.5463 | lr=0.000767
+[val example] noisy:        AO R D UW AY B IH L IY V EH N IY TH IY NG W T EH V ER Z
+[val example] target:       N AO R D UW AY B IH L IY V EH N IY TH IH NG W AH T EH V ER
+[val example] corrected:    AO R D UW AY B IH L IY V EH N IY TH IH NG W AH T EH V ER
+[val example] plain text:   Nor do I believe anything whatever.
+epoch 62: train_loss=0.6278 | val_loss=0.5467 | lr=0.000761
+epoch 62: train_loss=0.6278 | val_loss=0.5467 | lr=0.000761
+[val example] noisy:        AH D IY T OW L D DH AH CH AY L D AY T IH Y D AH N T N IY R D AH R T AE K ER
+[val example] target:       AH N D HH IY T OW L D DH AH CH AY L D AY D IH D AH N T N IY D AH R AA K
+[val example] corrected:    AH N D IH T OW L D DH AH CH AY L D AY T IH D AH N D N IY D AH R EH K T ER
+[val example] plain text:   And," he told the child, "I didn't need a rock.
+[val example] noisy:        AH D IY T OW L D DH AH CH AY L D AY T IH Y D AH N T N IY R D AH R T AE K ER
+[val example] target:       AH N D HH IY T OW L D DH AH CH AY L D AY D IH D AH N T N IY D AH R AA K
+[val example] corrected:    AH N D IH T OW L D DH AH CH AY L D AY T IH D AH N D N IY D AH R EH K T ER
+[val example] plain text:   And," he told the child, "I didn't need a rock.
+epoch 63: train_loss=0.6252 | val_loss=0.5434 | lr=0.000756
+epoch 63: train_loss=0.6252 | val_loss=0.5434 | lr=0.000756
+[val example] noisy:        P R IY P EH R AE Z F AO IH R P L AH IH T P IY K AH R W IY OW
+[val example] target:       P R IY P EH R AE Z F AO R S P L IH T P IY K AH R IY N OW
+[val example] corrected:    P R IY P EH R AE Z F AO R P L AH S IH T P IH K AH L W IY OW
+[val example] plain text:   Prepare as for split pea curry (No.
+[val example] noisy:        P R IY P EH R AE Z F AO IH R P L AH IH T P IY K AH R W IY OW
+[val example] target:       P R IY P EH R AE Z F AO R S P L IH T P IY K AH R IY N OW
+[val example] corrected:    P R IY P EH R AE Z F AO R P L AH S IH T P IH K AH L W IY OW
+[val example] plain text:   Prepare as for split pea curry (No.
+epoch 64: train_loss=0.6230 | val_loss=0.5443 | lr=0.000750
+epoch 64: train_loss=0.6230 | val_loss=0.5443 | lr=0.000750
+[val example] noisy:        N AW W K UW Y F UW N T AH TH L AY DH S P R IH N S EY AH P L IH N S P K IH NG AA ZH UW EH EH N T AH N ZH
+[val example] target:       N AW W AY D UW Y UW N AA T AH P L AY DH IH S P R IH N S AH P AH L IH N S P IY K IH NG AH S EH N T AH N S
+[val example] corrected:    N AW W IY K UW Y UW N AA T AH L AY K DH IH S P R IH N S AH P L IH N S P IY K IH NG AA N T UW EH N T AH N
+[val example] plain text:   Now why do you not apply this principle in speaking a sentence?
+[val example] noisy:        N AW W K UW Y F UW N T AH TH L AY DH S P R IH N S EY AH P L IH N S P K IH NG AA ZH UW EH EH N T AH N ZH
+[val example] target:       N AW W AY D UW Y UW N AA T AH P L AY DH IH S P R IH N S AH P AH L IH N S P IY K IH NG AH S EH N T AH N S
+[val example] corrected:    N AW W IY K UW Y UW N AA T AH L AY K DH IH S P R IH N S AH P L IH N S P IY K IH NG AA N T UW EH N T AH N
+[val example] plain text:   Now why do you not apply this principle in speaking a sentence?
+epoch 65: train_loss=0.6213 | val_loss=0.5420 | lr=0.000744
+epoch 65: train_loss=0.6213 | val_loss=0.5420 | lr=0.000744
+[val example] noisy:        SH S T R UW D AE T G DH AH F AY L W Y IH DH T R TH N JH IH K S AY T M AH N T
+[val example] target:       SH IY S T EH R D AE T DH AH F AY ER W IH DH S T R EY N JH IH K S AY T M AH N T
+[val example] corrected:    SH IY S T R UW D AE T DH AH F AY L W IH DH T R EY N JH IH K S AY T M AH N T
+[val example] plain text:   She stared at the fire with strange excitement.
+[val example] noisy:        SH S T R UW D AE T G DH AH F AY L W Y IH DH T R TH N JH IH K S AY T M AH N T
+[val example] target:       SH IY S T EH R D AE T DH AH F AY ER W IH DH S T R EY N JH IH K S AY T M AH N T
+[val example] corrected:    SH IY S T R UW D AE T DH AH F AY L W IH DH T R EY N JH IH K S AY T M AH N T
+[val example] plain text:   She stared at the fire with strange excitement.
+epoch 66: train_loss=0.6195 | val_loss=0.5374 | lr=0.000739
+epoch 66: train_loss=0.6195 | val_loss=0.5374 | lr=0.000739
+[val example] noisy:        CH T D EY B R D EY K T AA G EH S T AH UW AA N N D HH IH Z F AA L OW ER Z W P P UH T AO F IH N AH OW T
+[val example] target:       AE T D EY B R EY K D AA N EH S T AH B AA N AH N D HH IH Z F AA L OW ER Z W ER P UH T AO F IH N AH B OW T
+[val example] corrected:    CH EY N JH D EY B R EY K T AA G EH S T AH N D HH IH Z F AA L OW ER Z W ER P UH T AO F IH N AH T
+[val example] plain text:   At daybreak Don Esteban and his followers were put off in a boat.
+[val example] noisy:        CH T D EY B R D EY K T AA G EH S T AH UW AA N N D HH IH Z F AA L OW ER Z W P P UH T AO F IH N AH OW T
+[val example] target:       AE T D EY B R EY K D AA N EH S T AH B AA N AH N D HH IH Z F AA L OW ER Z W ER P UH T AO F IH N AH B OW T
+[val example] corrected:    CH EY N JH D EY B R EY K T AA G EH S T AH N D HH IH Z F AA L OW ER Z W ER P UH T AO F IH N AH T
+[val example] plain text:   At daybreak Don Esteban and his followers were put off in a boat.
+epoch 67: train_loss=0.6182 | val_loss=0.5352 | lr=0.000733
+epoch 67: train_loss=0.6182 | val_loss=0.5352 | lr=0.000733
+[val example] noisy:        M IH Z P R AA B T R AE K AH G N IH ZH AH N AW AA V TH AH IH AW P D AO R T AH N S V M IH S T ER UW
+[val example] target:       M IH L Z P R AA M P T R EH K AH G N IH SH AH N AH V DH AH IH M P AO R T AH N S AH V M IH S T ER
+[val example] corrected:    M IH S P R AA B AH T R AE K AH G N IH SH AH N AH V DH AH IH M P AO R T AH N S AH V M IH S T ER
+[val example] plain text:   Mill's prompt recognition of the importance of Mr.
+[val example] noisy:        M IH Z P R AA B T R AE K AH G N IH ZH AH N AW AA V TH AH IH AW P D AO R T AH N S V M IH S T ER UW
+[val example] target:       M IH L Z P R AA M P T R EH K AH G N IH SH AH N AH V DH AH IH M P AO R T AH N S AH V M IH S T ER
+[val example] corrected:    M IH S P R AA B AH T R AE K AH G N IH SH AH N AH V DH AH IH M P AO R T AH N S AH V M IH S T ER
+[val example] plain text:   Mill's prompt recognition of the importance of Mr.
+epoch 68: train_loss=0.6156 | val_loss=0.5326 | lr=0.000728
+epoch 68: train_loss=0.6156 | val_loss=0.5326 | lr=0.000728
+[val example] noisy:        AH DH Z AA R P UH T AW T UW G AA EH T DH EH N IH K AH L Z N D D AY M SH Z N B G D AW T AH G OY NG IY D TH D AH AY AA DH ER
+[val example] target:       DH AH TH IH NG Z AA R P UH T AW T T UW G EH T DH EH R N IH K AH L Z AH N D D AY M Z N OW D AW T AH G R IY D DH AH AH DH ER
+[val example] corrected:    AH DH ER Z AA R P UH T AW T T UW G EH T DH EH N IH K AH L Z AH N D D AY M Z N AW G UH D AW T AH G R IY D DH AH AY D IY AH DH ER
+[val example] plain text:   The things are put out to get their nickels and dimes." "No doubt," agreed the other.
+[val example] noisy:        AH DH Z AA R P UH T AW T UW G AA EH T DH EH N IH K AH L Z N D D AY M SH Z N B G D AW T AH G OY NG IY D TH D AH AY AA DH ER
+[val example] target:       DH AH TH IH NG Z AA R P UH T AW T T UW G EH T DH EH R N IH K AH L Z AH N D D AY M Z N OW D AW T AH G R IY D DH AH AH DH ER
+[val example] corrected:    AH DH ER Z AA R P UH T AW T T UW G EH T DH EH N IH K AH L Z AH N D D AY M Z N AW G UH D AW T AH G R IY D DH AH AY D IY AH DH ER
+[val example] plain text:   The things are put out to get their nickels and dimes." "No doubt," agreed the other.
+epoch 69: train_loss=0.6133 | val_loss=0.5337 | lr=0.000722
+epoch 69: train_loss=0.6133 | val_loss=0.5337 | lr=0.000722
+[val example] noisy:        IH F TH IH S K AH N D L IH W SH AW AA V HH IH OW G AY N IY D N AA T S HH AW G B D W UW IY SH AE L P IY TH W T AO G AH D L S UH SH T AA N IH W N P AY T AH V DH AH AH P EH R AH N T L IY HH S P L S AW T L UH K
+[val example] target:       IH F DH IH S K AH N D IH SH AH N HH OW L D Z AY N IY D N AA T S EY HH AW G L AE D W IY SH AE L B IY DH AE T W IY D AO G AH D L IY P UH SH T AA N IH N S P AY T AH V DH AH AH P EH R AH N T L IY HH OW P L AH S AW T L UH K
+[val example] corrected:    IH F DH IH S K AH N D IH SH AH N AH V HH IH Z OW N L IY D IH D N AA T S HH AW G UH D W IY SH AE L B IY W AH T AO K AH N D L UH K T AA N IH N P AY T AH V DH AH AH P EH R AH N T L IY HH IY S P L EY S AW T L UH K
+[val example] plain text:   If this condition holds I need not say how glad we shall be that we doggedly pushed on in spite of the apparently hopeless outlook.
+[val example] noisy:        IH F TH IH S K AH N D L IH W SH AW AA V HH IH OW G AY N IY D N AA T S HH AW G B D W UW IY SH AE L P IY TH W T AO G AH D L S UH SH T AA N IH W N P AY T AH V DH AH AH P EH R AH N T L IY HH S P L S AW T L UH K
+[val example] target:       IH F DH IH S K AH N D IH SH AH N HH OW L D Z AY N IY D N AA T S EY HH AW G L AE D W IY SH AE L B IY DH AE T W IY D AO G AH D L IY P UH SH T AA N IH N S P AY T AH V DH AH AH P EH R AH N T L IY HH OW P L AH S AW T L UH K
+[val example] corrected:    IH F DH IH S K AH N D IH SH AH N AH V HH IH Z OW N L IY D IH D N AA T S HH AW G UH D W IY SH AE L B IY W AH T AO K AH N D L UH K T AA N IH N P AY T AH V DH AH AH P EH R AH N T L IY HH IY S P L EY S AW T L UH K
+[val example] plain text:   If this condition holds I need not say how glad we shall be that we doggedly pushed on in spite of the apparently hopeless outlook.
+epoch 70: train_loss=0.6113 | val_loss=0.5323 | lr=0.000717
+epoch 70: train_loss=0.6113 | val_loss=0.5323 | lr=0.000717
+[val example] noisy:        AH K T N S T AH V IH DH AH AH R L ER R EH UH D HH AE Z AH T AH V EH R IH Z IH M P AH L K AA N T EH ZH N T AH N D B AY Y UW K NG IH AW T DH IH S K AA AA N T EH HH N T K AE UW B IY V R IY K L IH R L IY R EH P R IH Z EH N T IH D
+[val example] target:       AH K AA N S EH P T AH V DH AH K AH L ER R EH D HH AE Z B AH T AH V EH R IY S IH M P AH L K AA N T EH N T AH N D B AY Y UW Z IH NG IH T DH IH S K AA N T EH N T K AE N B IY V EH R IY K L IH R L IY R EH P R IH Z EH N T IH D
+[val example] corrected:    AH K AW N T AH N S AH V DH AH R IH L ER R EH D HH AE Z AH T AH V EH R IY IH M P AH L K AA N T EH N T AH N D B AY Y UW K IH NG AW T DH IH S K AA N T EH N T K AE N B IY V EH R IY K L IH R L IY R EH P R IH Z EH N T IH D
+[val example] plain text:   A concept of the colour red has but a very simple content, and by using it, this content can be very clearly represented.
+[val example] noisy:        AH K T N S T AH V IH DH AH AH R L ER R EH UH D HH AE Z AH T AH V EH R IH Z IH M P AH L K AA N T EH ZH N T AH N D B AY Y UW K NG IH AW T DH IH S K AA AA N T EH HH N T K AE UW B IY V R IY K L IH R L IY R EH P R IH Z EH N T IH D
+[val example] target:       AH K AA N S EH P T AH V DH AH K AH L ER R EH D HH AE Z B AH T AH V EH R IY S IH M P AH L K AA N T EH N T AH N D B AY Y UW Z IH NG IH T DH IH S K AA N T EH N T K AE N B IY V EH R IY K L IH R L IY R EH P R IH Z EH N T IH D
+[val example] corrected:    AH K AW N T AH N S AH V DH AH R IH L ER R EH D HH AE Z AH T AH V EH R IY IH M P AH L K AA N T EH N T AH N D B AY Y UW K IH NG AW T DH IH S K AA N T EH N T K AE N B IY V EH R IY K L IH R L IY R EH P R IH Z EH N T IH D
+[val example] plain text:   A concept of the colour red has but a very simple content, and by using it, this content can be very clearly represented.
+epoch 71: train_loss=0.6098 | val_loss=0.5296 | lr=0.000711
+[val example] noisy:        OW DH AH HH R AH JH B AH UH S AW EY T AH V N HH ER Y F AO L
+[val example] target:       OW DH AH HH AO R AH B AH L S AW N D AH V HH ER F AO L
+[val example] corrected:    OW DH AH HH AA R T AH V B UH K S AW T AH V HH ER F AO L
+[val example] plain text:   Oh, the horrible sound of her fall!
+epoch 71: train_loss=0.6098 | val_loss=0.5296 | lr=0.000711
+[val example] noisy:        OW DH AH HH R AH JH B AH UH S AW EY T AH V N HH ER Y F AO L
+[val example] target:       OW DH AH HH AO R AH B AH L S AW N D AH V HH ER F AO L
+[val example] corrected:    OW DH AH HH AA R T AH V B UH K S AW T AH V HH ER F AO L
+[val example] plain text:   Oh, the horrible sound of her fall!
+epoch 72: train_loss=0.6085 | val_loss=0.5287 | lr=0.000706
+epoch 72: train_loss=0.6085 | val_loss=0.5287 | lr=0.000706
+[val example] noisy:        P R OW S IY R D IY SH NG W Z IH N K D ZH S AH V D EH TH IH F AH HH AE Z N AE K V DH AH ER AA R T IY AY Z P R AY T D N S AH R IH T EY L D AH K AW N T AH V DH AA M AE T T ER AH N T HH IY AE V IH T AH T EH S T IH B AY DH AE AH DH ER Z AH AH S P EH SH L IY IH P F AE K V S W AH T AH OY N B AH K S AH Y V HH AH IH Z T AA TH
+[val example] target:       P R OW S IY D IH NG Z IH N K EY S AH V D EH TH IH F AH M AE N AH V DH AH P AA R T IY D AY Z R AY T D AW N AH D IH T EY L D AH K AW N T AH V DH AH M AE T ER AH N D HH AE V IH T AH T EH S T IH D B AY DH AH AH DH ER Z AH S P EH SH L IY IH F AE K S AH D AH N T B IY DH AH K AA Z AH V HH IH Z D EH TH
+[val example] corrected:    P R OW S IY D IH NG W AA Z IH N K L UW ZH AH N AH V D EH TH IH F AH HH AE Z N EH V ER DH AH AA R T IY AY Z P R AY D IH N S AH P IH R IH T EY L D AH K AW N T AH V DH AH M AE T ER AH N D HH IY HH AE V IH T AH T EH S T IH D B AY DH AH AH DH ER Z AH S P EH SH L IY IH M P R AE K S W AH T AH N B AH K S AH V HH IH Z T AA
+[val example] plain text:   Proceedings in case of Death.--If a man of the party dies, write down a detailed account of the matter, and have it attested by the others, especially if accident be the cause of his death.
+[val example] noisy:        P R OW S IY R D IY SH NG W Z IH N K D ZH S AH V D EH TH IH F AH HH AE Z N AE K V DH AH ER AA R T IY AY Z P R AY T D N S AH R IH T EY L D AH K AW N T AH V DH AA M AE T T ER AH N T HH IY AE V IH T AH T EH S T IH B AY DH AE AH DH ER Z AH AH S P EH SH L IY IH P F AE K V S W AH T AH OY N B AH K S AH Y V HH AH IH Z T AA TH
+[val example] target:       P R OW S IY D IH NG Z IH N K EY S AH V D EH TH IH F AH M AE N AH V DH AH P AA R T IY D AY Z R AY T D AW N AH D IH T EY L D AH K AW N T AH V DH AH M AE T ER AH N D HH AE V IH T AH T EH S T IH D B AY DH AH AH DH ER Z AH S P EH SH L IY IH F AE K S AH D AH N T B IY DH AH K AA Z AH V HH IH Z D EH TH
+[val example] corrected:    P R OW S IY D IH NG W AA Z IH N K L UW ZH AH N AH V D EH TH IH F AH HH AE Z N EH V ER DH AH AA R T IY AY Z P R AY D IH N S AH P IH R IH T EY L D AH K AW N T AH V DH AH M AE T ER AH N D HH IY HH AE V IH T AH T EH S T IH D B AY DH AH AH DH ER Z AH S P EH SH L IY IH M P R AE K S W AH T AH N B AH K S AH V HH IH Z T AA
+[val example] plain text:   Proceedings in case of Death.--If a man of the party dies, write down a detailed account of the matter, and have it attested by the others, especially if accident be the cause of his death.
+epoch 73: train_loss=0.6068 | val_loss=0.5274 | lr=0.000700
+[val example] noisy:        AY D N AA T W AA Y N T T S UW K OW AH W AW
+[val example] target:       AY D UW N AA T W AA N T T UW G OW AH W EY
+[val example] corrected:    AY D UW N AA T W AA N T T UW G OW AH W EY
+[val example] plain text:   I do not want to go away.
+epoch 73: train_loss=0.6068 | val_loss=0.5274 | lr=0.000700
+[val example] noisy:        AY D N AA T W AA Y N T T S UW K OW AH W AW
+[val example] target:       AY D UW N AA T W AA N T T UW G OW AH W EY
+[val example] corrected:    AY D UW N AA T W AA N T T UW G OW AH W EY
+[val example] plain text:   I do not want to go away.
+epoch 74: train_loss=0.6059 | val_loss=0.5263 | lr=0.000694
+epoch 74: train_loss=0.6059 | val_loss=0.5263 | lr=0.000694
+[val example] noisy:        P UW R G IH T W D CH Z IH N R V EH HH R IY AE D W EY W AW ER P V IH F IH R L W P AA R T IH
+[val example] target:       P UW R K IH T W AA Z IH N AH V EH R IY B AE D W EY W AH N AW ER B IH F AO R W IY P AA R T IH D
+[val example] corrected:    P UW R G IH T W AA Z IH N V EH R IY AE D W EY W ER P R IH V IH R L IY P AA R T IY
+[val example] plain text:   Poor Kit was in a very bad way one hour before we parted.
+[val example] noisy:        P UW R G IH T W D CH Z IH N R V EH HH R IY AE D W EY W AW ER P V IH F IH R L W P AA R T IH
+[val example] target:       P UW R K IH T W AA Z IH N AH V EH R IY B AE D W EY W AH N AW ER B IH F AO R W IY P AA R T IH D
+[val example] corrected:    P UW R G IH T W AA Z IH N V EH R IY AE D W EY W ER P R IH V IH R L IY P AA R T IY
+[val example] plain text:   Poor Kit was in a very bad way one hour before we parted.
+epoch 75: train_loss=0.6059 | val_loss=0.5261 | lr=0.000689
+epoch 75: train_loss=0.6059 | val_loss=0.5261 | lr=0.000689
+[val example] noisy:        IH T W L M OW S T L AY K L IY P IY DH AH S EY M ER DH S T B T D IH V EH N ER
+[val example] target:       IH T W IH L M OW S T L AY K L IY B IY DH AH S EY M W IH DH S T EY T D IH F EH N D ER Z
+[val example] corrected:    IH T W IH L M OW S T L AY K L IY P DH AH S EY M ER DH AH S T EY T D IH V EH N CH ER
+[val example] plain text:   It will most likely be the same with state defenders.
+[val example] noisy:        IH T W L M OW S T L AY K L IY P IY DH AH S EY M ER DH S T B T D IH V EH N ER
+[val example] target:       IH T W IH L M OW S T L AY K L IY B IY DH AH S EY M W IH DH S T EY T D IH F EH N D ER Z
+[val example] corrected:    IH T W IH L M OW S T L AY K L IY P DH AH S EY M ER DH AH S T EY T D IH V EH N CH ER
+[val example] plain text:   It will most likely be the same with state defenders.
+epoch 76: train_loss=0.6024 | val_loss=0.5217 | lr=0.000683
+epoch 76: train_loss=0.6024 | val_loss=0.5217 | lr=0.000683
+[val example] noisy:        AY L W EY T AH B IH AE T S OW NG DH HH IY W AA Z EH R IH HH AH NG G IY F IY W Z UH D N T JH IY IY AH B IH T AH DH P IH W Z DH AE T UW N IH R DH AH P EH
+[val example] target:       AY L W EY T AH B IH T S OW DH OW HH IY W AA Z V EH R IY HH AH NG G R IY HH IY W UH D N AA T IY T AH B IH T AH V DH AH P IH G W IY D DH AE T G R UW N IH R DH AH P EH N
+[val example] corrected:    AY L W EY T AH B IH T S OW IH NG DH AE T HH IY W AA Z V EH R IY HH AH NG G R IY W AA Z G UH D N AA T JH IY AH B IH T AH P IH R Z DH AE T Y UW N IH R DH AH P EH R
+[val example] plain text:   I'll wait a bit." So, though he was very hungry, he would not eat a bit of the pig weed that grew near the pen.
+[val example] noisy:        AY L W EY T AH B IH AE T S OW NG DH HH IY W AA Z EH R IH HH AH NG G IY F IY W Z UH D N T JH IY IY AH B IH T AH DH P IH W Z DH AE T UW N IH R DH AH P EH
+[val example] target:       AY L W EY T AH B IH T S OW DH OW HH IY W AA Z V EH R IY HH AH NG G R IY HH IY W UH D N AA T IY T AH B IH T AH V DH AH P IH G W IY D DH AE T G R UW N IH R DH AH P EH N
+[val example] corrected:    AY L W EY T AH B IH T S OW IH NG DH AE T HH IY W AA Z V EH R IY HH AH NG G R IY W AA Z G UH D N AA T JH IY AH B IH T AH P IH R Z DH AE T Y UW N IH R DH AH P EH R
+[val example] plain text:   I'll wait a bit." So, though he was very hungry, he would not eat a bit of the pig weed that grew near the pen.
+epoch 77: train_loss=0.5982 | val_loss=0.5179 | lr=0.000678
+epoch 77: train_loss=0.5982 | val_loss=0.5179 | lr=0.000678
+[val example] noisy:        DH AH AH B AA M AH EY SH AA AH V F G L IY ER Z ER R R EH P R AH Z AE N EY SH AH SH Z AH V T W L EY ZH OW L AA B JH EH K T S K AH V IY AY N D B SH UH D N AA T B IY EH D Y UH R D W IH DH IH N EH DH AH IH M M AH T S AH V OY K R IH S AE AH M
+[val example] target:       DH AH AH B AA M AH N EY SH AH N AH V F L AW ER Z AO R R EH P R AH Z AH N T EY SH AH N Z AH V W EH L N OW N AA B JH EH K T S AH V EH N IY K AY N D SH UH D N AA T B IY EH N D Y UH R D W IH DH IH N DH AH L IH M AH T S AH V K R IH S AH N D AH M
+[val example] corrected:    DH AH AH B AA M AH N EY SH AH N AH V F L IY ER Z R EH P R AH Z EH N SH AH N Z AH V T W EY L EY SH AH N B AE K T UW S K AH V ER IY AY N D B UH SH T N AA T B IY EH N D Y UH R D W IH DH IH N DH AH IH M AH T S AH V K R IH S CH AH N
+[val example] plain text:   The abomination of flowers, or representations of well-known objects of any kind, should not be endured within the limits of Christendom.
+[val example] noisy:        DH AH AH B AA M AH EY SH AA AH V F G L IY ER Z ER R R EH P R AH Z AE N EY SH AH SH Z AH V T W L EY ZH OW L AA B JH EH K T S K AH V IY AY N D B SH UH D N AA T B IY EH D Y UH R D W IH DH IH N EH DH AH IH M M AH T S AH V OY K R IH S AE AH M
+[val example] target:       DH AH AH B AA M AH N EY SH AH N AH V F L AW ER Z AO R R EH P R AH Z AH N T EY SH AH N Z AH V W EH L N OW N AA B JH EH K T S AH V EH N IY K AY N D SH UH D N AA T B IY EH N D Y UH R D W IH DH IH N DH AH L IH M AH T S AH V K R IH S AH N D AH M
+[val example] corrected:    DH AH AH B AA M AH N EY SH AH N AH V F L IY ER Z R EH P R AH Z EH N SH AH N Z AH V T W EY L EY SH AH N B AE K T UW S K AH V ER IY AY N D B UH SH T N AA T B IY EH N D Y UH R D W IH DH IH N DH AH IH M AH T S AH V K R IH S CH AH N
+[val example] plain text:   The abomination of flowers, or representations of well-known objects of any kind, should not be endured within the limits of Christendom.
+epoch 78: train_loss=0.5971 | val_loss=0.5184 | lr=0.000672
+epoch 78: train_loss=0.5971 | val_loss=0.5184 | lr=0.000672
+[val example] noisy:        AH N SH D HH IY HH AE D B IY K EH R F AH L UW Z T UW ZH ER AH EH R Z
+[val example] target:       AH N D HH IY HH AE D B IH N K EH R F AH L T UW AE Z T UW HH ER AH F EH R Z
+[val example] corrected:    AH N D HH IY HH AE D B IH N K EH R F AH L T UW HH ER AH P EH R Z
+[val example] plain text:   And he had been careful, too, as to her affairs.
+[val example] noisy:        AH N SH D HH IY HH AE D B IY K EH R F AH L UW Z T UW ZH ER AH EH R Z
+[val example] target:       AH N D HH IY HH AE D B IH N K EH R F AH L T UW AE Z T UW HH ER AH F EH R Z
+[val example] corrected:    AH N D HH IY HH AE D B IH N K EH R F AH L T UW HH ER AH P EH R Z
+[val example] plain text:   And he had been careful, too, as to her affairs.
+epoch 79: train_loss=0.5950 | val_loss=0.5190 | lr=0.000667
+epoch 79: train_loss=0.5950 | val_loss=0.5190 | lr=0.000667
+[val example] noisy:        UW W B AE V K AY K IY K AH L ZH G Z IH S T AH N S AE T AO L ZH W IY N Z DH S T UW B IY AH N B JH EH K G AH V W EH R N AH S IH V AO R AH AA N SH AH S N S
+[val example] target:       T UW HH AE V S AY K IH K AH L EH G Z IH S T AH N S AE T AO L M IY N Z DH AH S T UW B IY AA B JH EH K T AH V AH W EH R N AH S F AO R AH K AA N SH AH S N AH S
+[val example] corrected:    Y UW HH AE V K W AY T K AH L EH G Z IH S T AH N S AE T AO L W IY N Z DH AH S T UW B IY AH N B JH EH K T AH V W EH R N AH S IH V AO R AH K AA N SH AH S N AH S
+[val example] plain text:   To have psychical existence at all means thus to be object of awareness for a consciousness.
+[val example] noisy:        UW W B AE V K AY K IY K AH L ZH G Z IH S T AH N S AE T AO L ZH W IY N Z DH S T UW B IY AH N B JH EH K G AH V W EH R N AH S IH V AO R AH AA N SH AH S N S
+[val example] target:       T UW HH AE V S AY K IH K AH L EH G Z IH S T AH N S AE T AO L M IY N Z DH AH S T UW B IY AA B JH EH K T AH V AH W EH R N AH S F AO R AH K AA N SH AH S N AH S
+[val example] corrected:    Y UW HH AE V K W AY T K AH L EH G Z IH S T AH N S AE T AO L W IY N Z DH AH S T UW B IY AH N B JH EH K T AH V W EH R N AH S IH V AO R AH K AA N SH AH S N AH S
+[val example] plain text:   To have psychical existence at all means thus to be object of awareness for a consciousness.
+epoch 80: train_loss=0.5937 | val_loss=0.5126 | lr=0.000661
+epoch 80: train_loss=0.5937 | val_loss=0.5126 | lr=0.000661
+[val example] noisy:        DH EY S DH AH IH D IH K G P R IY AW K AH N F G ER D AH DH AH D IY P L OW M AA G V B ZH N
+[val example] target:       DH EY S AO DH AH D IH G R IY K AH N F ER D AH N D DH AH D IH P L OW M AA G IH V AH N
+[val example] corrected:    DH EY S IY DH AH IH N D IH K S P R IY K AH N F ER D AH V DH AH D IY P L OW M AH V B IH G AE N
+[val example] plain text:   They saw the degree conferred and the diploma given.
+[val example] noisy:        DH EY S DH AH IH D IH K G P R IY AW K AH N F G ER D AH DH AH D IY P L OW M AA G V B ZH N
+[val example] target:       DH EY S AO DH AH D IH G R IY K AH N F ER D AH N D DH AH D IH P L OW M AA G IH V AH N
+[val example] corrected:    DH EY S IY DH AH IH N D IH K S P R IY K AH N F ER D AH V DH AH D IY P L OW M AH V B IH G AE N
+[val example] plain text:   They saw the degree conferred and the diploma given.
+epoch 81: train_loss=0.5915 | val_loss=0.5137 | lr=0.000656
+epoch 81: train_loss=0.5915 | val_loss=0.5137 | lr=0.000656
+[val example] noisy:        S AE N G D IY AE Z DH AH L IH T AO AH L M AE N AH P IH R S D F CH IY K DH AO L D P AO Z D N N HH IH Z B IY Z N AH S IH T ER N S D R N N D IY AH N D S AO M JH D AE T DH AH CH L D EH AH N
+[val example] target:       S AE N D IY AE Z DH AH L IH T AH L M AE N AH P IH R D T UW B IY K AO L D P AO Z D IH N HH IH Z B IH Z N AH S T ER N D R AW N D AH N D S M AY L D AE T DH AH CH IH L D R AH N
+[val example] corrected:    S AE N D IY AE Z DH AH L IH T AH L M AE N AH P IH R S T F IH K S AO L D P AO Z D AA N HH IH Z B IY Z N AH S IH T ER N S T R EY N D IY AH N D S AO M D AE T DH AH CH AY L D AH N
+[val example] plain text:   Sandy, as the little man appeared to be called, paused in his business, turned round, and smiled at the children.
+[val example] noisy:        S AE N G D IY AE Z DH AH L IH T AO AH L M AE N AH P IH R S D F CH IY K DH AO L D P AO Z D N N HH IH Z B IY Z N AH S IH T ER N S D R N N D IY AH N D S AO M JH D AE T DH AH CH L D EH AH N
+[val example] target:       S AE N D IY AE Z DH AH L IH T AH L M AE N AH P IH R D T UW B IY K AO L D P AO Z D IH N HH IH Z B IH Z N AH S T ER N D R AW N D AH N D S M AY L D AE T DH AH CH IH L D R AH N
+[val example] corrected:    S AE N D IY AE Z DH AH L IH T AH L M AE N AH P IH R S T F IH K S AO L D P AO Z D AA N HH IH Z B IY Z N AH S IH T ER N S T R EY N D IY AH N D S AO M D AE T DH AH CH AY L D AH N
+[val example] plain text:   Sandy, as the little man appeared to be called, paused in his business, turned round, and smiled at the children.
+epoch 82: train_loss=0.5906 | val_loss=0.5116 | lr=0.000650
+[val example] noisy:        W AH T AH W AY N D AH Y R EY N IH T IH Z SH T N AY T
+[val example] target:       W AH T AH W AY N D AH N D R EY N IH T IH Z T UW N AY T
+[val example] corrected:    W AH T AH W AY N D AH Y UW R EY N IH T IH Z SH IY T R AY D
+[val example] plain text:   What a wind and rain it is to-night!
+epoch 82: train_loss=0.5906 | val_loss=0.5116 | lr=0.000650
+[val example] noisy:        W AH T AH W AY N D AH Y R EY N IH T IH Z SH T N AY T
+[val example] target:       W AH T AH W AY N D AH N D R EY N IH T IH Z T UW N AY T
+[val example] corrected:    W AH T AH W AY N D AH Y UW R EY N IH T IH Z SH IY T R AY D
+[val example] plain text:   What a wind and rain it is to-night!
+epoch 83: train_loss=0.5891 | val_loss=0.5088 | lr=0.000644
+epoch 83: train_loss=0.5891 | val_loss=0.5088 | lr=0.000644
+[val example] noisy:        AY N R AH M D S T AE N D S UW SH IY S EH D Y UW UW HH V L EH F T Y D G R HH AA EY R T B IH HH AY N Y UW IH F R AE UH S R AA UW HH L B B S D
+[val example] target:       AY N AW AH N D ER S T AE N D Y UW SH IY S EH D Y UW HH AE V L EH F T Y AO R HH AA R T B IH HH AY N D Y UW IH N F R AE N S R AA UW L B AW D
+[val example] corrected:    AY N OW R AH M D S T AE N D S UW N SH IY S EH D Y UW HH AE V L EH F T Y UW D R AA P HH AA R T B IH HH AY N D Y UW IH F AY R AE N S R UW L B IY S EH D
+[val example] plain text:   I now understand you," she said; "you have left your heart behind you in France." Raoul bowed.
+[val example] noisy:        AY N R AH M D S T AE N D S UW SH IY S EH D Y UW UW HH V L EH F T Y D G R HH AA EY R T B IH HH AY N Y UW IH F R AE UH S R AA UW HH L B B S D
+[val example] target:       AY N AW AH N D ER S T AE N D Y UW SH IY S EH D Y UW HH AE V L EH F T Y AO R HH AA R T B IH HH AY N D Y UW IH N F R AE N S R AA UW L B AW D
+[val example] corrected:    AY N OW R AH M D S T AE N D S UW N SH IY S EH D Y UW HH AE V L EH F T Y UW D R AA P HH AA R T B IH HH AY N D Y UW IH F AY R AE N S R UW L B IY S EH D
+[val example] plain text:   I now understand you," she said; "you have left your heart behind you in France." Raoul bowed.
+epoch 84: train_loss=0.5880 | val_loss=0.5064 | lr=0.000639
+epoch 84: train_loss=0.5880 | val_loss=0.5064 | lr=0.000639
+[val example] noisy:        AE Z DH AH F R EH UH SH AH S AH V Y AH NG P SH AH N V EY AH D L AY F W AA Z EY T EY K N IY B NG M AO R AH AE M CH AO R D S AY AH AE D L IY F AO M R HH M DH AE S W P EH K T AH V AH M G EY M IH N W IH CH DH EH EH R ER AA Z TH EH EH L AH AE G R IY AH AH L UW M IH NG G P AH L IH NG EY S K IH L AH N D CH AE AA N CH S
+[val example] target:       AE Z DH AH F R EH SH N AH S AH V Y AH NG P AE SH AH N F EY D AH D L AY F W AA Z T EY K IH NG M AO R AH N D M AO R D IH S AY D AH D L IY F AO R HH IH M DH AH AE S P EH K T AH V AH G EY M IH N W IH CH DH EH R W AA Z AE N AH G R IY AH B AH L M IH NG G AH L IH NG AH V S K IH L AH N D CH AE N S
+[val example] corrected:    AE Z DH AH F R EH SH AH S AH V Y AH NG P EY SH AH N AH V DH AH D EY L AY F W AA Z T EY K AH N IH NG M AO R AH M AO R D IH S AY D AH D L IY F AO R HH IH M DH AH S P EH K T AH V AH M EY M IH N W IH CH DH EH R W AA Z DH EH R EH L AH G R IY AH B AH L T UW M IH NG G AH L IH NG S K IH L AH N D CH AE N S
+[val example] plain text:   As the freshness of young passion faded, life was taking more and more decidedly for him the aspect of a game in which there was an agreeable mingling of skill and chance.
+[val example] noisy:        AE Z DH AH F R EH UH SH AH S AH V Y AH NG P SH AH N V EY AH D L AY F W AA Z EY T EY K N IY B NG M AO R AH AE M CH AO R D S AY AH AE D L IY F AO M R HH M DH AE S W P EH K T AH V AH M G EY M IH N W IH CH DH EH EH R ER AA Z TH EH EH L AH AE G R IY AH AH L UW M IH NG G P AH L IH NG EY S K IH L AH N D CH AE AA N CH S
+[val example] target:       AE Z DH AH F R EH SH N AH S AH V Y AH NG P AE SH AH N F EY D AH D L AY F W AA Z T EY K IH NG M AO R AH N D M AO R D IH S AY D AH D L IY F AO R HH IH M DH AH AE S P EH K T AH V AH G EY M IH N W IH CH DH EH R W AA Z AE N AH G R IY AH B AH L M IH NG G AH L IH NG AH V S K IH L AH N D CH AE N S
+[val example] corrected:    AE Z DH AH F R EH SH AH S AH V Y AH NG P EY SH AH N AH V DH AH D EY L AY F W AA Z T EY K AH N IH NG M AO R AH M AO R D IH S AY D AH D L IY F AO R HH IH M DH AH S P EH K T AH V AH M EY M IH N W IH CH DH EH R W AA Z DH EH R EH L AH G R IY AH B AH L T UW M IH NG G AH L IH NG S K IH L AH N D CH AE N S
+[val example] plain text:   As the freshness of young passion faded, life was taking more and more decidedly for him the aspect of a game in which there was an agreeable mingling of skill and chance.
+epoch 85: train_loss=0.5862 | val_loss=0.5085 | lr=0.000633
+epoch 85: train_loss=0.5862 | val_loss=0.5085 | lr=0.000633
+[val example] noisy:        IH T IH S R DH AE M R HH W AA Z B AO R N T IH Z DH EH R HH IH M IY AW Z T UW AY AY K T AE N AH D ER S T AE DH AE T HH EH R IY P
+[val example] target:       IH T IH Z DH EH R HH IY W AA Z B AO R N IH T IH Z DH EH R HH IY M IY N Z T UW D AY AY K AE N AH N D ER S T AE N D DH AE T HH EH R IY
+[val example] corrected:    IH T IH Z DH EH M AA R HH IY W AA Z B AO R N T IH Z DH EH R HH IH M IH Z T UW L AY K T AE N AH N D ER S T AE N D DH AE T HH EH R IY
+[val example] plain text:   It is there he was born, it is there he means to die!" "I can understand that, Harry.
+[val example] noisy:        IH T IH S R DH AE M R HH W AA Z B AO R N T IH Z DH EH R HH IH M IY AW Z T UW AY AY K T AE N AH D ER S T AE DH AE T HH EH R IY P
+[val example] target:       IH T IH Z DH EH R HH IY W AA Z B AO R N IH T IH Z DH EH R HH IY M IY N Z T UW D AY AY K AE N AH N D ER S T AE N D DH AE T HH EH R IY
+[val example] corrected:    IH T IH Z DH EH M AA R HH IY W AA Z B AO R N T IH Z DH EH R HH IH M IH Z T UW L AY K T AE N AH N D ER S T AE N D DH AE T HH EH R IY
+[val example] plain text:   It is there he was born, it is there he means to die!" "I can understand that, Harry.
+epoch 86: train_loss=0.5858 | val_loss=0.5077 | lr=0.000628
+epoch 86: train_loss=0.5858 | val_loss=0.5077 | lr=0.000628
+[val example] noisy:        D IH R F AE AW CH R AY T D ER K T L IY N AH N JH EH L AO AH S T UW K AH M F
+[val example] target:       D IH R F AE N IY R AY T D ER EH K T L IY AH N D T EH L AH S T UW K AH M
+[val example] corrected:    D IH R F AE CH R AY T D ER EH K T L IY N AH N JH EH L AH S T UW K AH M
+[val example] plain text:   Dear Fanny, write directly, and tell us to come.
+[val example] noisy:        D IH R F AE AW CH R AY T D ER K T L IY N AH N JH EH L AO AH S T UW K AH M F
+[val example] target:       D IH R F AE N IY R AY T D ER EH K T L IY AH N D T EH L AH S T UW K AH M
+[val example] corrected:    D IH R F AE CH R AY T D ER EH K T L IY N AH N JH EH L AH S T UW K AH M
+[val example] plain text:   Dear Fanny, write directly, and tell us to come.
+epoch 87: train_loss=0.5841 | val_loss=0.5068 | lr=0.000622
+epoch 87: train_loss=0.5841 | val_loss=0.5068 | lr=0.000622
+[val example] noisy:        IH F Y UW R AH S IY V D DH AH UW W ER K IH L AH EH K V T R AA IH K AH L IY EY AH B P ER S AH N AO R EH N T T IY P R AH V AY NG D IH NG IH T HH UW Y UW M CH UW S T UW G IH AA V IY Y UW AH EH AH N D AA P ER D UW T N AH T UW R AH Z IY V AH W K IH AO EH K T OW IY OY N IH K AA L IY IH N L AH V AH R F AH N
+[val example] target:       IH F Y UW R AH S IY V D DH AH W ER K IH L EH K T R AA N IH K AH L IY DH AH P ER S AH N AO R EH N T AH T IY P R AH V AY D IH NG IH T T UW Y UW M EY CH UW Z T UW G IH V Y UW AH S EH K AH N D AA P ER T UW N AH T IY T UW R AH S IY V DH AH W ER K IH L EH K T R AA N IH K AH L IY IH N L UW AH V AH R IH F AH N D
+[val example] corrected:    IH F Y UW R AH S IY V D DH AH W ER K IH L EH K T R AA N IH K AH L IY AH P ER S AH N AO R EH N T IY P R AH V AY D IH NG IH T HH Y UW M Y UW Z T UW G IH V Y UW AH N D AA P ER T UW N AH T IY T UW R AH S IY V AH W AO K IH NG EH K T IH N IH K AH L IY IH N L AH V AH R IH F AH N
+[val example] plain text:   If you received the work electronically, the person or entity providing it to you may choose to give you a second opportunity to receive the work electronically in lieu of a refund.
+[val example] noisy:        IH F Y UW R AH S IY V D DH AH UW W ER K IH L AH EH K V T R AA IH K AH L IY EY AH B P ER S AH N AO R EH N T T IY P R AH V AY NG D IH NG IH T HH UW Y UW M CH UW S T UW G IH AA V IY Y UW AH EH AH N D AA P ER D UW T N AH T UW R AH Z IY V AH W K IH AO EH K T OW IY OY N IH K AA L IY IH N L AH V AH R F AH N
+[val example] target:       IH F Y UW R AH S IY V D DH AH W ER K IH L EH K T R AA N IH K AH L IY DH AH P ER S AH N AO R EH N T AH T IY P R AH V AY D IH NG IH T T UW Y UW M EY CH UW Z T UW G IH V Y UW AH S EH K AH N D AA P ER T UW N AH T IY T UW R AH S IY V DH AH W ER K IH L EH K T R AA N IH K AH L IY IH N L UW AH V AH R IH F AH N D
+[val example] corrected:    IH F Y UW R AH S IY V D DH AH W ER K IH L EH K T R AA N IH K AH L IY AH P ER S AH N AO R EH N T IY P R AH V AY D IH NG IH T HH Y UW M Y UW Z T UW G IH V Y UW AH N D AA P ER T UW N AH T IY T UW R AH S IY V AH W AO K IH NG EH K T IH N IH K AH L IY IH N L AH V AH R IH F AH N
+[val example] plain text:   If you received the work electronically, the person or entity providing it to you may choose to give you a second opportunity to receive the work electronically in lieu of a refund.
+epoch 88: train_loss=0.5830 | val_loss=0.5028 | lr=0.000617
+epoch 88: train_loss=0.5830 | val_loss=0.5028 | lr=0.000617
+[val example] noisy:        W AW IH NG G AH L IH K S EH F N D IH NG HH G IH Z T HH AE N D HH IH Z T IY Z TH CH AE Z T ER IH NG AO L DH AE AY B M HH IY P S B OW F AO R M HH IY HH AE OW D IY N T AE D IH NG D IH UH R IH NG F DH AE CH OW L L AH V M IH S T ER
+[val example] target:       W IH NG K AH L IH K S T EH N D IH NG HH IH Z HH AE N D HH IH Z T IY TH CH AE T ER IH NG AO L DH AH T AY M HH IY S P OW K F AO R HH IY HH AE D B IH N S T AE N D IH NG D UH R IH NG DH AH HH OW L AH V M IH S T ER
+[val example] corrected:    W IH NG G AH L IH K S EH N D IH NG HH IH Z HH AE N D HH IH Z T IY Z TH AE S T ER IH NG AO L DH AE T AY M HH IY S P OW K F AO R M HH IY HH AE D B IH N T EH N D IH NG D UH R IH NG DH AH CH OW L D AH V M IH S T ER
+[val example] plain text:   Winkle, extending his hand--his teeth chattering all the time he spoke, for he had been standing, during the whole of Mr.
+[val example] noisy:        W AW IH NG G AH L IH K S EH F N D IH NG HH G IH Z T HH AE N D HH IH Z T IY Z TH CH AE Z T ER IH NG AO L DH AE AY B M HH IY P S B OW F AO R M HH IY HH AE OW D IY N T AE D IH NG D IH UH R IH NG F DH AE CH OW L L AH V M IH S T ER
+[val example] target:       W IH NG K AH L IH K S T EH N D IH NG HH IH Z HH AE N D HH IH Z T IY TH CH AE T ER IH NG AO L DH AH T AY M HH IY S P OW K F AO R HH IY HH AE D B IH N S T AE N D IH NG D UH R IH NG DH AH HH OW L AH V M IH S T ER
+[val example] corrected:    W IH NG G AH L IH K S EH N D IH NG HH IH Z HH AE N D HH IH Z T IY Z TH AE S T ER IH NG AO L DH AE T AY M HH IY S P OW K F AO R M HH IY HH AE D B IH N T EH N D IH NG D UH R IH NG DH AH CH OW L D AH V M IH S T ER
+[val example] plain text:   Winkle, extending his hand--his teeth chattering all the time he spoke, for he had been standing, during the whole of Mr.
+epoch 89: train_loss=0.5819 | val_loss=0.5041 | lr=0.000611
+epoch 89: train_loss=0.5819 | val_loss=0.5041 | lr=0.000611
+[val example] noisy:        EH N IY EY IH UH NG K UH D M AE P AH N AA N DH S N AY D AH V W AH AE D ER
+[val example] target:       EH N IY TH IH NG K UH D HH AE P AH N AA N DH IH S N AY T AH V W AH N D ER
+[val example] corrected:    EH N IY TH IH NG K UH D M AE P AH N AA N DH AH S AY D AH V W AH N D ER
+[val example] plain text:   Anything could happen on this night of wonder.
+[val example] noisy:        EH N IY EY IH UH NG K UH D M AE P AH N AA N DH S N AY D AH V W AH AE D ER
+[val example] target:       EH N IY TH IH NG K UH D HH AE P AH N AA N DH IH S N AY T AH V W AH N D ER
+[val example] corrected:    EH N IY TH IH NG K UH D M AE P AH N AA N DH AH S AY D AH V W AH N D ER
+[val example] plain text:   Anything could happen on this night of wonder.
+epoch 90: train_loss=0.5805 | val_loss=0.5003 | lr=0.000606
+epoch 90: train_loss=0.5805 | val_loss=0.5003 | lr=0.000606
+[val example] noisy:        AY K N AA T N EY M W IH EH Z N AA T T S AH F S DH AH EY M AH V HH AE V ER NG R UW AH N D Y N
+[val example] target:       AY K AE N AA T N EY AY W IH L N AA T S AH F ER DH AH SH EY M AH V HH AE V IH NG R UW AH N D Y UW
+[val example] corrected:    AY K AE N AA T N EY M W EH N N AA T T UW S AH F ER DH AH S EY M AH V HH AE V IH NG R UW AH N D Y UW N OW
+[val example] plain text:   I cannot, nay, I will not suffer the shame of having ruined you.
+[val example] noisy:        AY K N AA T N EY M W IH EH Z N AA T T S AH F S DH AH EY M AH V HH AE V ER NG R UW AH N D Y N
+[val example] target:       AY K AE N AA T N EY AY W IH L N AA T S AH F ER DH AH SH EY M AH V HH AE V IH NG R UW AH N D Y UW
+[val example] corrected:    AY K AE N AA T N EY M W EH N N AA T T UW S AH F ER DH AH S EY M AH V HH AE V IH NG R UW AH N D Y UW N OW
+[val example] plain text:   I cannot, nay, I will not suffer the shame of having ruined you.
+epoch 91: train_loss=0.5801 | val_loss=0.4996 | lr=0.000600
+[val example] noisy:        S IY P AE R AH G AE F Z IH B M IY K L OW
+[val example] target:       S IY P AE R AH G R AE F S IY B IH L OW
+[val example] corrected:    S IY P AE R AH G R AE F S IY B IH K L OW
+[val example] plain text:   See paragraph 1.C below.
+epoch 91: train_loss=0.5801 | val_loss=0.4996 | lr=0.000600
+[val example] noisy:        S IY P AE R AH G AE F Z IH B M IY K L OW
+[val example] target:       S IY P AE R AH G R AE F S IY B IH L OW
+[val example] corrected:    S IY P AE R AH G R AE F S IY B IH K L OW
+[val example] plain text:   See paragraph 1.C below.
+epoch 92: train_loss=0.5782 | val_loss=0.4999 | lr=0.000594
+epoch 92: train_loss=0.5782 | val_loss=0.4999 | lr=0.000594
+[val example] noisy:        IY T M AY T HH EH V B IH F AH AY L AO R T UW M AY L Z ZH AH W EY B AA W D IH S T AH T M D IH D N AA L EH IY S AH N DH K AA F R IH T B R T T UW DH AH D AY NG K UH IH NG K AH V EH DH AH N AO R TH AA
+[val example] target:       IH T M AY T HH AE V B IH N AH M AY L AO R T UW M AY L Z AH W EY B AH T D IH S T AH N S D IH D N AA T L EH S AH N DH AH F IH R IH T B R AO T T UW DH AH D AY IH NG K IH NG AH V DH AH N AO R TH
+[val example] corrected:    IH T M AY T HH AE V B IH N AH L AO NG T UW M AY L Z AH W EY B AH T IH T S T AH M D IH D N AA T L EH S AH N D DH AH K AA F IY T B R AO T T UW DH AH D AY IH NG K UH K AH V DH AH N AO R TH
+[val example] plain text:   It might have been a mile or two miles away, but distance did not lessen the fear it brought to the dying king of the North.
+[val example] noisy:        IY T M AY T HH EH V B IH F AH AY L AO R T UW M AY L Z ZH AH W EY B AA W D IH S T AH T M D IH D N AA L EH IY S AH N DH K AA F R IH T B R T T UW DH AH D AY NG K UH IH NG K AH V EH DH AH N AO R TH AA
+[val example] target:       IH T M AY T HH AE V B IH N AH M AY L AO R T UW M AY L Z AH W EY B AH T D IH S T AH N S D IH D N AA T L EH S AH N DH AH F IH R IH T B R AO T T UW DH AH D AY IH NG K IH NG AH V DH AH N AO R TH
+[val example] corrected:    IH T M AY T HH AE V B IH N AH L AO NG T UW M AY L Z AH W EY B AH T IH T S T AH M D IH D N AA T L EH S AH N D DH AH K AA F IY T B R AO T T UW DH AH D AY IH NG K UH K AH V DH AH N AO R TH
+[val example] plain text:   It might have been a mile or two miles away, but distance did not lessen the fear it brought to the dying king of the North.
+epoch 93: train_loss=0.5773 | val_loss=0.4962 | lr=0.000589
+epoch 93: train_loss=0.5773 | val_loss=0.4962 | lr=0.000589
+[val example] noisy:        UW D T R CH DH OY AH HH IH N T AH N D T EH HH N S ER K AH L IH NG HH ER W EY S T IH TH HH V Z AA IY R M L UH L D HH ER T L HH IH M AH N D K IH S T ER
+[val example] target:       JH UW D T UH K DH AH HH IH N T AH N D EH N S ER K AH L IH NG HH ER W EY S T W IH DH HH IH Z AA R M P UH L D HH ER T UW HH IH M AH N D K IH S T HH ER
+[val example] corrected:    Y UW D T R AY DH AH HH IH N T AH N D T EH N S ER K AH L IH NG HH ER W EY S T IH L HH AE V S IY N R IH M EY L D HH ER T UW HH IH M AH N D K IH S T ER
+[val example] plain text:   Jude took the hint, and encircling her waist with his arm, pulled her to him and kissed her.
+[val example] noisy:        UW D T R CH DH OY AH HH IH N T AH N D T EH HH N S ER K AH L IH NG HH ER W EY S T IH TH HH V Z AA IY R M L UH L D HH ER T L HH IH M AH N D K IH S T ER
+[val example] target:       JH UW D T UH K DH AH HH IH N T AH N D EH N S ER K AH L IH NG HH ER W EY S T W IH DH HH IH Z AA R M P UH L D HH ER T UW HH IH M AH N D K IH S T HH ER
+[val example] corrected:    Y UW D T R AY DH AH HH IH N T AH N D T EH N S ER K AH L IH NG HH ER W EY S T IH L HH AE V S IY N R IH M EY L D HH ER T UW HH IH M AH N D K IH S T ER
+[val example] plain text:   Jude took the hint, and encircling her waist with his arm, pulled her to him and kissed her.
+epoch 94: train_loss=0.5765 | val_loss=0.5021 | lr=0.000583
+epoch 94: train_loss=0.5765 | val_loss=0.5021 | lr=0.000583
+[val example] noisy:        DH AH AW N EY DH SH AH N M EY OY S N OW HH R R AH Z AH N T G SH P AH Z K P AA HH S ER N IH NG IY AH M K AA P Y R V AY T S T AE D AH S AH UH V EH N Y IH W ER K IH N EH N IH K AH T R IY AY W T AY AH D DH AH Y N AY T IH Z NG Z T EY D S K
+[val example] target:       DH AH F AW N D EY SH AH N M EY K S N OW R EH P R AH Z AH N T EY SH AH N Z K AH N S ER N IH NG DH AH K AA P IY R AY T S T AE T AH S AH V EH N IY W ER K IH N EH N IY K AH N T R IY AW T S AY D DH AH Y UW N AY T IH D S T EY T S
+[val example] corrected:    DH AH N EY SH AH N M EY K S N OW HH AO R AH Z AH N T K AA P AH Z IH K P AA S T ER N IH NG AH M AA R V AY T S T AE T AH S AH V EH N IY W ER K IH N EH N IY K AH N T R IY AY W UH D AH N T DH AH N AY T IH Z T EY K
+[val example] plain text:   The Foundation makes no representations concerning the copyright status of any work in any country outside the United States.
+[val example] noisy:        DH AH AW N EY DH SH AH N M EY OY S N OW HH R R AH Z AH N T G SH P AH Z K P AA HH S ER N IH NG IY AH M K AA P Y R V AY T S T AE D AH S AH UH V EH N Y IH W ER K IH N EH N IH K AH T R IY AY W T AY AH D DH AH Y N AY T IH Z NG Z T EY D S K
+[val example] target:       DH AH F AW N D EY SH AH N M EY K S N OW R EH P R AH Z AH N T EY SH AH N Z K AH N S ER N IH NG DH AH K AA P IY R AY T S T AE T AH S AH V EH N IY W ER K IH N EH N IY K AH N T R IY AW T S AY D DH AH Y UW N AY T IH D S T EY T S
+[val example] corrected:    DH AH N EY SH AH N M EY K S N OW HH AO R AH Z AH N T K AA P AH Z IH K P AA S T ER N IH NG AH M AA R V AY T S T AE T AH S AH V EH N IY W ER K IH N EH N IY K AH N T R IY AY W UH D AH N T DH AH N AY T IH Z T EY K
+[val example] plain text:   The Foundation makes no representations concerning the copyright status of any work in any country outside the United States.
+epoch 95: train_loss=0.5740 | val_loss=0.4978 | lr=0.000578
+epoch 95: train_loss=0.5740 | val_loss=0.4978 | lr=0.000578
+[val example] noisy:        P EH R S SH AH P R AY D AH B AW T M IY K AH ER N T IH N Y UW T AE T AY D UW N W T CH UW AY Z T UW G OW W AE B R AY M N AE HH W AO T Y IH D HH JH K N T D EH L Y UW M IH S S T ER
+[val example] target:       DH EH R Z AH P R AY D AH B AW T M IY HH IY K AH N T IH N Y UW D DH AE T AY D OW N T CH UW Z T UW G OW W EH R AY M N AA T W AO N T IH D AY K AE N T T EH L Y UW M IH S T ER
+[val example] corrected:    P EH R IH S AH P R AY D AH B AW T M IY K AH N T IH N Y UW D DH AE T AY D UW N AA T CH UW Z T UW G OW W EH R AY M N AA T HH IY W AO N T IH D HH ER K AH N T EH L Y UW M IH S T ER
+[val example] plain text:   There's a pride about me," he continued, "that I don't choose to go where I'm not wanted." "I can't tell you, Mr.
+[val example] noisy:        P EH R S SH AH P R AY D AH B AW T M IY K AH ER N T IH N Y UW T AE T AY D UW N W T CH UW AY Z T UW G OW W AE B R AY M N AE HH W AO T Y IH D HH JH K N T D EH L Y UW M IH S S T ER
+[val example] target:       DH EH R Z AH P R AY D AH B AW T M IY HH IY K AH N T IH N Y UW D DH AE T AY D OW N T CH UW Z T UW G OW W EH R AY M N AA T W AO N T IH D AY K AE N T T EH L Y UW M IH S T ER
+[val example] corrected:    P EH R IH S AH P R AY D AH B AW T M IY K AH N T IH N Y UW D DH AE T AY D UW N AA T CH UW Z T UW G OW W EH R AY M N AA T HH IY W AO N T IH D HH ER K AH N T EH L Y UW M IH S T ER
+[val example] plain text:   There's a pride about me," he continued, "that I don't choose to go where I'm not wanted." "I can't tell you, Mr.
+epoch 96: train_loss=0.5739 | val_loss=0.4964 | lr=0.000572
+[val example] noisy:        W AA AA R Y B UW R IY T IH R NG AE K T DH AH V IH Z EY IH T ER
+[val example] target:       W AH T AA R Y UW R IY D IH NG AE S K T DH AH V IH Z IH T ER
+[val example] corrected:    W AA Z AA R Y UW R IY T IH NG AE K T DH AH V IH Z IH T ER
+[val example] plain text:   What are you reading?" asked the visitor.
+epoch 96: train_loss=0.5739 | val_loss=0.4964 | lr=0.000572
+[val example] noisy:        W AA AA R Y B UW R IY T IH R NG AE K T DH AH V IH Z EY IH T ER
+[val example] target:       W AH T AA R Y UW R IY D IH NG AE S K T DH AH V IH Z IH T ER
+[val example] corrected:    W AA Z AA R Y UW R IY T IH NG AE K T DH AH V IH Z IH T ER
+[val example] plain text:   What are you reading?" asked the visitor.
+epoch 97: train_loss=0.5730 | val_loss=0.4920 | lr=0.000567
+[val example] noisy:        AY UH D UH G AW EH T HH ER IH N S AY D
+[val example] target:       AY K UH D G EH T HH ER IH N S AY D
+[val example] corrected:    AY K UH D G EH T HH ER IH N S AY D
+[val example] plain text:   I could get her inside.
+epoch 97: train_loss=0.5730 | val_loss=0.4920 | lr=0.000567
+[val example] noisy:        AY UH D UH G AW EH T HH ER IH N S AY D
+[val example] target:       AY K UH D G EH T HH ER IH N S AY D
+[val example] corrected:    AY K UH D G EH T HH ER IH N S AY D
+[val example] plain text:   I could get her inside.
+epoch 98: train_loss=0.5711 | val_loss=0.4894 | lr=0.000561
+epoch 98: train_loss=0.5711 | val_loss=0.4894 | lr=0.000561
+[val example] noisy:        Y UW S IH L B IY L IY D UW P AH AA R D N EY IH F ER M IH T IY S AH M IH NG AY ZH UH D L AE V S EH AH B AE AH D T AY S EY IY AY SH AE L N T B IY EY B AH L N D DH EH R F AO R AY SH AE L L V IH T
+[val example] target:       Y UW W IH L B IY P L IY Z D T UW P AA R D AH N M AY IH N F ER M IH T IY S AH M TH IH NG AY SH UH D HH AE V S EH D B AH T AY S IY AY SH AE L N AA T B IY EY B AH L AH N D DH EH R F AO R AY SH AE L L IY V IH T
+[val example] corrected:    Y UW S IH L B IY L IY D UW P AA R D N EY IH F HH ER M IH T IH Z S AH M TH IH NG AY SH UH D L AH V S EH T AH B AE D T UW S EY AY SH AE L N AA T B IY EY B AH L AH N D DH EH R F AO R AY SH AE L L IH T
+[val example] plain text:   You will be pleased to pardon my infirmity: something I should have said; but I see I shall not be able, and therefore I shall leave it.
+[val example] noisy:        Y UW S IH L B IY L IY D UW P AH AA R D N EY IH F ER M IH T IY S AH M IH NG AY ZH UH D L AE V S EH AH B AE AH D T AY S EY IY AY SH AE L N T B IY EY B AH L N D DH EH R F AO R AY SH AE L L V IH T
+[val example] target:       Y UW W IH L B IY P L IY Z D T UW P AA R D AH N M AY IH N F ER M IH T IY S AH M TH IH NG AY SH UH D HH AE V S EH D B AH T AY S IY AY SH AE L N AA T B IY EY B AH L AH N D DH EH R F AO R AY SH AE L L IY V IH T
+[val example] corrected:    Y UW S IH L B IY L IY D UW P AA R D N EY IH F HH ER M IH T IH Z S AH M TH IH NG AY SH UH D L AH V S EH T AH B AE D T UW S EY AY SH AE L N AA T B IY EY B AH L AH N D DH EH R F AO R AY SH AE L L IH T
+[val example] plain text:   You will be pleased to pardon my infirmity: something I should have said; but I see I shall not be able, and therefore I shall leave it.
+epoch 99: train_loss=0.5706 | val_loss=0.4934 | lr=0.000556
+epoch 99: train_loss=0.5706 | val_loss=0.4934 | lr=0.000556
+[val example] noisy:        S AH T M Z SH IY G IH V Z M B IY EH R AH D R IH AO G OW ER HH ER SH OW L AW D ER
+[val example] target:       S AH M T AY M Z SH IY G IH V Z M IY AH B IH T AO R AH D R IH NG K OW V ER HH ER SH OW L D ER
+[val example] corrected:    S AH M T AY M Z SH IY G IH V Z M IY B EH R AH N D R IH G OW HH ER SH OW L D ER
+[val example] plain text:   Sometimes she gives me a bit or a drink over her shoulder.
+[val example] noisy:        S AH T M Z SH IY G IH V Z M B IY EH R AH D R IH AO G OW ER HH ER SH OW L AW D ER
+[val example] target:       S AH M T AY M Z SH IY G IH V Z M IY AH B IH T AO R AH D R IH NG K OW V ER HH ER SH OW L D ER
+[val example] corrected:    S AH M T AY M Z SH IY G IH V Z M IY B EH R AH N D R IH G OW HH ER SH OW L D ER
+[val example] plain text:   Sometimes she gives me a bit or a drink over her shoulder.
+epoch 100: train_loss=0.5683 | val_loss=0.4972 | lr=0.000550
+epoch 100: train_loss=0.5683 | val_loss=0.4972 | lr=0.000550
+[val example] noisy:        N JH IH T W AA Z Y UW HH UW K IY L T Y AO R AH NG K AH L W DH AH M AH F AH T G AY M JH AA R K HH SH UH IY K HH IH M S EH L F F R IY AH N D S IH P R AE G NG W EY F R AE M HH ER
+[val example] target:       AY N OW IH T W AA Z Y UW HH UW K IH L D Y AO R AH NG K AH L W IH DH AH M AH F AH L D K R AY M AA R K SH UH K HH IH M S EH L F F R IY AH N D S P R AE NG AH W EY F R AH M HH ER
+[val example] corrected:    N OW IH T W AA Z Y UW HH UW K IH L D Y AO R AH NG K AH L W IH DH AH M AH NG AH V AH T AY M JH AA R K HH IY SH UH K HH IH M S EH L F F R IY AH N D S IH M P R AE NG K W EY F R AH M HH ER
+[val example] plain text:   I know it was you who killed your uncle." With a muffled cry Mark shook himself free, and sprang away from her.
+[val example] noisy:        N JH IH T W AA Z Y UW HH UW K IY L T Y AO R AH NG K AH L W DH AH M AH F AH T G AY M JH AA R K HH SH UH IY K HH IH M S EH L F F R IY AH N D S IH P R AE G NG W EY F R AE M HH ER
+[val example] target:       AY N OW IH T W AA Z Y UW HH UW K IH L D Y AO R AH NG K AH L W IH DH AH M AH F AH L D K R AY M AA R K SH UH K HH IH M S EH L F F R IY AH N D S P R AE NG AH W EY F R AH M HH ER
+[val example] corrected:    N OW IH T W AA Z Y UW HH UW K IH L D Y AO R AH NG K AH L W IH DH AH M AH NG AH V AH T AY M JH AA R K HH IY SH UH K HH IH M S EH L F F R IY AH N D S IH M P R AE NG K W EY F R AH M HH ER
+[val example] plain text:   I know it was you who killed your uncle." With a muffled cry Mark shook himself free, and sprang away from her.
+epoch 101: train_loss=0.5709 | val_loss=0.4904 | lr=0.000544
+epoch 101: train_loss=0.5709 | val_loss=0.4904 | lr=0.000544
+[val example] noisy:        HH IH Z N EY M V R R IY K AH N T L IY AH B IH R Z IH N DH AH L AE N D AH NG N G Z AE Z F AO R IY AY G S AE N P L AA EH N JH TH L AY AY
+[val example] target:       HH IH Z N EY M F R IY K W AH N T L IY AH P IH R Z IH N DH AH L AH N D AH N G AH Z EH T AE Z F AO R IH G Z AE M P AH L AA N JH UW L AY
+[val example] corrected:    HH IH Z N EY M V EH R IY K AH N T L IY AH P IH R Z IH N DH AH L AE N D AH N Z AE Z F AO R IH G Z AE M P AH L AA N DH AH L AY F
+[val example] plain text:   His name frequently appears in the London Gazette, as, for example, on July 28.
+[val example] noisy:        HH IH Z N EY M V R R IY K AH N T L IY AH B IH R Z IH N DH AH L AE N D AH NG N G Z AE Z F AO R IY AY G S AE N P L AA EH N JH TH L AY AY
+[val example] target:       HH IH Z N EY M F R IY K W AH N T L IY AH P IH R Z IH N DH AH L AH N D AH N G AH Z EH T AE Z F AO R IH G Z AE M P AH L AA N JH UW L AY
+[val example] corrected:    HH IH Z N EY M V EH R IY K AH N T L IY AH P IH R Z IH N DH AH L AE N D AH N Z AE Z F AO R IH G Z AE M P AH L AA N DH AH L AY F
+[val example] plain text:   His name frequently appears in the London Gazette, as, for example, on July 28.
+epoch 102: train_loss=0.5688 | val_loss=0.4921 | lr=0.000539
+epoch 102: train_loss=0.5688 | val_loss=0.4921 | lr=0.000539
+[val example] noisy:        AE D R EH TH IH AW AH D AA R T M AH TH AA NG L IH JH K S D DH S S ER IH IY S M AY K EY S
+[val example] target:       AE D R EH S IH N DH AH D AA R T M AH TH K AA L IH JH K EY S DH IH S S ER IH Z M AY K EY S
+[val example] corrected:    AE D R EH TH IH N AH D AA R T M AH N TH IH NG L IH K S T DH IH S S ER IY S M AY K EY S
+[val example] plain text:   _ADDRESS IN THE DARTMOUTH COLLEGE CASE_ This, sir, is my case.
+[val example] noisy:        AE D R EH TH IH AW AH D AA R T M AH TH AA NG L IH JH K S D DH S S ER IH IY S M AY K EY S
+[val example] target:       AE D R EH S IH N DH AH D AA R T M AH TH K AA L IH JH K EY S DH IH S S ER IH Z M AY K EY S
+[val example] corrected:    AE D R EH TH IH N AH D AA R T M AH N TH IH NG L IH K S T DH IH S S ER IY S M AY K EY S
+[val example] plain text:   _ADDRESS IN THE DARTMOUTH COLLEGE CASE_ This, sir, is my case.
+epoch 103: train_loss=0.5682 | val_loss=0.4889 | lr=0.000533
+epoch 103: train_loss=0.5682 | val_loss=0.4889 | lr=0.000533
+[val example] noisy:        AE CH D HH AE D Y UW N AA T S P OW K AH N AH B AW T M B IH R EY AH ZH
+[val example] target:       AH N D HH AE D Y UW N AA T S P OW K AH N AH B AW T M AY B R AH DH ER
+[val example] corrected:    AE T HH AE D Y UW N AA T S P OW K AH N AH B AW T M AY B IH R EY SH AH N
+[val example] plain text:   And had you not spoken about my brother .
+[val example] noisy:        AE CH D HH AE D Y UW N AA T S P OW K AH N AH B AW T M B IH R EY AH ZH
+[val example] target:       AH N D HH AE D Y UW N AA T S P OW K AH N AH B AW T M AY B R AH DH ER
+[val example] corrected:    AE T HH AE D Y UW N AA T S P OW K AH N AH B AW T M AY B IH R EY SH AH N
+[val example] plain text:   And had you not spoken about my brother .
+epoch 104: train_loss=0.5670 | val_loss=0.4861 | lr=0.000528
+epoch 104: train_loss=0.5670 | val_loss=0.4861 | lr=0.000528
+[val example] noisy:        IH N DH S IH S B EH K T IH T M S IY M AH V L IH T AH L D R IH V IY AH L T UW Z P IY K AA V IH ER K S D R IH V M Z M IY T IH NG AH T IH T IH AO Z W N G D B F AH L IY P T
+[val example] target:       IH N DH IH S R IH S P EH K T IH T M EY S IY M AH L IH T AH L T R IH V IY AH L T UW S P IY K AH V IH K S T R IY M Z M IY T IH NG B AH T IH T IH Z W AH N D ER F AH L IY AE P T
+[val example] corrected:    IH N DH IH S B AE K T IH T S IY M Z AH V L IH T AH L D R IH V IY AH L T UW S P IY K AH V IH K S T R IY M Z M IY T IH NG AH N D IH T IH Z W AH N G UH D B AY F AH L IY P
+[val example] plain text:   In this respect it may seem a little trivial to speak of extremes meeting; but it is wonderfully apt.
+[val example] noisy:        IH N DH S IH S B EH K T IH T M S IY M AH V L IH T AH L D R IH V IY AH L T UW Z P IY K AA V IH ER K S D R IH V M Z M IY T IH NG AH T IH T IH AO Z W N G D B F AH L IY P T
+[val example] target:       IH N DH IH S R IH S P EH K T IH T M EY S IY M AH L IH T AH L T R IH V IY AH L T UW S P IY K AH V IH K S T R IY M Z M IY T IH NG B AH T IH T IH Z W AH N D ER F AH L IY AE P T
+[val example] corrected:    IH N DH IH S B AE K T IH T S IY M Z AH V L IH T AH L D R IH V IY AH L T UW S P IY K AH V IH K S T R IY M Z M IY T IH NG AH N D IH T IH Z W AH N G UH D B AY F AH L IY P
+[val example] plain text:   In this respect it may seem a little trivial to speak of extremes meeting; but it is wonderfully apt.
+epoch 105: train_loss=0.5641 | val_loss=0.4853 | lr=0.000522
+epoch 105: train_loss=0.5641 | val_loss=0.4853 | lr=0.000522
+[val example] noisy:        F R DH AH P AW ER Z K AE T AA R S CH EH V R L IY N EH EY AE R N AE S EY AA Z EH IY T UW B IH K UH AH N S IY D AW D IH F W IY W W IH L M AE V D R EH AY D IH S T NG IH K T N OW SH AH N Z AH V DH AH CH S EH V EY AH L S AO R T S AH V S AH B S T AH N AH Z
+[val example] target:       F AO R DH AH P AW ER Z DH AE T AA R S EH V R AH L IY IH N DH EH M AA R N EH S AH S EH R IY T UW B IY K AH N S IH D ER D IH F W IY W IH L HH AE V T R UW D IH S T IH NG K T N OW SH AH N Z AH V DH AH S EH V ER AH L S AO R T S AH V S AH B S T AH N S AH Z
+[val example] corrected:    F AO R DH AH P AW ER Z K AE N AA T AA R S EH V R AH L IY N EH R N AE S AH Z EH N IY T UW B IY K AH N S IH D ER D IH F W IY W IH L HH AE V D R EH D IH S T IH NG K T N OW SH AH N Z AH V DH AH S EH V ER AH L S AO R T S AH V S AH B S T AH N S AH Z
+[val example] plain text:   For the powers that are severally in them are necessary to be considered, if we will have true distinct notions of the several sorts of substances.
+[val example] noisy:        F R DH AH P AW ER Z K AE T AA R S CH EH V R L IY N EH EY AE R N AE S EY AA Z EH IY T UW B IH K UH AH N S IY D AW D IH F W IY W W IH L M AE V D R EH AY D IH S T NG IH K T N OW SH AH N Z AH V DH AH CH S EH V EY AH L S AO R T S AH V S AH B S T AH N AH Z
+[val example] target:       F AO R DH AH P AW ER Z DH AE T AA R S EH V R AH L IY IH N DH EH M AA R N EH S AH S EH R IY T UW B IY K AH N S IH D ER D IH F W IY W IH L HH AE V T R UW D IH S T IH NG K T N OW SH AH N Z AH V DH AH S EH V ER AH L S AO R T S AH V S AH B S T AH N S AH Z
+[val example] corrected:    F AO R DH AH P AW ER Z K AE N AA T AA R S EH V R AH L IY N EH R N AE S AH Z EH N IY T UW B IY K AH N S IH D ER D IH F W IY W IH L HH AE V D R EH D IH S T IH NG K T N OW SH AH N Z AH V DH AH S EH V ER AH L S AO R T S AH V S AH B S T AH N S AH Z
+[val example] plain text:   For the powers that are severally in them are necessary to be considered, if we will have true distinct notions of the several sorts of substances.
+epoch 106: train_loss=0.5607 | val_loss=0.4825 | lr=0.000517
+[val example] noisy:        TH AH AW S IH K S TH JH AE W B T ER AH V UH M K S T CH ER
+[val example] target:       DH AH S IH K S TH CH AE P T ER AH V M IH S T ER
+[val example] corrected:    DH AH S IH K S TH AE B T ER AH V M IH S T ER
+[val example] plain text:   The sixth chapter of Mr.
+epoch 106: train_loss=0.5607 | val_loss=0.4825 | lr=0.000517
+[val example] noisy:        TH AH AW S IH K S TH JH AE W B T ER AH V UH M K S T CH ER
+[val example] target:       DH AH S IH K S TH CH AE P T ER AH V M IH S T ER
+[val example] corrected:    DH AH S IH K S TH AE B T ER AH V M IH S T ER
+[val example] plain text:   The sixth chapter of Mr.
+epoch 107: train_loss=0.5594 | val_loss=0.4799 | lr=0.000511
+[val example] noisy:        DH AH AO L D ER M M IH N AE W T ER AO V EH R IY F L AE SH G IH N D K AE R IY D G OW L D F HH EH D AH T EY F N Z W IH CH DH NG EY S W AH NG V EH IY NG AE T EH S V K S D EH B
+[val example] target:       DH AH AO L D ER M IH N W ER AO L V EH R IY F L EH SH IY AH N D K AE R IY D G OW L D HH EH D AH D K EY N Z W IH CH DH EY S W AH NG V EH R IY HH AY AE T EH V ER IY S T EH P
+[val example] corrected:    DH AH AO L T ER M IH N AH T ER V EH R IY F L AE SH IH N D AH K AE R IY D G OW L D HH EH D AH T EY N Z W IH CH DH EY S W AH NG V EH R IY AE T EH K S T EH M P
+[val example] plain text:   The Aldermen were all very fleshy, and carried gold-headed canes which they swung very high at every step.
+epoch 107: train_loss=0.5594 | val_loss=0.4799 | lr=0.000511
+[val example] noisy:        DH AH AO L D ER M M IH N AE W T ER AO V EH R IY F L AE SH G IH N D K AE R IY D G OW L D F HH EH D AH T EY F N Z W IH CH DH NG EY S W AH NG V EH IY NG AE T EH S V K S D EH B
+[val example] target:       DH AH AO L D ER M IH N W ER AO L V EH R IY F L EH SH IY AH N D K AE R IY D G OW L D HH EH D AH D K EY N Z W IH CH DH EY S W AH NG V EH R IY HH AY AE T EH V ER IY S T EH P
+[val example] corrected:    DH AH AO L T ER M IH N AH T ER V EH R IY F L AE SH IH N D AH K AE R IY D G OW L D HH EH D AH T EY N Z W IH CH DH EY S W AH NG V EH R IY AE T EH K S T EH M P
+[val example] plain text:   The Aldermen were all very fleshy, and carried gold-headed canes which they swung very high at every step.
+epoch 108: train_loss=0.5579 | val_loss=0.4801 | lr=0.000506
+[val example] noisy:        D N V IY SH EH L R IH K IY Z UW B IH AH W IH DH Y NG UW ER L IY AH N EH K UH S OW T W IY K AH N D M IH S T ER
+[val example] target:       D EY V IY G EH R IH K IH Z T UW B IY W IH DH Y UW ER L IY DH AH N EH K S T W IY K AH N D M IH S T ER
+[val example] corrected:    D OW N T F IY L SH EH L R IH K IY Z T UW B IY AH W IH DH Y UW ER L IY AH N D K UH D S OW T W IY K AH N D M IH S T ER
+[val example] plain text:   Davy Garrick is to be with you early the next week, and Mr.
+epoch 108: train_loss=0.5579 | val_loss=0.4801 | lr=0.000506
+[val example] noisy:        D N V IY SH EH L R IH K IY Z UW B IH AH W IH DH Y NG UW ER L IY AH N EH K UH S OW T W IY K AH N D M IH S T ER
+[val example] target:       D EY V IY G EH R IH K IH Z T UW B IY W IH DH Y UW ER L IY DH AH N EH K S T W IY K AH N D M IH S T ER
+[val example] corrected:    D OW N T F IY L SH EH L R IH K IY Z T UW B IY AH W IH DH Y UW ER L IY AH N D K UH D S OW T W IY K AH N D M IH S T ER
+[val example] plain text:   Davy Garrick is to be with you early the next week, and Mr.
+epoch 109: train_loss=0.5581 | val_loss=0.4806 | lr=0.000500
+epoch 109: train_loss=0.5581 | val_loss=0.4806 | lr=0.000500
+[val example] noisy:        B AH T AY K UH N OW AA M EY K M AY Z N M W IH DH N IH S IH
+[val example] target:       B AH T AY K UH D N AA T M EY K M AY HH OW M W IH DH M IH S IH Z
+[val example] corrected:    B AH T AY K UH D N AA T M EY K M AY N EY M W IH DH N IH S IH Z
+[val example] plain text:   But I could not make my home with Mrs.
+[val example] noisy:        B AH T AY K UH N OW AA M EY K M AY Z N M W IH DH N IH S IH
+[val example] target:       B AH T AY K UH D N AA T M EY K M AY HH OW M W IH DH M IH S IH Z
+[val example] corrected:    B AH T AY K UH D N AA T M EY K M AY N EY M W IH DH N IH S IH Z
+[val example] plain text:   But I could not make my home with Mrs.
+epoch 110: train_loss=0.5571 | val_loss=0.4842 | lr=0.000494
+[val example] noisy:        W AE D D F CH EH NG K SH IY P R OW K Y UH R EH M P L OY M AH N IY
+[val example] target:       W EH R D IH D F R AE NG K L IH N P R OW K Y UH R EH M P L OY M AH N T
+[val example] corrected:    W AH T D IH F EH K T SH IY P R OW K Y UH R EH M P L OY M AH N T
+[val example] plain text:   Where did Franklin procure employment?
+epoch 110: train_loss=0.5571 | val_loss=0.4842 | lr=0.000494
+[val example] noisy:        W AE D D F CH EH NG K SH IY P R OW K Y UH R EH M P L OY M AH N IY
+[val example] target:       W EH R D IH D F R AE NG K L IH N P R OW K Y UH R EH M P L OY M AH N T
+[val example] corrected:    W AH T D IH F EH K T SH IY P R OW K Y UH R EH M P L OY M AH N T
+[val example] plain text:   Where did Franklin procure employment?
+epoch 111: train_loss=0.5558 | val_loss=0.4793 | lr=0.000489
+[val example] noisy:        HH W IH S T R UW P S HH D K W S AY T K T AH F EH N JH M AH P N D AE D F AA R M IH NG T AH N AA N DH AE D EY B N AH T K EH IH D DH AH P L EY S W IH DH K AH N S D ER AH B AH L L AO S T UW DH AH EH N AH M IY
+[val example] target:       HH IH Z T R UW P S HH AE D K W AY T AH L IH T AH L EH N G EY JH M AH N T AE T F AA R M IH NG T AH N AA N DH AE T D EY B AH T K AE R IY D DH AH P L EY S W IH DH K AH N S IH D ER AH B AH L L AO S T UW DH AH EH N AH M IY
+[val example] corrected:    HH IY W IH S T R UW P S HH AE D K W AY T K AH N F EH N CH M AH N T AH N D F AA R M IH NG T AH N AA N DH AH D EY B AH T K EH R IH D DH AH P L EY S W IH DH K AH N S IH D ER AH B AH L L AO S T UW DH AH EH N AH M IY
+[val example] plain text:   His troops had quite a little engagement at Farmington on that day, but carried the place with considerable loss to the enemy.
+epoch 111: train_loss=0.5558 | val_loss=0.4793 | lr=0.000489
+[val example] noisy:        HH W IH S T R UW P S HH D K W S AY T K T AH F EH N JH M AH P N D AE D F AA R M IH NG T AH N AA N DH AE D EY B N AH T K EH IH D DH AH P L EY S W IH DH K AH N S D ER AH B AH L L AO S T UW DH AH EH N AH M IY
+[val example] target:       HH IH Z T R UW P S HH AE D K W AY T AH L IH T AH L EH N G EY JH M AH N T AE T F AA R M IH NG T AH N AA N DH AE T D EY B AH T K AE R IY D DH AH P L EY S W IH DH K AH N S IH D ER AH B AH L L AO S T UW DH AH EH N AH M IY
+[val example] corrected:    HH IY W IH S T R UW P S HH AE D K W AY T K AH N F EH N CH M AH N T AH N D F AA R M IH NG T AH N AA N DH AH D EY B AH T K EH R IH D DH AH P L EY S W IH DH K AH N S IH D ER AH B AH L L AO S T UW DH AH EH N AH M IY
+[val example] plain text:   His troops had quite a little engagement at Farmington on that day, but carried the place with considerable loss to the enemy.
+epoch 112: train_loss=0.5551 | val_loss=0.4808 | lr=0.000483
+[val example] noisy:        HH IY S ER EH S N T D AW N T UW TH AH AA M N Z AH M EH AA F JH TH N AA D M IH L IY N S AY N N D B HH M IH M S EH L F G AO R D IH D NG D UW DH P AH Y AE UW ZH AH AH L F AO M B AH T R IH T AH N TH R UW AW T W IH DH S HH IH Z OW N AE N D
+[val example] target:       HH IY S EH N T D AW N T UW DH AH K AA M AH N Z AH M EH S AH JH N AA T M IH R L IY S AY N D B AY HH IH M S EH L F AH K AO R D IH NG T UW DH AH Y UW ZH AH W AH L F AO R M B AH T R IH T AH N TH R UW AW T W IH DH HH IH Z OW N HH AE N D
+[val example] corrected:    HH IY S ER EH N T D AW N T UW DH AH AA R M Z AH M EH N AH V JH OY N D M IH L IY AH N S AY N D HH IH M S EH L F G AO R D IH D T UW DH AH Y UW ZH AH W AH L F AO R M B AH T R IH T AH N TH R UW AW T W IH DH HH IH Z OW N HH AE N D
+[val example] plain text:   He sent down to the Commons a message, not merely signed by himself according to the usual form, but written throughout with his own hand.
+epoch 112: train_loss=0.5551 | val_loss=0.4808 | lr=0.000483
+[val example] noisy:        HH IY S ER EH S N T D AW N T UW TH AH AA M N Z AH M EH AA F JH TH N AA D M IH L IY N S AY N N D B HH M IH M S EH L F G AO R D IH D NG D UW DH P AH Y AE UW ZH AH AH L F AO M B AH T R IH T AH N TH R UW AW T W IH DH S HH IH Z OW N AE N D
+[val example] target:       HH IY S EH N T D AW N T UW DH AH K AA M AH N Z AH M EH S AH JH N AA T M IH R L IY S AY N D B AY HH IH M S EH L F AH K AO R D IH NG T UW DH AH Y UW ZH AH W AH L F AO R M B AH T R IH T AH N TH R UW AW T W IH DH HH IH Z OW N HH AE N D
+[val example] corrected:    HH IY S ER EH N T D AW N T UW DH AH AA R M Z AH M EH N AH V JH OY N D M IH L IY AH N S AY N D HH IH M S EH L F G AO R D IH D T UW DH AH Y UW ZH AH W AH L F AO R M B AH T R IH T AH N TH R UW AW T W IH DH HH IH Z OW N HH AE N D
+[val example] plain text:   He sent down to the Commons a message, not merely signed by himself according to the usual form, but written throughout with his own hand.
+epoch 113: train_loss=0.5541 | val_loss=0.4779 | lr=0.000478
+[val example] noisy:        IH N HH AE F P AE N AW ER R AE F D ER DH IH S F IH Z T
+[val example] target:       IH N HH AE F AE N AW ER AE F T ER DH IH S M IH S T ER
+[val example] corrected:    IH N HH AE F P AE N AW ER R AE F T ER DH IH S F IH S T
+[val example] plain text:   In half an hour after this Mr.
+epoch 113: train_loss=0.5541 | val_loss=0.4779 | lr=0.000478
+[val example] noisy:        IH N HH AE F P AE N AW ER R AE F D ER DH IH S F IH Z T
+[val example] target:       IH N HH AE F AE N AW ER AE F T ER DH IH S M IH S T ER
+[val example] corrected:    IH N HH AE F P AE N AW ER R AE F T ER DH IH S F IH S T
+[val example] plain text:   In half an hour after this Mr.
+epoch 114: train_loss=0.5535 | val_loss=0.4770 | lr=0.000472
+epoch 114: train_loss=0.5535 | val_loss=0.4770 | lr=0.000472
+[val example] noisy:        HH IY S IH M D M HH AA AH S D AH N D R IH Z V D AE P OY G HH IH Z OW F G OY IH V T S AO L V HH IY HH UW M AW S L F T Z Y Z AH Z IY N AE HH IH Z K N F EH SH AH N AE T HH B IY W AA Z F N UH L AH V P V AY D AH TH N T AE M B IH SH N
+[val example] target:       HH IY S IY M D M AA D AH S T AH N D R IH Z ER V D AH B AW T HH IH Z OW N G IH F T S AO L DH OW HH IY HH IH M S EH L F T EH L Z AH S IH N HH IH Z K AH N F EH SH AH N Z DH AE T HH IY W AA Z F UH L AH V P R AY D AH N D AE M B IH SH AH N
+[val example] corrected:    HH IY S IY M D HH AA R T AH N D R IH Z ER V D AH P HH IH Z OW N G IH V IH T S AO L HH IY HH UW M S EH L F T UW S AH CH AE Z IH N HH IH Z K AH N F EH SH AH N AE T HH IY W AA Z F UH L AH V P R AY D AH N D AE M B IH SH AH N
+[val example] plain text:   He seemed modest and reserved about his own gifts, although he himself tells us in his _Confessions_ that he was full of pride and ambition.
+[val example] noisy:        HH IY S IH M D M HH AA AH S D AH N D R IH Z V D AE P OY G HH IH Z OW F G OY IH V T S AO L V HH IY HH UW M AW S L F T Z Y Z AH Z IY N AE HH IH Z K N F EH SH AH N AE T HH B IY W AA Z F N UH L AH V P V AY D AH TH N T AE M B IH SH N
+[val example] target:       HH IY S IY M D M AA D AH S T AH N D R IH Z ER V D AH B AW T HH IH Z OW N G IH F T S AO L DH OW HH IY HH IH M S EH L F T EH L Z AH S IH N HH IH Z K AH N F EH SH AH N Z DH AE T HH IY W AA Z F UH L AH V P R AY D AH N D AE M B IH SH AH N
+[val example] corrected:    HH IY S IY M D HH AA R T AH N D R IH Z ER V D AH P HH IH Z OW N G IH V IH T S AO L HH IY HH UW M S EH L F T UW S AH CH AE Z IH N HH IH Z K AH N F EH SH AH N AE T HH IY W AA Z F UH L AH V P R AY D AH N D AE M B IH SH AH N
+[val example] plain text:   He seemed modest and reserved about his own gifts, although he himself tells us in his _Confessions_ that he was full of pride and ambition.
+epoch 115: train_loss=0.5537 | val_loss=0.4775 | lr=0.000467
+[val example] noisy:        IH G AE K ER T L JH IY DH K AY N D AH V AH S EY F IH AO EH Z AH P K IH K V ER JH IH N Y AH HH AE D EH D DH AE SH AO R P N AW IH NG AH N D EH N HH AY G R IY AE N D M AH DH ER AH B JH EH K T NG D S IH NG DH AW T HH DH AH G R B N SH D W AE S T IH AH T UW D AE OW M P SH S AH JH EH S T IH D HH AE V IH NG IH T IH N P DH AH HH EY
+[val example] target:       IH G Z AE K T L IY DH AH K AY N D AH V AH D EY F AO R AH P IH K N IH K V ER JH IH N Y AH HH AE D S EH D DH AE T M AO R N IH NG AH N D W EH N HH ER G R AE N D M AH DH ER AH B JH EH K T AH D S EY IH NG DH AE T DH AH G R AW N D W AA Z S T IH L T UW D AE M P SH IY S AH JH EH S T IH D HH AE V IH NG IH T IH N DH AH HH EY
+[val example] corrected:    IH G Z AE K T L IY DH AH K AY N D AH V AH S EY F IH Z AH P IH K CH ER IH N Y AH HH AE D S EH D DH AH SH AO R P N AW IH NG AH N D DH EH N HH AY G R IY AH N D M AH DH ER AH B JH EH K T IH D S IH NG AW T DH AH G R AW N D W AA Z T UW D AE M P S AH JH EH S T IH D HH AE V IH NG IH T IH N DH AH HH EY S
+[val example] plain text:   Exactly the kind of a day for a picnic," Virginia had said that morning, and when her grandmother objected, saying that the ground was still too damp, she suggested having it in the hay-barn.
+epoch 115: train_loss=0.5537 | val_loss=0.4775 | lr=0.000467
+[val example] noisy:        IH G AE K ER T L JH IY DH K AY N D AH V AH S EY F IH AO EH Z AH P K IH K V ER JH IH N Y AH HH AE D EH D DH AE SH AO R P N AW IH NG AH N D EH N HH AY G R IY AE N D M AH DH ER AH B JH EH K T NG D S IH NG DH AW T HH DH AH G R B N SH D W AE S T IH AH T UW D AE OW M P SH S AH JH EH S T IH D HH AE V IH NG IH T IH N P DH AH HH EY
+[val example] target:       IH G Z AE K T L IY DH AH K AY N D AH V AH D EY F AO R AH P IH K N IH K V ER JH IH N Y AH HH AE D S EH D DH AE T M AO R N IH NG AH N D W EH N HH ER G R AE N D M AH DH ER AH B JH EH K T AH D S EY IH NG DH AE T DH AH G R AW N D W AA Z S T IH L T UW D AE M P SH IY S AH JH EH S T IH D HH AE V IH NG IH T IH N DH AH HH EY
+[val example] corrected:    IH G Z AE K T L IY DH AH K AY N D AH V AH S EY F IH Z AH P IH K CH ER IH N Y AH HH AE D S EH D DH AH SH AO R P N AW IH NG AH N D DH EH N HH AY G R IY AH N D M AH DH ER AH B JH EH K T IH D S IH NG AW T DH AH G R AW N D W AA Z T UW D AE M P S AH JH EH S T IH D HH AE V IH NG IH T IH N DH AH HH EY S
+[val example] plain text:   Exactly the kind of a day for a picnic," Virginia had said that morning, and when her grandmother objected, saying that the ground was still too damp, she suggested having it in the hay-barn.
+epoch 116: train_loss=0.5539 | val_loss=0.4786 | lr=0.000461
+[val example] noisy:        HH EH L AH N Z AE G Z IH OW AE B ER S T IY EY CH
+[val example] target:       HH EH L AH N Z AA K T OW B ER T IY EY CH
+[val example] corrected:    HH EH L AH N Z AE Z IH T AE B S T R EY N JH
+[val example] plain text:   Helens, October 7th, 1852.
+epoch 116: train_loss=0.5539 | val_loss=0.4786 | lr=0.000461
+[val example] noisy:        HH EH L AH N Z AE G Z IH OW AE B ER S T IY EY CH
+[val example] target:       HH EH L AH N Z AA K T OW B ER T IY EY CH
+[val example] corrected:    HH EH L AH N Z AE Z IH T AE B S T R EY N JH
+[val example] plain text:   Helens, October 7th, 1852.
+epoch 117: train_loss=0.5512 | val_loss=0.4746 | lr=0.000456
+[val example] noisy:        R Z AH P F AH R UW D K R AO S V M AE N
+[val example] target:       R AY M Z AH V AH R EH D K R AO S M AE N
+[val example] corrected:    R IH Z AH L T F R UW T K R AO S M AE N
+[val example] plain text:   RHYMES OF A RED CROSS MAN.
+epoch 117: train_loss=0.5512 | val_loss=0.4746 | lr=0.000456
+[val example] noisy:        R Z AH P F AH R UW D K R AO S V M AE N
+[val example] target:       R AY M Z AH V AH R EH D K R AO S M AE N
+[val example] corrected:    R IH Z AH L T F R UW T K R AO S M AE N
+[val example] plain text:   RHYMES OF A RED CROSS MAN.
+epoch 118: train_loss=0.5507 | val_loss=0.4754 | lr=0.000450
+epoch 118: train_loss=0.5507 | val_loss=0.4754 | lr=0.000450
+[val example] noisy:        AH TH AH N AH V DH AH R IY W UH AH N AE R IY JH S P IH AH DH L IY D IY V EH L AH P T DH AH IH T R UW K EH SH IH K T ER AH V DH AE S AH N AH V DH AH B AA AH D W UH M AA N
+[val example] target:       DH AH S AH N AH V DH AH F R IY W UH M AH N V EH R IY S P IY D AH L IY D IH V EH L AH P T DH AH T R UW K EH R IH K T ER AH V DH AH S AH N AH V DH AH B AA N D W UH M AH N
+[val example] corrected:    AH TH AH N AH V DH AH R IY L W UH M AH N EH R IY S P IH R AH T L IY D IH V EH L AH P T DH AH IH N T R UW K EH R IH K T ER AH V DH AH S AH N AH V DH AH B AA D IY W UH M AH N
+[val example] plain text:   The son of the free-woman very speedily developed the true character of the son of the bond-woman.
+[val example] noisy:        AH TH AH N AH V DH AH R IY W UH AH N AE R IY JH S P IH AH DH L IY D IY V EH L AH P T DH AH IH T R UW K EH SH IH K T ER AH V DH AE S AH N AH V DH AH B AA AH D W UH M AA N
+[val example] target:       DH AH S AH N AH V DH AH F R IY W UH M AH N V EH R IY S P IY D AH L IY D IH V EH L AH P T DH AH T R UW K EH R IH K T ER AH V DH AH S AH N AH V DH AH B AA N D W UH M AH N
+[val example] corrected:    AH TH AH N AH V DH AH R IY L W UH M AH N EH R IY S P IH R AH T L IY D IH V EH L AH P T DH AH IH N T R UW K EH R IH K T ER AH V DH AH S AH N AH V DH AH B AA D IY W UH M AH N
+[val example] plain text:   The son of the free-woman very speedily developed the true character of the son of the bond-woman.
+epoch 119: train_loss=0.5508 | val_loss=0.4686 | lr=0.000444
+epoch 119: train_loss=0.5508 | val_loss=0.4686 | lr=0.000444
+[val example] noisy:        B AH T T T UW IH M IH T HH AE T S IY ZH D T UW M IH N V EH NG IY UH CH IH N D IY K D
+[val example] target:       B AH T T UW HH IH M IH T HH AE D S IY M D T UW M IY N V EH R IY M AH CH IH N D IY D
+[val example] corrected:    B AH T T UW HH IH M IH T HH AE D S IY M D T UW M IY N V EH R IY W IH N D IY D
+[val example] plain text:   But to him it had seemed to mean very much indeed.
+[val example] noisy:        B AH T T T UW IH M IH T HH AE T S IY ZH D T UW M IH N V EH NG IY UH CH IH N D IY K D
+[val example] target:       B AH T T UW HH IH M IH T HH AE D S IY M D T UW M IY N V EH R IY M AH CH IH N D IY D
+[val example] corrected:    B AH T T UW HH IH M IH T HH AE D S IY M D T UW M IY N V EH R IY W IH N D IY D
+[val example] plain text:   But to him it had seemed to mean very much indeed.
+epoch 120: train_loss=0.5477 | val_loss=0.4723 | lr=0.000439
+epoch 120: train_loss=0.5477 | val_loss=0.4723 | lr=0.000439
+[val example] noisy:        R IH S CH EH AH N Z D IH S D N AA T AE S M K IY Z K W CH N Z
+[val example] target:       K R IH S CH AH N Z D IH D N AA T AE S K DH IY Z K W EH S CH AH N Z
+[val example] corrected:    R IH S CH AH N Z D IH D N AA T AE S K M IY AE Z K W EH S CH AH N Z
+[val example] plain text:   Christians did not ask these questions.
+[val example] noisy:        R IH S CH EH AH N Z D IH S D N AA T AE S M K IY Z K W CH N Z
+[val example] target:       K R IH S CH AH N Z D IH D N AA T AE S K DH IY Z K W EH S CH AH N Z
+[val example] corrected:    R IH S CH AH N Z D IH D N AA T AE S K M IY AE Z K W EH S CH AH N Z
+[val example] plain text:   Christians did not ask these questions.
+epoch 121: train_loss=0.5466 | val_loss=0.4681 | lr=0.000433
+epoch 121: train_loss=0.5466 | val_loss=0.4681 | lr=0.000433
+[val example] noisy:        AH N N OW N T UW DH AH G R EY T P AH B L IH S K IH N DH OW S D EY Z AH S IY K R AH T M W D R W EY D AH W AO DH IH N W IH CH AO DH AH IY AH V EY L B AH L F TH R S Z AH V DH AH AH TH AO R AH T IY Z T AE UH K DH AH ER F IY L AH G EH N S W AE N M AE N
+[val example] target:       AH N N OW N T UW DH AH G R EY T P AH B L IH K IH N DH OW Z D EY Z AH S IY K R AH T W AO R W EY JH D AH W AO R IH N W IH CH AO L DH AH AH V EY L AH B AH L F AO R S IH Z AH V DH AH AH TH AO R AH T IY Z T UH K DH AH F IY L D AH G EH N S T W AH N M AE N
+[val example] corrected:    AH N D N OW N T UW DH AH G R EY T P AH B L IH K IH N DH OW Z D EY Z AH S IY K R AH T M EY D W EY T AH W AO R D IH N W IH CH DH AH IY V AH L B AH T F AO R S AH Z AH V DH AH AH TH AO R AH T IY Z T UH K DH AH ER L IY AH G EH N S T W AH N M AE N
+[val example] plain text:   Unknown to the great public, in those days a secret war waged--a war in which all the available forces of the authorities took the field against one man!
+[val example] noisy:        AH N N OW N T UW DH AH G R EY T P AH B L IH S K IH N DH OW S D EY Z AH S IY K R AH T M W D R W EY D AH W AO DH IH N W IH CH AO DH AH IY AH V EY L B AH L F TH R S Z AH V DH AH AH TH AO R AH T IY Z T AE UH K DH AH ER F IY L AH G EH N S W AE N M AE N
+[val example] target:       AH N N OW N T UW DH AH G R EY T P AH B L IH K IH N DH OW Z D EY Z AH S IY K R AH T W AO R W EY JH D AH W AO R IH N W IH CH AO L DH AH AH V EY L AH B AH L F AO R S IH Z AH V DH AH AH TH AO R AH T IY Z T UH K DH AH F IY L D AH G EH N S T W AH N M AE N
+[val example] corrected:    AH N D N OW N T UW DH AH G R EY T P AH B L IH K IH N DH OW Z D EY Z AH S IY K R AH T M EY D W EY T AH W AO R D IH N W IH CH DH AH IY V AH L B AH T F AO R S AH Z AH V DH AH AH TH AO R AH T IY Z T UH K DH AH ER L IY AH G EH N S T W AH N M AE N
+[val example] plain text:   Unknown to the great public, in those days a secret war waged--a war in which all the available forces of the authorities took the field against one man!
+epoch 122: train_loss=0.5465 | val_loss=0.4697 | lr=0.000428
+epoch 122: train_loss=0.5465 | val_loss=0.4697 | lr=0.000428
+[val example] noisy:        AH DH Z K M IY N R AE P IH D S AH AO K EH SH AH N JH AH N D L UH EH K IH V NG AE ZH D DH AH B R AW AH DH AH AA P AH Z IY T S AY D AH V DH EH AH R AH V IY N DH EY S AO N AH K P ER AH V N AW EY T IH V AH N
+[val example] target:       AH DH ER Z K EY M IH N R AE P IH D S AH K S EH SH AH N AH N D L UH K IH NG AE T DH AH B R AW AH V DH AH AA P AH Z IH T S AY D AH V DH AH R AH V IY N DH EY S AO AH N AH M B ER AH V N EY T IH V Z
+[val example] corrected:    AH DH ER Z K AH M IH N R AE P IH D S AH K S EH SH AH N AH N D L UH K IH NG AE T DH AH B R AW AH V DH AH AA P AH Z IH T S AY D AH V DH AH R AH F IY N DH EY S AO N AH K AA P ER AH V N EY T IH V AH N
+[val example] plain text:   Others came in rapid succession; and, looking at the brow of the opposite side of the ravine, they saw a number of natives.
+[val example] noisy:        AH DH Z K M IY N R AE P IH D S AH AO K EH SH AH N JH AH N D L UH EH K IH V NG AE ZH D DH AH B R AW AH DH AH AA P AH Z IY T S AY D AH V DH EH AH R AH V IY N DH EY S AO N AH K P ER AH V N AW EY T IH V AH N
+[val example] target:       AH DH ER Z K EY M IH N R AE P IH D S AH K S EH SH AH N AH N D L UH K IH NG AE T DH AH B R AW AH V DH AH AA P AH Z IH T S AY D AH V DH AH R AH V IY N DH EY S AO AH N AH M B ER AH V N EY T IH V Z
+[val example] corrected:    AH DH ER Z K AH M IH N R AE P IH D S AH K S EH SH AH N AH N D L UH K IH NG AE T DH AH B R AW AH V DH AH AA P AH Z IH T S AY D AH V DH AH R AH F IY N DH EY S AO N AH K AA P ER AH V N EY T IH V AH N
+[val example] plain text:   Others came in rapid succession; and, looking at the brow of the opposite side of the ravine, they saw a number of natives.
+epoch 123: train_loss=0.5466 | val_loss=0.4690 | lr=0.000422
+epoch 123: train_loss=0.5466 | val_loss=0.4690 | lr=0.000422
+[val example] noisy:        EY HH EH D AH L SH AA T AH V D IH F AH K AH L T IY G K EH T NG IH NG HH IH M M T F R AH M AH N D ER IY
+[val example] target:       DH EY HH AE D AH L AA T AH V D IH F AH K AH L T IY G EH T IH NG HH IH M AW T F R AH M AH N D ER
+[val example] corrected:    DH EY HH AE D AH L AA T AH V D IH F AH K AH L T IY K EH P T IH NG HH IH M T UW F R AH M AH N D ER
+[val example] plain text:   They had a lot of difficulty getting him out from under.
+[val example] noisy:        EY HH EH D AH L SH AA T AH V D IH F AH K AH L T IY G K EH T NG IH NG HH IH M M T F R AH M AH N D ER IY
+[val example] target:       DH EY HH AE D AH L AA T AH V D IH F AH K AH L T IY G EH T IH NG HH IH M AW T F R AH M AH N D ER
+[val example] corrected:    DH EY HH AE D AH L AA T AH V D IH F AH K AH L T IY K EH P T IH NG HH IH M T UW F R AH M AH N D ER
+[val example] plain text:   They had a lot of difficulty getting him out from under.
+epoch 124: train_loss=0.5459 | val_loss=0.4683 | lr=0.000417
+[val example] noisy:        DH EH R W AA Z AY N OW S T AA P IH EH NG JH AO G R M IH D T AH N
+[val example] target:       DH EH R W AA Z N OW S T AA P IH NG JH AO R JH M AO R T AH N
+[val example] corrected:    DH EH R W AA Z N OW S T AA P IH NG JH AO R JH M IH D S T AH N
+[val example] plain text:   There was no stopping George Morton.
+epoch 124: train_loss=0.5459 | val_loss=0.4683 | lr=0.000417
+[val example] noisy:        DH EH R W AA Z AY N OW S T AA P IH EH NG JH AO G R M IH D T AH N
+[val example] target:       DH EH R W AA Z N OW S T AA P IH NG JH AO R JH M AO R T AH N
+[val example] corrected:    DH EH R W AA Z N OW S T AA P IH NG JH AO R JH M IH D S T AH N
+[val example] plain text:   There was no stopping George Morton.
+epoch 125: train_loss=0.5444 | val_loss=0.4690 | lr=0.000411
+epoch 125: train_loss=0.5444 | val_loss=0.4690 | lr=0.000411
+[val example] noisy:        IH T W IH M K G IH V AH S AA B K IH D AH V AH HH AE N D IY K P IH UW K S EY S AE HH T T AE K AA IY IH Z AH M EH N AH S P
+[val example] target:       IH T W IH L G IH V AH S AH B IH T AH V AH HH AE N D IY K AE P IH N K EY S DH AE T T AE K S IY IH Z AH M EH N AH S
+[val example] corrected:    IH T W IH L G IH V AH S AA B K IH T AH V AH HH AE N D IY K P IH K S EY S AE T T AE K AA N HH IH Z AH M EH N AH S
+[val example] plain text:   It will give us a bit of a handicap in case that taxi is a menace.
+[val example] noisy:        IH T W IH M K G IH V AH S AA B K IH D AH V AH HH AE N D IY K P IH UW K S EY S AE HH T T AE K AA IY IH Z AH M EH N AH S P
+[val example] target:       IH T W IH L G IH V AH S AH B IH T AH V AH HH AE N D IY K AE P IH N K EY S DH AE T T AE K S IY IH Z AH M EH N AH S
+[val example] corrected:    IH T W IH L G IH V AH S AA B K IH T AH V AH HH AE N D IY K P IH K S EY S AE T T AE K AA N HH IH Z AH M EH N AH S
+[val example] plain text:   It will give us a bit of a handicap in case that taxi is a menace.
+epoch 126: train_loss=0.5421 | val_loss=0.4663 | lr=0.000406
+epoch 126: train_loss=0.5421 | val_loss=0.4663 | lr=0.000406
+[val example] noisy:        SH IY DH AA K T D N Y AE L AH N D B IH N OY UW T IY CH HH IH M T UW R EH D AH N T AY UW IY F AW G AW Y OY ER EY AY
+[val example] target:       SH IY L AY K T D AE N Y AH L AH N D B IH G AE N T UW T IY CH HH IH M T UW R EH D AH N D T UW F IH G Y ER
+[val example] corrected:    SH IY W AA Z K AA N T EH N Y AH L AH N D B IH N T UW T IY CH HH IH M T UW R EH D AH N T UW B IY F AW N D AW ER W EY
+[val example] plain text:   She liked Daniel and began to teach him to read and to figure.
+[val example] noisy:        SH IY DH AA K T D N Y AE L AH N D B IH N OY UW T IY CH HH IH M T UW R EH D AH N T AY UW IY F AW G AW Y OY ER EY AY
+[val example] target:       SH IY L AY K T D AE N Y AH L AH N D B IH G AE N T UW T IY CH HH IH M T UW R EH D AH N D T UW F IH G Y ER
+[val example] corrected:    SH IY W AA Z K AA N T EH N Y AH L AH N D B IH N T UW T IY CH HH IH M T UW R EH D AH N T UW B IY F AW N D AW ER W EY
+[val example] plain text:   She liked Daniel and began to teach him to read and to figure.
+epoch 127: train_loss=0.5413 | val_loss=0.4675 | lr=0.000400
+epoch 127: train_loss=0.5413 | val_loss=0.4675 | lr=0.000400
+[val example] noisy:        M T AY M N EY K S AE Z AY TH IH AA NG AH DH OW Z D Z Z AY R AY Z S IH S T ER
+[val example] target:       M AY M AY N D EY K S AE Z AY TH IH NG K AH V DH OW Z D EY Z R AY T S M IH S T ER
+[val example] corrected:    M AY M EY K S AE Z AY TH IH NG K AH V DH OW Z D EY Z AY R AY Z S IH S T ER
+[val example] plain text:   My mind aches as I think of those days," writes Mr.
+[val example] noisy:        M T AY M N EY K S AE Z AY TH IH AA NG AH DH OW Z D Z Z AY R AY Z S IH S T ER
+[val example] target:       M AY M AY N D EY K S AE Z AY TH IH NG K AH V DH OW Z D EY Z R AY T S M IH S T ER
+[val example] corrected:    M AY M EY K S AE Z AY TH IH NG K AH V DH OW Z D EY Z AY R AY Z S IH S T ER
+[val example] plain text:   My mind aches as I think of those days," writes Mr.
+epoch 128: train_loss=0.5412 | val_loss=0.4646 | lr=0.000394
+epoch 128: train_loss=0.5412 | val_loss=0.4646 | lr=0.000394
+[val example] noisy:        UW W IH L S EY L D ER EH AW T T AY B W EY N OW S EH R F IH Z W R DH AH ZH AA S S AH S EH R IY R F B SH EH AW W L B EH K AO AH K Y DH Z T IH D P R ER AH AW V IH N Z T EY K AE N AA N B AO R D AH N D DH AH K R UW K AH M AY AH L IY D AH D
+[val example] target:       Y UW W IH L S EY L D ER EH K T T UW B W EY N OW S EH R IY Z W EH R DH AH N EH S AH S EH R IY R IH P EH R Z W IH L B IY EH K S AH K Y UW T IH D P R AH V IH ZH AH N Z T EY K AH N AA N B AO R D AH N D DH AH K R UW K AH M P L IY T AH D
+[val example] corrected:    Y UW W IH L S EY L D ER AW T T AY M W EY N OW S EH R IY Z W EH R DH AH SH AA K S S AH S EH R IY F AO R SH EH L B AE K AO L DH AH K Y UW Z D IH D P R AH V IH N S T EY K AH N AA N B AO R D AH N D DH AH K R UW K AH M P AH L IY D AH D
+[val example] plain text:   You will sail direct to Buenos Aires, where the necessary repairs will be executed, provisions taken on board, and the crew completed.
+[val example] noisy:        UW W IH L S EY L D ER EH AW T T AY B W EY N OW S EH R F IH Z W R DH AH ZH AA S S AH S EH R IY R F B SH EH AW W L B EH K AO AH K Y DH Z T IH D P R ER AH AW V IH N Z T EY K AE N AA N B AO R D AH N D DH AH K R UW K AH M AY AH L IY D AH D
+[val example] target:       Y UW W IH L S EY L D ER EH K T T UW B W EY N OW S EH R IY Z W EH R DH AH N EH S AH S EH R IY R IH P EH R Z W IH L B IY EH K S AH K Y UW T IH D P R AH V IH ZH AH N Z T EY K AH N AA N B AO R D AH N D DH AH K R UW K AH M P L IY T AH D
+[val example] corrected:    Y UW W IH L S EY L D ER AW T T AY M W EY N OW S EH R IY Z W EH R DH AH SH AA K S S AH S EH R IY F AO R SH EH L B AE K AO L DH AH K Y UW Z D IH D P R AH V IH N S T EY K AH N AA N B AO R D AH N D DH AH K R UW K AH M P AH L IY D AH D
+[val example] plain text:   You will sail direct to Buenos Aires, where the necessary repairs will be executed, provisions taken on board, and the crew completed.
+epoch 129: train_loss=0.5395 | val_loss=0.4659 | lr=0.000389
+epoch 129: train_loss=0.5395 | val_loss=0.4659 | lr=0.000389
+[val example] noisy:        DH AH EY T IH V Z AH B V OW S D AH D EH S P R IH T K R P IH Z IY S T AH N S B T DH AH TH R IH K IH AA L AH M Z S P R EH S T Z F AO R W ER D AA N P EH DH AH L EH L AY UH N Z
+[val example] target:       DH AH N EY T IH V Z AH P OW Z D AH D EH S P R IH T R IH Z IH S T AH N S B AH T DH AH TH R IY K AA L AH M Z P R EH S T F AO R W ER D AA N P EH R AH L EH L L AY N Z
+[val example] corrected:    DH AH EY T IH V Z AH V OW L D AH D EH S P R IH T K R IH S T AH N S B AH T DH AH TH R IH K IH NG AA L AH M Z S P R EH S T F AO R W ER D AA N DH AH L EH L AY N Z
+[val example] plain text:   The natives opposed a desperate resistance, but the three columns pressed forward on parallel lines.
+[val example] noisy:        DH AH EY T IH V Z AH B V OW S D AH D EH S P R IH T K R P IH Z IY S T AH N S B T DH AH TH R IH K IH AA L AH M Z S P R EH S T Z F AO R W ER D AA N P EH DH AH L EH L AY UH N Z
+[val example] target:       DH AH N EY T IH V Z AH P OW Z D AH D EH S P R IH T R IH Z IH S T AH N S B AH T DH AH TH R IY K AA L AH M Z P R EH S T F AO R W ER D AA N P EH R AH L EH L L AY N Z
+[val example] corrected:    DH AH EY T IH V Z AH V OW L D AH D EH S P R IH T K R IH S T AH N S B AH T DH AH TH R IH K IH NG AA L AH M Z S P R EH S T F AO R W ER D AA N DH AH L EH L AY N Z
+[val example] plain text:   The natives opposed a desperate resistance, but the three columns pressed forward on parallel lines.
+epoch 130: train_loss=0.5392 | val_loss=0.4655 | lr=0.000383
+epoch 130: train_loss=0.5392 | val_loss=0.4655 | lr=0.000383
+[val example] noisy:        M AA N AW T IY K R IH S D OW AH B Z ER F D IH T P R T IH K Y AH L ER IY N D P AY K AH L UH K AE S G T DH AH B AE NG K ER F N R EH N EH K S B L T EY AH N
+[val example] target:       M AA N T IY K R IH S T OW AH B Z ER V D IH T P AA R T IH K Y AH L ER L IY AH N D B AY AH L UH K AE S K T DH AH B AE NG K ER F AO R AE N EH K S P L AH N EY SH AH N
+[val example] corrected:    M AA N T IY K R IH S T AH B Z ER V D IH T P R IH T IH K Y AH L ER IH N D IH P AY K AH L UH K AE S K T DH AH B AE NG K ER F R EH N D EH K S P L AH N EY SH AH N
+[val example] plain text:   Monte Cristo observed it particularly, and by a look asked the banker for an explanation.
+[val example] noisy:        M AA N AW T IY K R IH S D OW AH B Z ER F D IH T P R T IH K Y AH L ER IY N D P AY K AH L UH K AE S G T DH AH B AE NG K ER F N R EH N EH K S B L T EY AH N
+[val example] target:       M AA N T IY K R IH S T OW AH B Z ER V D IH T P AA R T IH K Y AH L ER L IY AH N D B AY AH L UH K AE S K T DH AH B AE NG K ER F AO R AE N EH K S P L AH N EY SH AH N
+[val example] corrected:    M AA N T IY K R IH S T AH B Z ER V D IH T P R IH T IH K Y AH L ER IH N D IH P AY K AH L UH K AE S K T DH AH B AE NG K ER F R EH N D EH K S P L AH N EY SH AH N
+[val example] plain text:   Monte Cristo observed it particularly, and by a look asked the banker for an explanation.
+epoch 131: train_loss=0.5391 | val_loss=0.4648 | lr=0.000378
+epoch 131: train_loss=0.5391 | val_loss=0.4648 | lr=0.000378
+[val example] noisy:        AH V G AO R T S K R IY S T IY AO T HH W AA Z IH IH IH S T EY G AH AO N AH D S IY K IH D L OW IY Y IY Z AA L V T T UW P R UW V UW UH IH M AH F AO L S P R F AH S T B AY AH T R AY R AH M F S AH V HH ER K ER IH R
+[val example] target:       AH V K AO R S K R IH S T IY TH AO T HH IY W AA Z M IH S T EY K AH N AH N D S IY K R IH T L IY R IY Z AA L V D T UW P R UW V HH IH M AH F AO L S P R AA F AH T B AY DH AH T R AY AH M F S AH V HH ER K ER IH R
+[val example] corrected:    AH V K AO R S K R IY S T IY AO T HH IY W AA Z IH N IH S T EY K AH N AH N D S IY K IH NG L IY Y IY S AA L V D T UW P R UW V HH IH M AH F AO L S P R AA F AH S T B AY AH T R AY AH M F S AH V HH ER K ER IH R
+[val example] plain text:   Of course Christie thought he was mistaken, and secretly resolved to prove him a false prophet by the triumphs of her career.
+[val example] noisy:        AH V G AO R T S K R IY S T IY AO T HH W AA Z IH IH IH S T EY G AH AO N AH D S IY K IH D L OW IY Y IY Z AA L V T T UW P R UW V UW UH IH M AH F AO L S P R F AH S T B AY AH T R AY R AH M F S AH V HH ER K ER IH R
+[val example] target:       AH V K AO R S K R IH S T IY TH AO T HH IY W AA Z M IH S T EY K AH N AH N D S IY K R IH T L IY R IY Z AA L V D T UW P R UW V HH IH M AH F AO L S P R AA F AH T B AY DH AH T R AY AH M F S AH V HH ER K ER IH R
+[val example] corrected:    AH V K AO R S K R IY S T IY AO T HH IY W AA Z IH N IH S T EY K AH N AH N D S IY K IH NG L IY Y IY S AA L V D T UW P R UW V HH IH M AH F AO L S P R AA F AH S T B AY AH T R AY AH M F S AH V HH ER K ER IH R
+[val example] plain text:   Of course Christie thought he was mistaken, and secretly resolved to prove him a false prophet by the triumphs of her career.
+epoch 132: train_loss=0.5385 | val_loss=0.4662 | lr=0.000372
+epoch 132: train_loss=0.5385 | val_loss=0.4662 | lr=0.000372
+[val example] noisy:        HH EH V AY G B IH N S EH L T AA N AA F UW EH L S CH EY S AE F T ER L L AH AH F B S D AH T IY AH V DH IH S K AH L UW ZH AH N IH T R AH K HH IH M HH AW EH V ER AE Z HH IY R AH NG AE D W DH EH N SH UH D HH IY HH AE V P EY D M AY F EH R
+[val example] target:       HH AE V AY B IH N S EH N T AA N AH F UW L Z CH EY S AE F T ER AO L DH AH AH B S ER D AH T IY AH V DH IH S K AH N K L UW ZH AH N S T R AH K HH IH M HH AW EH V ER AE Z HH IY R IY Z AH N D W AY DH EH N SH UH D HH IY HH AE V P EY D M AY F EH R
+[val example] corrected:    HH AE V AY B IH N S EH L D AA N AH F EH L S CH EY S AE F T ER AO L AH V B EH S T AH T IY AH V DH IH S K AH L UW ZH AH N IH T R AH K HH IH M HH AW EH V ER AE Z HH IY R AH N D DH EH N SH UH D HH IY HH AE V P EY D M AY F EH R
+[val example] plain text:   Have I been sent on a fool's chase after all?" The absurdity of this conclusion struck him, however, as he reasoned: "Why, then, should he have paid my fare?
+[val example] noisy:        HH EH V AY G B IH N S EH L T AA N AA F UW EH L S CH EY S AE F T ER L L AH AH F B S D AH T IY AH V DH IH S K AH L UW ZH AH N IH T R AH K HH IH M HH AW EH V ER AE Z HH IY R AH NG AE D W DH EH N SH UH D HH IY HH AE V P EY D M AY F EH R
+[val example] target:       HH AE V AY B IH N S EH N T AA N AH F UW L Z CH EY S AE F T ER AO L DH AH AH B S ER D AH T IY AH V DH IH S K AH N K L UW ZH AH N S T R AH K HH IH M HH AW EH V ER AE Z HH IY R IY Z AH N D W AY DH EH N SH UH D HH IY HH AE V P EY D M AY F EH R
+[val example] corrected:    HH AE V AY B IH N S EH L D AA N AH F EH L S CH EY S AE F T ER AO L AH V B EH S T AH T IY AH V DH IH S K AH L UW ZH AH N IH T R AH K HH IH M HH AW EH V ER AE Z HH IY R AH N D DH EH N SH UH D HH IY HH AE V P EY D M AY F EH R
+[val example] plain text:   Have I been sent on a fool's chase after all?" The absurdity of this conclusion struck him, however, as he reasoned: "Why, then, should he have paid my fare?
+epoch 133: train_loss=0.5380 | val_loss=0.4621 | lr=0.000367
+epoch 133: train_loss=0.5380 | val_loss=0.4621 | lr=0.000367
+[val example] noisy:        AW B R EY S Y AO R F IY T CH AH IH NG IY AH N T L HH EH L P AO L IY Y UW K AE N DH IH S S T EY Z D CH IH D AW K L AE D AO AO IH N AE F
+[val example] target:       N AW B R EY S Y AO R F IY T CH AH NG K IY AH N D HH EH L P AO L Y UW K AE N DH IH S S T EY S IY D IH D G L AE D L IY IH N AH F
+[val example] corrected:    AW ER B R EY S Y AO R F IY T CH AH Z IH NG M IY AH N D HH EH L P AO L Y UW K AE N DH IH S S T EY T S D IH D K L AE D AO R IH N AH F
+[val example] plain text:   Now brace your feet, Chunky, and help all you can." This Stacy did gladly enough.
+[val example] noisy:        AW B R EY S Y AO R F IY T CH AH IH NG IY AH N T L HH EH L P AO L IY Y UW K AE N DH IH S S T EY Z D CH IH D AW K L AE D AO AO IH N AE F
+[val example] target:       N AW B R EY S Y AO R F IY T CH AH NG K IY AH N D HH EH L P AO L Y UW K AE N DH IH S S T EY S IY D IH D G L AE D L IY IH N AH F
+[val example] corrected:    AW ER B R EY S Y AO R F IY T CH AH Z IH NG M IY AH N D HH EH L P AO L Y UW K AE N DH IH S S T EY T S D IH D K L AE D AO R IH N AH F
+[val example] plain text:   Now brace your feet, Chunky, and help all you can." This Stacy did gladly enough.
