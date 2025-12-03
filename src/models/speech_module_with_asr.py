@@ -1,5 +1,6 @@
 from typing import Any, Dict, List, Optional, Tuple
 import os
+from pathlib import Path
 
 import torch
 torch.set_float32_matmul_precision("medium")
@@ -8,6 +9,39 @@ from lightning import LightningModule
 from torchmetrics import MeanMetric
 from edit_distance import SequenceMatcher
 import string
+import yaml
+
+
+class TransformerMapping(torch.nn.Module):
+    """Small 3-layer Transformer encoder with input/output projections."""
+
+    def __init__(
+        self,
+        in_dim: int,
+        out_dim: int,
+        d_model: int = 256,
+        nhead: int = 4,
+        dim_feedforward: Optional[int] = None,
+        num_layers: int = 3,
+        dropout: float = 0.1,
+    ) -> None:
+        super().__init__()
+        dim_feedforward = dim_feedforward or d_model * 2
+        self.input_proj = torch.nn.Linear(in_dim, d_model)
+        encoder_layer = torch.nn.TransformerEncoderLayer(
+            d_model=d_model,
+            nhead=nhead,
+            dim_feedforward=dim_feedforward,
+            dropout=dropout,
+            batch_first=True,
+        )
+        self.encoder = torch.nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        self.output_proj = torch.nn.Linear(d_model, out_dim)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.input_proj(x)
+        x = self.encoder(x)
+        return self.output_proj(x)
 
 
 class SpeechModule(LightningModule):
@@ -39,6 +73,8 @@ class SpeechModule(LightningModule):
         seed: int = 0,
         asr_model_id: str = "nvidia/parakeet-tdt-0.6b-v2",
         freeze_asr: bool = True,
+        phoneme_labels: Optional[List[str]] = None,
+        quantize_asr: bool = True,
     ) -> None:
         super().__init__()
 
@@ -72,6 +108,8 @@ class SpeechModule(LightningModule):
             self.asr_ctc.eval()
         else:
             self.asr_ctc.train()
+        self._asr_quantized = False
+        self.quantize_asr = quantize_asr
 
         cfg = getattr(self.asr_ctc, "cfg", None)
 
@@ -92,11 +130,22 @@ class SpeechModule(LightningModule):
         else:
             gru_dim = n_units * (2 if bidirectional else 1)
 
-        # Map BMI GRU output -> Parakeet encoder input
-        self.gru_to_asr = torch.nn.Linear(gru_dim, feat_in)
+        # Map BMI GRU output -> Parakeet encoder input with a small transformer
+        self.gru_to_asr = TransformerMapping(
+            in_dim=gru_dim,
+            out_dim=feat_in,
+            d_model=min(256, feat_in),
+            nhead=4,
+        )
 
         # Project Parakeet token logits -> BMI phoneme CTC vocab (including blank)
-        self.asr_to_phoneme = torch.nn.Linear(parakeet_vocab, self.vocab_size)
+        self.asr_vocab_dim = parakeet_vocab
+        self.asr_to_phoneme = TransformerMapping(
+            in_dim=self.asr_vocab_dim,
+            out_dim=self.vocab_size,
+            d_model=min(256, self.asr_vocab_dim),
+            nhead=4,
+        )
 
         # helper: keep only A-Z characters (currently unused but kept for later use)
         self._letters = set(string.ascii_letters)
@@ -106,6 +155,10 @@ class SpeechModule(LightningModule):
         self.test_loss = MeanMetric()
         self.val_cer = MeanMetric()
         self.test_cer = MeanMetric()
+        default_labels = self._load_default_phoneme_labels()
+        self.phoneme_labels = self._normalize_phoneme_labels(
+            labels=phoneme_labels or default_labels
+        )
 
     def forward(self, neural: torch.Tensor, days: torch.Tensor) -> torch.Tensor:
         """Forward for compatibility; just uses the BMI net."""
@@ -160,6 +213,79 @@ class SpeechModule(LightningModule):
             return 0.0
         return total_edit_distance / total_seq_length
 
+    def _tokens_to_phonemes(self, tokens: List[int]) -> List[str]:
+        """Map token ids to phoneme strings when a label list is provided."""
+        if not self.phoneme_labels:
+            return [str(t) for t in tokens]
+        mapped: List[str] = []
+        n_labels = len(self.phoneme_labels)
+        for t in tokens:
+            if 0 <= t < n_labels:
+                mapped.append(self.phoneme_labels[t])
+            else:
+                mapped.append(f"<unk:{t}>")
+        return mapped
+
+    def _format_phoneme_seq(self, tokens: List[int]) -> str:
+        """Render tokens as a readable space-separated phoneme string."""
+        return " ".join(self._tokens_to_phonemes(tokens))
+
+    def _load_default_phoneme_labels(self) -> Optional[List[str]]:
+        """
+        Reuse the phoneme label list defined in configs/model/LLMSpeech.yaml.
+        Returns None if the file cannot be read or lacks the list.
+        """
+        cfg_path = Path(__file__).resolve().parents[2] / "configs" / "model" / "LLMSpeech.yaml"
+        if not cfg_path.exists():
+            return None
+        try:
+            with cfg_path.open("r", encoding="utf-8") as f:
+                data = yaml.safe_load(f)
+            labels = data.get("phoneme_labels") if isinstance(data, dict) else None
+            if isinstance(labels, list):
+                return labels
+        except Exception:
+            return None
+        return None
+
+    def _normalize_phoneme_labels(self, labels: Optional[List[str]]) -> Optional[List[str]]:
+        """
+        Ensure the label list is at least as long as the vocab (blank + phonemes).
+        Pads with placeholder names when needed to avoid <unk> on in-range ids.
+        """
+        if not labels:
+            return None
+        normalized = list(labels)
+        if len(normalized) < self.vocab_size:
+            for idx in range(len(normalized), self.vocab_size):
+                # Prefer to treat the final missing slot as silence if only one is missing.
+                if idx == self.vocab_size - 1 and self.vocab_size - len(normalized) == 1:
+                    normalized.append("<sil>")
+                else:
+                    normalized.append(f"<phoneme_{idx}>")
+        return normalized
+
+    def _maybe_quantize_asr(self, device: torch.device) -> None:
+        """
+        Quantize the (frozen) ASR model to dynamic int8 when running on CPU.
+        Skips on CUDA because PyTorch quantized modules are CPU-only.
+        """
+        if self._asr_quantized or not self.quantize_asr or not self.hparams.freeze_asr:
+            return
+        if device.type != "cpu":
+            return
+        try:
+            self.asr_ctc = torch.ao.quantization.quantize_dynamic(
+                self.asr_ctc,
+                {torch.nn.Linear},
+                dtype=torch.qint8,
+            )
+            self._asr_quantized = True
+            self.asr_ctc.eval()
+        except Exception:
+            # If quantization fails, leave the model as-is.
+            self._asr_quantized = False
+
     def _encode_with_asr(
         self,
         enc_in: torch.Tensor,
@@ -169,6 +295,8 @@ class SpeechModule(LightningModule):
         Run the NeMo ASR encoder on pre-projected features.
         We try a 'bypass_pre_encode' call first, then fall back to a simpler signature.
         """
+        self._maybe_quantize_asr(enc_in.device)
+
         # Ensure shapes are what the encoder expects.
         # If Parakeet uses (B, T, D) this is fine; if it uses (B, D, T) you may need to transpose here.
         try:
@@ -205,11 +333,11 @@ class SpeechModule(LightningModule):
         if hasattr(self.asr_ctc, "ctc_lin"):
             parakeet_logits = self.asr_ctc.ctc_lin(enc_out)
         else:
-            # Dynamically create a simple linear head if the model doesn't expose a CTC head.
+            # Dynamically create a simple head if the model doesn't expose a CTC head.
             if not hasattr(self, "parakeet_head") or self.parakeet_head.in_features != enc_out.size(-1):
                 self.parakeet_head = torch.nn.Linear(
                     in_features=enc_out.size(-1),
-                    out_features=self.asr_to_phoneme.in_features,
+                    out_features=self.asr_vocab_dim,
                 ).to(enc_out.device)
             parakeet_logits = self.parakeet_head(enc_out)
 
@@ -259,7 +387,9 @@ class SpeechModule(LightningModule):
                 target_len = int(label_lens[0].item())
                 target_seq = labels[0, :target_len].detach().cpu().tolist()
                 pred_seq = pred_tokens[0]
-                self.print(f"[val example] pred={pred_seq} target={target_seq}")
+                pred_str = self._format_phoneme_seq(pred_seq)
+                target_str = self._format_phoneme_seq(target_seq)
+                self.print(f"[val example] pred: {pred_str} | target: {target_str}")
 
     def test_step(self, batch: Tuple[torch.Tensor, ...], batch_idx: int) -> None:
         neural, labels, neural_lens, label_lens, days = batch
