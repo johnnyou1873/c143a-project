@@ -26,10 +26,10 @@ model:
   # override top-level speech model hyperparameters
   lr_start: 1e-3
   lr_end: 1e-5
-  n_units: 256
+  n_units: 512
   asr_model_id: nvidia/parakeet-tdt-0.6b-v2
   # set to False to fine-tune the ASR encoder
-  freeze_asr: False
+  freeze_asr: True
   # n_layers: 5
   # dropout: 0.4
   # gaussian_smooth_width: 2.0
@@ -41,9 +41,9 @@ model:
   # compile: False # disable compile for debugging
 
 # datamodule overrides
-data: {}
-# data:
-#   batch_size: 16
+# data: {}
+data:
+  batch_size: 16
 #   seq_len: 150
 #   max_time_series_len: 1200
 #   white_noise_std: 0.8
@@ -56,6 +56,7 @@ data: {}
 
 logger:
   wandb:
+    name: "GRU256 ASR Fine-Tune"
     tags: ${tags}
     group: "speech"
   aim:
