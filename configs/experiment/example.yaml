@@ -8,7 +8,7 @@ defaults:
   - override /model: speech_with_asr
   - override /callbacks: default
   - override /trainer: default
-  - override /logger: csv
+  - override /logger: wandb
 
 # all parameters below will be merged with parameters from default configurations set above
 # this allows you to overwrite only specified parameters
@@ -24,12 +24,12 @@ trainer:
 
 model:
   # override top-level speech model hyperparameters
-  lr_start: 3e-4
-  lr_end: 3e-5
+  lr_start: 1e-3
+  lr_end: 1e-5
   n_units: 256
   asr_model_id: nvidia/parakeet-tdt-0.6b-v2
   # set to False to fine-tune the ASR encoder
-  freeze_asr: True
+  freeze_asr: False
   # n_layers: 5
   # dropout: 0.4
   # gaussian_smooth_width: 2.0
