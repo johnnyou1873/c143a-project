@@ -11,7 +11,10 @@ class GRUDecoderVAE(nn.Module):
         neural_dim,
         n_classes,
         hidden_dim,
+        hidden_dim_vae,
         layer_dim,
+        latent_global,
+        latent_local,
         nDays=24,
         dropout=0,
         device="cuda",
@@ -25,8 +28,11 @@ class GRUDecoderVAE(nn.Module):
         # Defining the number of layers and the nodes in each layer
         self.layer_dim = layer_dim
         self.hidden_dim = hidden_dim
+        self.hidden_dim_vae = hidden_dim_vae
         self.neural_dim = neural_dim
         self.n_classes = n_classes
+        self.latent_global = latent_global
+        self.latent_local = latent_local
         self.nDays = nDays
         self.device = device
         self.dropout = dropout
@@ -44,14 +50,13 @@ class GRUDecoderVAE(nn.Module):
             )
         else:
             self.gaussianSmoother = torch.nn.Identity()
-
         # apply vae dim reduction
         # self.dayWeights = torch.nn.Parameter(torch.randn(nDays, neural_dim, neural_dim))
         # self.dayBias = torch.nn.Parameter(torch.zeros(nDays, 1, neural_dim))
-        self.latent_dim = 64
-        self.inputAE = VAEInputModel(input_dim=neural_dim, latent_dim=self.latent_dim, hidden_dim=2*self.latent_dim)
-        self.day_scale = nn.Parameter(torch.ones(nDays, self.latent_dim))
-        self.day_shift = nn.Parameter(torch.zeros(nDays, self.latent_dim))
+        latent_dim = latent_local + latent_global
+        self.inputAE = VAEInputModel(input_dim=neural_dim, latent_global=latent_global, latent_local= latent_local, hidden_dim=hidden_dim_vae)
+        self.day_scale = nn.Parameter(torch.ones(nDays, latent_dim))
+        self.day_shift = nn.Parameter(torch.zeros(nDays, latent_dim)) 
         # for x in range(nDays):
         #     self.dayWeights.data[x, :, :] = torch.eye(neural_dim)
 
@@ -101,8 +106,17 @@ class GRUDecoderVAE(nn.Module):
         
         B,T,D = neuralInput.shape
         flat = neuralInput.reshape(-1, D)
-        mean, log_variance = self.inputAE.encode(flat)    
-        z = self.inputAE.reparameterize(mean, log_variance, self.training)
+        pooled_x = torch.mean(neuralInput, dim=1)
+        mean_local, log_variance_local = self.inputAE.encode_local(flat)    
+        mean_global, log_variance_global = self.inputAE.encode_global(pooled_x)
+        #recon_flat, mean_local, log_variance_local, mean_global, log_variance_global = self.inputAE.forward(flat, flat, pooled_x, self.training)
+        z_local = self.inputAE.reparameterize(mean_local, log_variance_local, self.training)
+        z = z_local
+        if mean_global is not None:
+            z_global = self.inputAE.reparameterize(mean_global, log_variance_global, self.training)
+            z_global_exp = z_global.repeat(1,T,1).reshape(-1,z_global.size(-1))
+            z = torch.cat([z_local, z_global_exp], dim=1)   
+        #z = self.inputAE.reparameterize(mean, log_variance, self.training)
         dayIdx_exp = dayIdx.unsqueeze(1).repeat(1, T).reshape(-1) 
         scale = self.day_scale[dayIdx_exp]
         shift = self.day_shift[dayIdx_exp]
@@ -151,4 +165,4 @@ class GRUDecoderVAE(nn.Module):
 
         # get seq
         seq_out = self.fc_decoder_out(hid)
-        return seq_out, recon, mean, log_variance
+        return seq_out, recon, mean_local, log_variance_local, mean_global, log_variance_global

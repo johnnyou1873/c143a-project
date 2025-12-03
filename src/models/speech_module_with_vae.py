@@ -6,6 +6,7 @@ from lightning import LightningModule
 from torchmetrics import MeanMetric
 from edit_distance import SequenceMatcher
 
+import transformers
 
 class SpeechModuleVAE(LightningModule):
     """`LightningModule` for BMI speech task.
@@ -74,8 +75,10 @@ class SpeechModuleVAE(LightningModule):
         self.save_hyperparameters(logger=False, ignore=["net"])
 
         self.net = net
-        self.recon_loss_weight = 0.1
-        self.kl_loss_weight = 0.1
+        self.recon_loss_weight = 0.01
+        
+        self.kl_loss_weight_global = 0.001
+        self.kl_loss_weight_local = 0.00001
         self.ctc_loss = torch.nn.CTCLoss(blank=0, reduction="mean", zero_infinity=True)
 
         # track average losses
@@ -151,13 +154,17 @@ class SpeechModuleVAE(LightningModule):
         outputs = self.net(neural, days)
 
         # net may return just logits (legacy) or (logits, recon, mean, logvar)
-        if isinstance(outputs, (tuple, list)):
-            logits, recon, mean, log_variance = outputs
+        if isinstance(outputs, (tuple, list)) and len(outputs) >= 6:
+            logits, recon, mean_local, log_variance_local, mean_global, log_variance_global = outputs[:6]
         else:
-            logits = outputs
-            recon = None
-            mean = None
-            log_variance = None
+            if isinstance(outputs, (tuple, list)):
+                logits, recon, mean_local, log_variance_local = outputs[:4]
+                mean_global, log_variance_global = None, None
+            else:
+                logits = outputs
+                recon = None
+                mean_local = None
+                log_variance_local = None
 
         log_probs = logits.log_softmax(dim=-1).transpose(0, 1)
         input_lengths = self._compute_input_lengths(neural_lens).to(logits.device)
@@ -165,28 +172,76 @@ class SpeechModuleVAE(LightningModule):
         ctc_loss = self.ctc_loss(log_probs, labels, input_lengths, label_lens)
 
         vae_recon = torch.tensor(0.0, device=logits.device)
-        vae_kl = torch.tensor(0.0, device=logits.device)
-
         if recon is not None:
-            vae_recon = F.mse_loss(recon, neural, reduction="mean")
-        if (mean is not None) and (log_variance is not None):
-            if mean.dim() == 2:
+            if neural_lens is not None:
                 B, T, D = neural.shape
-                L = mean.size(-1)
-                try:
-                    mean_rs = mean.view(B, T, L)
-                    logvar_rs = log_variance.view(B, T, L)
-                except Exception:
-                    mean_rs = mean
-                    logvar_rs = log_variance
+                device = neural.device
+                idx = torch.arange(T, device=device).unsqueeze(0)
+                mask = (idx < neural_lens.unsqueeze(1)).to(neural.dtype)  
+                mask = mask.unsqueeze(-1)  
+                diff = (recon - neural) * mask
+                vae_recon = (diff.pow(2).sum() / mask.sum()).to(logits.device)
             else:
-                mean_rs = mean
-                logvar_rs = log_variance
+                vae_recon = F.mse_loss(recon, neural, reduction="mean")
 
-            kl_per_elem = -0.5 * (1 + logvar_rs - mean_rs.pow(2) - logvar_rs.exp())
-            vae_kl = kl_per_elem.sum(dim=-1).mean()
+        vae_kl_local = torch.tensor(0.0, device=logits.device)
+        if (mean_local is not None) and (log_variance_local is not None):
+            if mean_local.dim() == 2:
+                B, T, D = neural.shape
+                L = mean_local.size(-1)
+                try:
+                    mean_rs = mean_local.view(B, T, L)
+                    logvar_rs = log_variance_local.view(B, T, L)
+                except Exception:
+                    mean_rs = mean_local
+                    logvar_rs = log_variance_local
+            else:
+                mean_rs = mean_local
+                logvar_rs = log_variance_local
 
-        loss = ctc_loss + self.recon_loss_weight * vae_recon + self.kl_loss_weight * vae_kl
+            kl_per_elem_local = -0.5 * (1 + logvar_rs - mean_rs.pow(2) - logvar_rs.exp())
+            vae_kl_local = kl_per_elem_local.sum(dim=-1).mean()
+
+        vae_kl_global = torch.tensor(0.0, device=logits.device)
+        if (mean_global is not None) and (log_variance_global is not None):
+            # Ensure global mean/var have the same shape semantics as the local ones
+            if mean_global.dim() == 2:
+                B, T, D = neural.shape
+                Lg = mean_global.size(-1)
+                try:
+                    mean_global_rs = mean_global.view(B, T, Lg)
+                    logvar_global_rs = log_variance_global.view(B, T, Lg)
+                except Exception:
+                    mean_global_rs = mean_global
+                    logvar_global_rs = log_variance_global
+            else:
+                mean_global_rs = mean_global
+                logvar_global_rs = log_variance_global
+
+            kl_per_elem_global = -0.5 * (1 + logvar_global_rs - mean_global_rs.pow(2) - logvar_global_rs.exp())
+            vae_kl_global = kl_per_elem_global.sum(dim=-1).mean()
+
+        # if recon is not None:
+        #     vae_recon = F.mse_loss(recon, neural, reduction="mean")
+        # if (mean is not None) and (log_variance is not None):
+        #     if mean.dim() == 2:
+        #         B, T, D = neural.shape
+        #         L = mean.size(-1)
+        #         try:
+        #             mean_rs = mean.view(B, T, L)
+        #             logvar_rs = log_variance.view(B, T, L)
+        #         except Exception:
+        #             mean_rs = mean
+        #             logvar_rs = log_variance
+        #     else:
+        #         mean_rs = mean
+        #         logvar_rs = log_variance
+
+        #     kl_per_elem = -0.5 * (1 + logvar_rs - mean_rs.pow(2) - logvar_rs.exp())
+        #     vae_kl = kl_per_elem.sum(dim=-1).mean()
+
+        # loss = ctc_loss + self.recon_loss_weight * vae_recon + self.kl_loss_weight * vae_kl
+        loss = ctc_loss + self.recon_loss_weight * vae_recon + self.kl_loss_weight_local * vae_kl_local + self.kl_loss_weight_global * vae_kl_global
         return loss, logits, input_lengths
 
     def model_step(self, batch: Tuple[torch.Tensor, ...]) -> torch.Tensor:

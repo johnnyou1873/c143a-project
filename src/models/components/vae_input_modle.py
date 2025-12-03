@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+
+=======
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -95,3 +98,4 @@ class VAEInputModel(nn.Module):
         BCE = F.mse_loss(recon_x, x, reduction='sum')
         KLD = -0.5 * torch.sum(1 + log_variance - mean.pow(2) - log_variance.exp())
         return BCE + KLD, BCE, KLD
+>>>>>>> 268acae01bc911175a29a023e05f0672175ee90a

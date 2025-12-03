@@ -24,6 +24,7 @@ rich            # beautiful text formatting in terminal
 pytest          # tests
 edit_distance   # sequence edit distance for CER
 ollama          # local LLM inference
+transformers    # simplify setup for warm up in LR scheduler
 # sh            # for running bash commands in some tests (linux/macos only)
 transformers>=4.40.0
 huggingface_hub>=0.23.0
