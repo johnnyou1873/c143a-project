@@ -1,0 +1,23 @@
+_target_: src.data.speech_datamodule.SpeechDataModule
+
+# path to the preprocessed speech dataset pickle
+dataset_path: ${paths.data_dir}/allDatasets.pkl
+
+# dataset/dataloader params
+seq_len: 150
+max_time_series_len: 1200
+batch_size: 32
+num_workers: 8
+pin_memory: True
+shuffle: True
+persistent_workers: True
+seed: 0
+
+# optional augmentations
+white_noise_std: 0.8
+constant_offset_std: 0.2
+
+# optional dataset metadata (will be inferred if left null)
+n_classes: 40
+n_input_features: 256
+n_days: null
