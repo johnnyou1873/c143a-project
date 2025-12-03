@@ -60,19 +60,23 @@ class GRUDecoderVAE(nn.Module):
         # for x in range(nDays):
         #     self.dayWeights.data[x, :, :] = torch.eye(neural_dim)
 
+
         # Layer normalization 
         norm_dim = hidden_dim * 2 if bidirectional else hidden_dim
         self.layerNorm = nn.LayerNorm(norm_dim)
 
         # GRU layers
         self.gru_decoder = nn.GRU(
-            (neural_dim) * self.kernelLen,
+            (latent_dim) * self.kernelLen,
+            #(neural_dim) * self.kernelLen,
             hidden_dim,
             layer_dim,
             batch_first=True,
             dropout=self.dropout,
             bidirectional=self.bidirectional,
         )
+
+        self.day_embedding = nn.Embedding(self.nDays, neural_dim).to(device)
 
         for name, param in self.gru_decoder.named_parameters():
             if "weight_hh" in name:
@@ -104,40 +108,43 @@ class GRUDecoderVAE(nn.Module):
         neuralInput = self.gaussianSmoother(neuralInput)
         neuralInput = torch.permute(neuralInput, (0, 2, 1))
         
-        B,T,D = neuralInput.shape
-        flat = neuralInput.reshape(-1, D)
-        pooled_x = torch.mean(neuralInput, dim=1)
-        mean_local, log_variance_local = self.inputAE.encode_local(flat)    
-        mean_global, log_variance_global = self.inputAE.encode_global(pooled_x)
-        #recon_flat, mean_local, log_variance_local, mean_global, log_variance_global = self.inputAE.forward(flat, flat, pooled_x, self.training)
-        z_local = self.inputAE.reparameterize(mean_local, log_variance_local, self.training)
+        batch, time, channels = neuralInput.shape
+
+        day_embed = self.day_embedding(dayIdx) #shape (batch, D_day)
+        D_day = day_embed.shape[-1] # shape (batch, D_day)
+        day_embed = day_embed.unsqueeze(1).expand(batch, time, D_day) 
+        neuralInput = torch.cat([neuralInput, day_embed], dim=2) #shape (batch, time, channels + D_day)
+        flat = neuralInput.reshape(batch * time, 2*channels) #s
+        # Pooled per-sample features for the global encoder: (B, channels)
+        global_x = neuralInput.mean(dim=1)
+
+        # Encode
+        mean_local, log_variance_local = self.inputAE.encode_local(flat)     # (B*T, latent_local)
+        mean_global, log_variance_global = self.inputAE.encode_global(global_x) # (B, latent_global)
+
+        # Reparameterize local latents; ensure flattened shape (B*T, latent_local)
+        z_local = self.inputAE.reparameterize(mean_local, log_variance_local, self.training)  # [B*T, latent_local]
         z = z_local
         if mean_global is not None:
+            # global z: (B, latent_global) -> expand to (B*T, latent_global)
             z_global = self.inputAE.reparameterize(mean_global, log_variance_global, self.training)
-            z_global_exp = z_global.repeat(1,T,1).reshape(-1,z_global.size(-1))
-            z = torch.cat([z_local, z_global_exp], dim=1)   
-        #z = self.inputAE.reparameterize(mean, log_variance, self.training)
-        dayIdx_exp = dayIdx.unsqueeze(1).repeat(1, T).reshape(-1) 
-        scale = self.day_scale[dayIdx_exp]
-        shift = self.day_shift[dayIdx_exp]
-        z = z * scale + shift
-        recon_flat = self.inputAE.decode(z)
-        transformedNeural = recon_flat.view(B, T, D)
-        recon = transformedNeural
+            z_global_exp = z_global.unsqueeze(1).expand(batch, time, -1).reshape(batch * time, -1)
+            z = torch.cat([z_local, z_global_exp], dim=1)    # B*T x (latent_local + latent_global)
+        dayIdx_exp = dayIdx.unsqueeze(1).repeat(1, time).reshape(-1)  # B*T
+        scale = self.day_scale[dayIdx_exp] # B*T x (latent_local + latent_global)
+        shift = self.day_shift[dayIdx_exp] # B*T x (latent_local + latent_global)
+        z = z * scale + shift  # 
+        z = z.reshape(batch, time, self.latent_global+self.latent_local)  # B x T x (latent_local + latent_global)
+        recon_flat = self.inputAE.decode(z)#
+        transformedNeural = recon_flat.view(batch, time, 2*channels)#
+        recon = transformedNeural[ :, :, :channels]  
         self.inputLayerNonlinearity(transformedNeural)
         transformedNeural = self.inputLayerNonlinearity(transformedNeural)
-
-        # apply day layer
-        # dayWeights = torch.index_select(self.dayWeights, 0, dayIdx)
-        # transformedNeural = torch.einsum(
-        #     "btd,bdk->btk", neuralInput, dayWeights
-        # ) + torch.index_select(self.dayBias, 0, dayIdx)
-        # transformedNeural = self.inputLayerNonlinearity(transformedNeural)
 
         # stride/kernel
         stridedInputs = torch.permute(
             self.unfolder(
-                torch.unsqueeze(torch.permute(transformedNeural, (0, 2, 1)), 3)
+                torch.unsqueeze(torch.permute(z, (0, 2, 1)), 3)
             ),
             (0, 2, 1),
         )

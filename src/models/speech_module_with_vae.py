@@ -148,9 +148,11 @@ class SpeechModuleVAE(LightningModule):
         labels: torch.Tensor,
         neural_lens: torch.Tensor,
         label_lens: torch.Tensor,
-        days: torch.Tensor,
+        days: torch.Tensor, 
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """Forward pass + CTC loss."""
+        """VAE loss components are also computed and returned."""
+
         outputs = self.net(neural, days)
 
         # net may return just logits (legacy) or (logits, recon, mean, logvar)
@@ -174,9 +176,9 @@ class SpeechModuleVAE(LightningModule):
         vae_recon = torch.tensor(0.0, device=logits.device)
         if recon is not None:
             if neural_lens is not None:
-                B, T, D = neural.shape
+                batch, time, channel = neural.shape
                 device = neural.device
-                idx = torch.arange(T, device=device).unsqueeze(0)
+                idx = torch.arange(time, device=device).unsqueeze(0)
                 mask = (idx < neural_lens.unsqueeze(1)).to(neural.dtype)  
                 mask = mask.unsqueeze(-1)  
                 diff = (recon - neural) * mask
@@ -187,11 +189,11 @@ class SpeechModuleVAE(LightningModule):
         vae_kl_local = torch.tensor(0.0, device=logits.device)
         if (mean_local is not None) and (log_variance_local is not None):
             if mean_local.dim() == 2:
-                B, T, D = neural.shape
+                batch, time, channel = neural.shape
                 L = mean_local.size(-1)
                 try:
-                    mean_rs = mean_local.view(B, T, L)
-                    logvar_rs = log_variance_local.view(B, T, L)
+                    mean_rs = mean_local.view(batch, time, L)
+                    logvar_rs = log_variance_local.view(batch, time, L)
                 except Exception:
                     mean_rs = mean_local
                     logvar_rs = log_variance_local
@@ -206,11 +208,11 @@ class SpeechModuleVAE(LightningModule):
         if (mean_global is not None) and (log_variance_global is not None):
             # Ensure global mean/var have the same shape semantics as the local ones
             if mean_global.dim() == 2:
-                B, T, D = neural.shape
+                batch, time, channel = neural.shape
                 Lg = mean_global.size(-1)
                 try:
-                    mean_global_rs = mean_global.view(B, T, Lg)
-                    logvar_global_rs = log_variance_global.view(B, T, Lg)
+                    mean_global_rs = mean_global.view(batch, time, Lg)
+                    logvar_global_rs = log_variance_global.view(batch, time, Lg)
                 except Exception:
                     mean_global_rs = mean_global
                     logvar_global_rs = log_variance_global
@@ -221,26 +223,6 @@ class SpeechModuleVAE(LightningModule):
             kl_per_elem_global = -0.5 * (1 + logvar_global_rs - mean_global_rs.pow(2) - logvar_global_rs.exp())
             vae_kl_global = kl_per_elem_global.sum(dim=-1).mean()
 
-        # if recon is not None:
-        #     vae_recon = F.mse_loss(recon, neural, reduction="mean")
-        # if (mean is not None) and (log_variance is not None):
-        #     if mean.dim() == 2:
-        #         B, T, D = neural.shape
-        #         L = mean.size(-1)
-        #         try:
-        #             mean_rs = mean.view(B, T, L)
-        #             logvar_rs = log_variance.view(B, T, L)
-        #         except Exception:
-        #             mean_rs = mean
-        #             logvar_rs = log_variance
-        #     else:
-        #         mean_rs = mean
-        #         logvar_rs = log_variance
-
-        #     kl_per_elem = -0.5 * (1 + logvar_rs - mean_rs.pow(2) - logvar_rs.exp())
-        #     vae_kl = kl_per_elem.sum(dim=-1).mean()
-
-        # loss = ctc_loss + self.recon_loss_weight * vae_recon + self.kl_loss_weight * vae_kl
         loss = ctc_loss + self.recon_loss_weight * vae_recon + self.kl_loss_weight_local * vae_kl_local + self.kl_loss_weight_global * vae_kl_global
         return loss, logits, input_lengths
 

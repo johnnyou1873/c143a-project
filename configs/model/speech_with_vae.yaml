@@ -1,7 +1,7 @@
 _target_: src.models.speech_module_with_vae.SpeechModuleVAE
 
 # general hyperparameters
-lr_start: 0.0001
+lr_start: 0.000075
 lr_end: 0.000025
 n_units: 1024
 n_batch: 10000
@@ -23,23 +23,26 @@ optimizer:
   weight_decay: ${..l2_decay}
 
 scheduler:
-  # _target_: torch.optim.lr_scheduler.CosineAnnealingLR
-  _target_: transformers.get_cosine_schedule_with_warmup
+  _target_: torch.optim.lr_scheduler.CosineAnnealingLR
   _partial_: true
-  optimizer: ${..optimizer}
-  num_warmup_steps: 0
-  num_training_steps: ${trainer.max_epochs}
-  # T_max: ${trainer.max_epochs}
-  # eta_min: ${..lr_end}
-  # warmup_pct: 0.1
+  T_max: ${trainer.max_epochs}
+  eta_min: ${..lr_end}
+
+# warmup scheduler is not helpful here
+# scheduler:
+#   _target_: transformers.get_cosine_schedule_with_warmup
+#   _partial_: true
+#   optimizer: ${..optimizer}
+#   num_warmup_steps: 0
+#   num_training_steps: ${trainer.max_epochs}
 
 net:
   _target_: src.models.components.gru_decoder_with_vae.GRUDecoderVAE
   neural_dim: ${..n_input_features}
   hidden_dim: ${..n_units}
-  hidden_dim_vae: 1024
-  latent_global: 64
-  latent_local: 64
+  hidden_dim_vae: 512
+  latent_global: 8
+  latent_local: 120
   layer_dim: ${..n_layers}
   n_classes: ${..n_classes}
   nDays: 24

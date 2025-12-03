@@ -6,7 +6,7 @@ class VAEInputModel(nn.Module):
     def __init__(self, input_dim=256, latent_global=16, latent_local=32, hidden_dim=128):
         super(VAEInputModel, self).__init__()
         self.encoder_local = nn.Sequential(
-            nn.Linear(input_dim, hidden_dim),
+            nn.Linear(2*input_dim, hidden_dim),
             nn.LayerNorm(hidden_dim),
             nn.GELU(),
             nn.Linear(hidden_dim, hidden_dim),
@@ -29,7 +29,7 @@ class VAEInputModel(nn.Module):
         self.log_variance_local = nn.Linear(hidden_dim, latent_local)
 
         self.encoder_global = nn.Sequential(
-            nn.Linear(input_dim, hidden_dim),
+            nn.Linear(2*input_dim, hidden_dim),
             nn.LayerNorm(hidden_dim),
             nn.GELU(),
             nn.Linear(hidden_dim, hidden_dim),
@@ -58,7 +58,7 @@ class VAEInputModel(nn.Module):
             # nn.Linear(hidden_dim, hidden_dim),
             # nn.LayerNorm(hidden_dim),
             # nn.GELU(),
-            nn.Linear(hidden_dim, input_dim),
+            nn.Linear(hidden_dim, 2*input_dim),
         )
         self.latent_local = latent_local
         self.latent_global = latent_global
@@ -96,4 +96,4 @@ class VAEInputModel(nn.Module):
         z_global_exp = z_global.unsqueeze(1).expand(B, T, -1).reshape(B*T, -1)
 
         recovered_x = self.decode(z_local, z_global_exp)
-        return recovered_x, mean, log_variance_local, mean_global, log_variance_global
+        return recovered_x, mean_local, log_variance_local, mean_global, log_variance_global
