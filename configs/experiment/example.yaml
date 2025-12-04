@@ -5,7 +5,7 @@
 
 defaults:
   - override /data: speech
-  - override /model: speech_with_asr
+  - override /model: speech_with_ps2s
   - override /callbacks: default
   - override /trainer: default
   - override /logger: wandb
@@ -13,7 +13,7 @@ defaults:
 # all parameters below will be merged with parameters from default configurations set above
 # this allows you to overwrite only specified parameters
 
-tags: ["speech", "gru_decoder", "parakeet"]
+tags: ["speech", "gru_decoder", "ps2s"]
 
 # seed: 0
 
@@ -24,26 +24,25 @@ trainer:
 
 model:
   # override top-level speech model hyperparameters
-  lr_start: 1e-3
-  lr_end: 1e-5
+  lr_start: 3e-4
+  lr_end: 5e-5
   n_units: 512
-  asr_model_id: nvidia/parakeet-tdt-0.6b-v2
-  # set to False to fine-tune the ASR encoder
-  freeze_asr: True
+  ps2s_weight: 0.5
+  ps2s_max_len: 128
+  bidirectional: False  # GRU uni-directional
   # n_layers: 5
   # dropout: 0.4
   # gaussian_smooth_width: 2.0
   # stride_len: 4
   # kernel_len: 32
-  # bidirectional: False
-  # l2_decay: 0.1
+  # l2_decay: 1e-5
   # seed: ${seed}
   # compile: False # disable compile for debugging
 
 # datamodule overrides
 # data: {}
 data:
-  batch_size: 16
+  batch_size: 32
 #   seq_len: 150
 #   max_time_series_len: 1200
 #   white_noise_std: 0.8
@@ -56,7 +55,7 @@ data:
 
 logger:
   wandb:
-    name: "GRU512 TF ASR Freeze"
+    name: "GRU512 PS2S"
     tags: ${tags}
     group: "speech"
   aim:

@@ -310,5 +310,5 @@ configs/local/default.yaml
 .aim
 
 # Notebook data
-notebook/data/
-notebook/checkpoints/
+notebooks/data/
+notebooks/checkpoints/
