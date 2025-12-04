@@ -1,14 +1,14 @@
 _target_: src.models.speech_module_fastconformer_tdt.SpeechModuleFastConformerTDT
 
 # general hyperparameters
-lr_start: 0.0003
-lr_end: 0.00005
-n_units: 384           # used as default d_model for the encoder
-n_layers: 8
+lr_start: 1e-4
+lr_end: 1e-6
+n_units: 512           # used as default d_model for the encoder
+n_layers: 12
 n_classes: 40
 n_input_features: 256
 dropout: 0.2
-gaussian_smooth_width: 1.5
+gaussian_smooth_width: 2.0
 stride_len: 2
 kernel_len: 15
 bidirectional: False
@@ -33,9 +33,9 @@ net:
   n_classes: ${..n_classes}
   d_model: ${..n_units}
   n_layers: ${..n_layers}
-  nhead: 6
+  nhead: 8
   ff_expansion: 4.0
-  conv_kernel: 15
+  conv_kernel: 31
   dropout: ${..dropout}
   strideLen: ${..stride_len}
   kernelLen: ${..kernel_len}

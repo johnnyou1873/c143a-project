@@ -5,7 +5,7 @@
 
 defaults:
   - override /data: speech
-  - override /model: speech_fastconformer_tdt
+  - override /model: speech_diphone
   - override /callbacks: default
   - override /trainer: default
   - override /logger: wandb
@@ -13,19 +13,19 @@ defaults:
 # all parameters below will be merged with parameters from default configurations set above
 # this allows you to overwrite only specified parameters
 
-tags: ["speech", "fastconformer-tdt"]
+tags: ["speech", "gru-diphone"]
 
 # seed: 0
 
 trainer:
   min_epochs: 1 # prevents early stopping
-  max_epochs: 100
+  max_epochs: 200
   # limit_val_batches: 10
   # limit_test_batches: 10
-  num_sanity_val_steps: 0
+  # num_sanity_val_steps: 0
   # gradient_clip_val: 0.5
 
-model:
+model: {}
   # override top-level speech model hyperparameters
   # lr_start: 3e-4
   # lr_end: 5e-5
@@ -33,7 +33,7 @@ model:
   # n_layers: 8
   # nhead: 6
   # dropout: 0.2
-  # gaussian_smooth_width: 1.5
+  # gaussian_smooth_width: 0.0
   # stride_len: 2         # temporal subsampling stride
   # kernel_len: 15        # temporal subsampling kernel
   # l2_decay: 1e-5      # inherited from model config
@@ -43,22 +43,22 @@ model:
 # datamodule overrides
 # data: {}
 data:
-  batch_size: 16
+  batch_size: 32
   # val_subset_size: 32
   # test_subset_size: 32
-#   seq_len: 150
-#   max_time_series_len: 1200
-  white_noise_std: 0.0
-  constant_offset_std: 0.0
-#   n_classes: 40
-#   n_input_features: 256
-#   seed: ${seed}
+  #   seq_len: 150
+  #   max_time_series_len: 1200
+  # white_noise_std: 0.0
+  # constant_offset_std: 0.0
+  #   n_classes: 40
+  #   n_input_features: 256
+  #   seed: ${seed}
   num_workers: 2
-#   persistent_workers: True
+  #   persistent_workers: True
 
 logger:
   wandb:
-    name: "FastConformer-TDT streaming"
+    name: "GRU Diphone"
     tags: ${tags}
     group: "speech"
   aim:

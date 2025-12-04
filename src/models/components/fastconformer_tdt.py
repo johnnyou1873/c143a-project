@@ -1,19 +1,19 @@
 from typing import Optional
-
 import torch
 from torch import nn
 from torch.nn import functional as F
-
 from ...utils.augmentations import GaussianSmoothing
 
 
-def _causal_mask(
-    seq_len: int, device: torch.device, lookahead: int = 0, left_context: Optional[int] = None
-) -> torch.Tensor:
-    """Build an additive attention mask that enforces causal / streaming behavior.
+# ============================================================
+#                MASK (CACHED + DETACHED)
+# ============================================================
 
-    Allowed positions are within [i - left_context, i + lookahead]; everything else is -inf.
-    """
+def _causal_mask_cached(seq_len, device, lookahead, left_context, cache):
+    key = (seq_len, device)
+    if key in cache:
+        return cache[key]
+
     i = torch.arange(seq_len, device=device).unsqueeze(1)
     j = torch.arange(seq_len, device=device).unsqueeze(0)
 
@@ -23,13 +23,20 @@ def _causal_mask(
 
     mask = torch.full((seq_len, seq_len), float("-inf"), device=device)
     mask = mask.masked_fill(allowed, 0.0)
+
+    # Important: do NOT track gradients
+    mask = mask.detach()
+
+    cache[key] = mask
     return mask
 
 
-class FeedForwardModule(nn.Module):
-    """Lightweight FFN used inside the Conformer blocks."""
+# ============================================================
+#                     FEEDFORWARD MODULE
+# ============================================================
 
-    def __init__(self, d_model: int, expansion: float = 4.0, dropout: float = 0.1) -> None:
+class FeedForwardModule(nn.Module):
+    def __init__(self, d_model: int, expansion: float = 4.0, dropout: float = 0.1):
         super().__init__()
         hidden = int(d_model * expansion)
         self.net = nn.Sequential(
@@ -40,13 +47,15 @@ class FeedForwardModule(nn.Module):
             nn.Dropout(dropout),
         )
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x):
         return self.net(x)
 
 
-class StreamingSelfAttention(nn.Module):
-    """Multi-head attention with a built-in streaming (causal) mask."""
+# ============================================================
+#              STREAMING ATTENTION (PATCHED)
+# ============================================================
 
+class StreamingSelfAttention(nn.Module):
     def __init__(
         self,
         d_model: int,
@@ -54,7 +63,7 @@ class StreamingSelfAttention(nn.Module):
         dropout: float = 0.1,
         lookahead: int = 0,
         left_context: Optional[int] = None,
-    ) -> None:
+    ):
         super().__init__()
         self.lookahead = lookahead
         self.left_context = left_context
@@ -62,56 +71,69 @@ class StreamingSelfAttention(nn.Module):
             embed_dim=d_model, num_heads=nhead, dropout=dropout, batch_first=True
         )
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # mask cache
+        self._mask_cache = {}
+
+    def forward(self, x):
         seq_len = x.size(1)
-        attn_mask = _causal_mask(
-            seq_len, device=x.device, lookahead=self.lookahead, left_context=self.left_context
+        attn_mask = _causal_mask_cached(
+            seq_len,
+            device=x.device,
+            lookahead=self.lookahead,
+            left_context=self.left_context,
+            cache=self._mask_cache,
         )
         out, _ = self.mha(x, x, x, attn_mask=attn_mask)
         return out
 
 
-class ConvModule(nn.Module):
-    """Depthwise separable conv block with causal padding (FastConformer style)."""
+# ============================================================
+#                   CONV MODULE (UNCHANGED)
+# ============================================================
 
-    def __init__(self, d_model: int, kernel_size: int = 15, dropout: float = 0.1) -> None:
+class ConvModule(nn.Module):
+    def __init__(self, d_model: int, kernel_size: int = 15, dropout: float = 0.1):
         super().__init__()
         self.layer_norm = nn.LayerNorm(d_model)
-        self.pointwise_conv1 = nn.Conv1d(d_model, 2 * d_model, kernel_size=1, padding=0)
+        self.pointwise_conv1 = nn.Conv1d(d_model, 2 * d_model, kernel_size=1)
         self.depthwise_conv = nn.Conv1d(
-            d_model, d_model, kernel_size=kernel_size, groups=d_model, padding=0
+            d_model, d_model, kernel_size=kernel_size, groups=d_model
         )
         self.batch_norm = nn.BatchNorm1d(d_model)
         self.activation = nn.SiLU()
-        self.pointwise_conv2 = nn.Conv1d(d_model, d_model, kernel_size=1, padding=0)
+        self.pointwise_conv2 = nn.Conv1d(d_model, d_model, kernel_size=1)
         self.dropout = dropout
         self.kernel_size = kernel_size
 
-    def _causal_depthwise_conv(self, x: torch.Tensor) -> torch.Tensor:
-        # causal left padding only
+    def _causal_depthwise_conv(self, x):
         if self.kernel_size > 1:
-            padding = (self.kernel_size - 1, 0)
-            x = F.pad(x, pad=padding)
+            x = F.pad(x, (self.kernel_size - 1, 0))
         return self.depthwise_conv(x)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x):
         residual = x
         x = self.layer_norm(x)
-        x = x.transpose(1, 2)  # (B, D, T)
+        x = x.transpose(1, 2)
+
         x = self.pointwise_conv1(x)
         x = F.glu(x, dim=1)
+
         x = self._causal_depthwise_conv(x)
         x = self.batch_norm(x)
         x = self.activation(x)
+
         x = self.pointwise_conv2(x)
         x = F.dropout(x, p=self.dropout, training=self.training)
-        x = x.transpose(1, 2)  # (B, T, D)
+
+        x = x.transpose(1, 2)
         return x + residual
 
 
-class FastConformerBlock(nn.Module):
-    """FastConformer encoder block with streaming self-attention."""
+# ============================================================
+#                 FAST CONFORMER BLOCK (PATCHED)
+# ============================================================
 
+class FastConformerBlock(nn.Module):
     def __init__(
         self,
         d_model: int,
@@ -121,25 +143,26 @@ class FastConformerBlock(nn.Module):
         dropout: float = 0.1,
         attn_lookahead: int = 0,
         attn_left_context: Optional[int] = None,
-    ) -> None:
+    ):
         super().__init__()
+
         self.ffn1_norm = nn.LayerNorm(d_model)
         self.ffn1 = FeedForwardModule(d_model, expansion=ff_expansion, dropout=dropout)
+
         self.self_attn_norm = nn.LayerNorm(d_model)
         self.self_attn = StreamingSelfAttention(
-            d_model=d_model,
-            nhead=nhead,
-            dropout=dropout,
-            lookahead=attn_lookahead,
-            left_context=attn_left_context,
+            d_model, nhead, dropout, attn_lookahead, attn_left_context
         )
+
         self.conv = ConvModule(d_model=d_model, kernel_size=conv_kernel, dropout=dropout)
+
         self.ffn2_norm = nn.LayerNorm(d_model)
         self.ffn2 = FeedForwardModule(d_model, expansion=ff_expansion, dropout=dropout)
+
         self.final_norm = nn.LayerNorm(d_model)
         self.dropout = dropout
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x):
         x = x + 0.5 * self.ffn1(self.ffn1_norm(x))
         x = x + F.dropout(self.self_attn(self.self_attn_norm(x)), p=self.dropout, training=self.training)
         x = self.conv(x)
@@ -147,9 +170,11 @@ class FastConformerBlock(nn.Module):
         return self.final_norm(x)
 
 
-class FastConformerTDT(nn.Module):
-    """FastConformer-TDT encoder with causal masking for streaming decoding."""
+# ============================================================
+#            FAST CONFORMER TDT (FULLY PATCHED)
+# ============================================================
 
+class FastConformerTDT(nn.Module):
     def __init__(
         self,
         neural_dim: int,
@@ -166,27 +191,45 @@ class FastConformerTDT(nn.Module):
         gaussianSmoothWidth: float = 0.0,
         attn_lookahead: int = 0,
         attn_left_context: Optional[int] = None,
-    ) -> None:
+    ):
         super().__init__()
+
         self.strideLen = strideLen
         self.kernelLen = kernelLen
-        self.gaussianSmoothWidth = gaussianSmoothWidth
 
-        self.inputLayerNonlinearity = nn.Softsign()
+        # optional gaussian smoothing
         self.gaussianSmoother = (
             GaussianSmoothing(neural_dim, 20, gaussianSmoothWidth, dim=1)
             if gaussianSmoothWidth > 0
             else nn.Identity()
         )
+        self.inputLayerNonlinearity = nn.Softsign()
 
-        self.day_scale = nn.Parameter(torch.ones(nDays, neural_dim))
-        self.day_bias = nn.Parameter(torch.zeros(nDays, neural_dim))
+        # ===================================================
+        #   DAY-SPECIFIC AFFINE LAYERS (PATCHED)
+        #   Instead of ModuleList → a single Parameter tensor
+        # ===================================================
+        W = []
+        b = []
+        for _ in range(nDays):
+            w = torch.eye(neural_dim)
+            W.append(w)
+            b.append(torch.zeros(neural_dim))
 
+        self.day_W = nn.Parameter(torch.stack(W))      # (D, C, C)
+        self.day_b = nn.Parameter(torch.stack(b))      # (D, C)
+
+        # ===================================================
+        #   SUBSAMPLING
+        # ===================================================
         self.subsample = nn.Conv1d(
-            neural_dim, d_model, kernel_size=kernelLen, stride=strideLen, padding=0
+            neural_dim, d_model, kernel_size=kernelLen, stride=strideLen
         )
         self.subsample_norm = nn.LayerNorm(d_model)
 
+        # ===================================================
+        #   ENCODER BLOCKS
+        # ===================================================
         self.blocks = nn.ModuleList(
             [
                 FastConformerBlock(
@@ -201,27 +244,40 @@ class FastConformerTDT(nn.Module):
                 for _ in range(n_layers)
             ]
         )
+
         self.final_norm = nn.LayerNorm(d_model)
-        self.fc_out = nn.Linear(d_model, n_classes + 1)  # +1 for CTC blank
+        self.fc_out = nn.Linear(d_model, n_classes + 1)
 
-    def forward(self, neuralInput: torch.Tensor, dayIdx: torch.Tensor) -> torch.Tensor:
+    # ============================================================
+    #                    FORWARD PASS (PATCHED)
+    # ============================================================
+    def forward(self, neuralInput, dayIdx):
         # neuralInput: (B, T, C)
-        x = neuralInput.transpose(1, 2)  # (B, C, T)
+        x = neuralInput.transpose(1, 2)
         x = self.gaussianSmoother(x)
-        x = x.transpose(1, 2)  # (B, T, C)
+        x = x.transpose(1, 2)
 
-        # day-specific affine transform
-        scale = torch.index_select(self.day_scale, 0, dayIdx).unsqueeze(1)
-        bias = torch.index_select(self.day_bias, 0, dayIdx).unsqueeze(1)
-        x = self.inputLayerNonlinearity(x * scale + bias)
+        # ===================================================
+        #     DAY-SPECIFIC LINEAR TRANSFORM (PATCHED)
+        # ===================================================
+        W = self.day_W[dayIdx]               # (B, C, C)
+        b = self.day_b[dayIdx]               # (B, C)
 
-        # temporal subsampling + projection to model dimension
-        x = x.transpose(1, 2)  # (B, C, T)
-        x = self.subsample(x)  # (B, d_model, T')
-        x = x.transpose(1, 2)  # (B, T', d_model)
+        # batched matmul: (B, T, C) @ (B, C, C)^T
+        x = torch.bmm(x, W.transpose(1, 2)) + b.unsqueeze(1)
+        x = self.inputLayerNonlinearity(x)
+
+        # ===================================================
+        #     TEMPORAL SUBSAMPLING
+        # ===================================================
+        x = x.transpose(1, 2)
+        x = self.subsample(x)
+        x = x.transpose(1, 2)
         x = self.subsample_norm(x)
 
-        # encoder blocks
+        # ===================================================
+        #     ENCODER BLOCKS
+        # ===================================================
         for block in self.blocks:
             x = block(x)
 

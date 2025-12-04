@@ -1,15 +1,15 @@
-_target_: src.models.speech_module.SpeechModule
+_target_: src.models.speech_module_diphone.SpeechModuleDiPhone
 
-# general hyperparameters
-lr_start: 0.00025 # adjusted for better performance cer 0.20
+# general hyperparameters (inherits SpeechModule defaults unless overridden)
+lr_start: 0.00025
 lr_end: 0.0000025
 n_units: 1024
 n_layers: 5
-n_classes: 40
+n_classes: 40          # monophone classes; diphone head size is computed inside the net
 n_input_features: 256
 dropout: 0.4
 gaussian_smooth_width: 2.0
-stride_len: 4 # defaults
+stride_len: 4
 kernel_len: 32
 bidirectional: False
 l2_decay: 0.1
@@ -28,7 +28,7 @@ scheduler:
   eta_min: ${..lr_end}
 
 net:
-  _target_: src.models.components.gru_decoder.GRUDecoder
+  _target_: src.models.components.gru_diphone.GRUDiphone
   neural_dim: ${..n_input_features}
   n_classes: ${..n_classes}
   hidden_dim: ${..n_units}
@@ -41,4 +41,4 @@ net:
   bidirectional: ${..bidirectional}
 
 # compile model for faster training with pytorch 2.0
-compile: False
+compile: false
