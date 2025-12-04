@@ -1,14 +1,16 @@
 from typing import Any, Dict, List, Optional, Tuple
-import os
 from pathlib import Path
 import functools
-
 import torch
 from lightning import LightningModule
 from torchmetrics import MeanMetric
 from edit_distance import SequenceMatcher
 import yaml
 
+
+# ============================================================
+#                  PHONEME-TO-PHONEME Seq2Seq
+# ============================================================
 
 class Seq2SeqCorrection(torch.nn.Module):
     """Small Transformer encoder-decoder used for phoneme-to-phoneme correction."""
@@ -28,44 +30,52 @@ class Seq2SeqCorrection(torch.nn.Module):
         super().__init__()
         self.pad_idx = pad_idx
         self.lookahead = lookahead
+
         self.src_emb = torch.nn.Embedding(vocab_size, d_model)
         self.tgt_emb = torch.nn.Embedding(vocab_size, d_model)
-        encoder_layer = torch.nn.TransformerEncoderLayer(
-            d_model=d_model,
-            nhead=nhead,
+
+        enc_layer = torch.nn.TransformerEncoderLayer(
+            d_model=d_model, nhead=nhead,
             dim_feedforward=dim_feedforward,
-            dropout=dropout,
-            batch_first=True,
+            dropout=dropout, batch_first=True
         )
-        decoder_layer = torch.nn.TransformerDecoderLayer(
-            d_model=d_model,
-            nhead=nhead,
+        dec_layer = torch.nn.TransformerDecoderLayer(
+            d_model=d_model, nhead=nhead,
             dim_feedforward=dim_feedforward,
-            dropout=dropout,
-            batch_first=True,
+            dropout=dropout, batch_first=True
         )
-        self.encoder = torch.nn.TransformerEncoder(encoder_layer, num_layers=num_encoder_layers)
-        self.decoder = torch.nn.TransformerDecoder(decoder_layer, num_layers=num_decoder_layers)
+
+        self.encoder = torch.nn.TransformerEncoder(enc_layer, num_layers=num_encoder_layers)
+        self.decoder = torch.nn.TransformerDecoder(dec_layer, num_layers=num_decoder_layers)
         self.proj = torch.nn.Linear(d_model, vocab_size)
 
     def forward(self, src: torch.Tensor, tgt_in: torch.Tensor) -> torch.Tensor:
+        """src: (B, S) noisy phonemes,  tgt_in: (B, T) clean inputs shifted right"""
+
         src_key_padding_mask = src == self.pad_idx
         tgt_key_padding_mask = tgt_in == self.pad_idx
+
+        # standard causal decoder mask
         tgt_mask = torch.nn.Transformer.generate_square_subsequent_mask(
             tgt_in.size(1), device=tgt_in.device
         )
 
-        # Encoder can see current and limited future (lookahead tokens)
-        src_seq_len = src.size(1)
-        i = torch.arange(src_seq_len, device=src.device).unsqueeze(1)
-        j = torch.arange(src_seq_len, device=src.device)
-        src_mask = torch.where(j - i > self.lookahead, float("-inf"), 0.0)
+        # LIMITED LOOKAHEAD MASK for encoder
+        L = src.size(1)
+        i = torch.arange(L, device=src.device).unsqueeze(1)
+        j = torch.arange(L, device=src.device)
+        src_mask = torch.where(
+            j - i > self.lookahead,
+            torch.tensor(float("-inf"), device=src.device),
+            torch.tensor(0.0, device=src.device)
+        )
 
         src_h = self.encoder(
             self.src_emb(src),
             mask=src_mask,
             src_key_padding_mask=src_key_padding_mask,
         )
+
         tgt_h = self.decoder(
             self.tgt_emb(tgt_in),
             src_h,
@@ -76,8 +86,12 @@ class Seq2SeqCorrection(torch.nn.Module):
         return self.proj(tgt_h)
 
 
+# ============================================================
+#                  MAIN LIGHTNING MODULE
+# ============================================================
+
 class SpeechModuleWithPS2S(LightningModule):
-    """LightningModule that combines a pretrained GRU decoder with a phoneme seq2seq model."""
+    """LightningModule that combines a GRU CTC model with a noisy→clean phoneme corrector."""
 
     def __init__(
         self,
@@ -109,67 +123,100 @@ class SpeechModuleWithPS2S(LightningModule):
         super().__init__()
 
         if net is None:
-            raise ValueError("`net` must be provided to SpeechModuleWithPS2S.")
+            raise ValueError("`net` must be provided.")
 
         self.save_hyperparameters(logger=False, ignore=["net"])
         self.net = net
 
-        # Load GRU weights if available
+        # ---------------- GRU LOADING -----------------
         self._load_gru_weights(gru_ckpt_path)
 
+        # ---------------- CTC -----------------
         self.ctc_loss = torch.nn.CTCLoss(blank=0, reduction="mean", zero_infinity=True)
+
+        # ---------------- PS2S -----------------
         self.ps2s_weight = ps2s_weight
         self.ps2s_max_len = ps2s_max_len
+        self._ps2s_model_path = ps2s_model_path
+        self.ps2s_model: Optional[Seq2SeqCorrection] = None
+        self.ps2s_meta: Optional[Dict[str, Any]] = None
+        self.ps2s_loss: Optional[torch.nn.Module] = None
 
-        self.ps2s_model, self.ps2s_meta = self._load_ps2s(ps2s_model_path)
-        self.ps2s_loss = torch.nn.CrossEntropyLoss(ignore_index=self.ps2s_meta["pad_idx"])
+        # load PS2S at init so its parameters are registered & optimized
+        if self.ps2s_weight > 0:
+            try:
+                ps2s, meta = self._load_ps2s(self._ps2s_model_path)
+            except FileNotFoundError:
+                print(f"[ps2s] WARNING: PS2S checkpoint not found at {self._ps2s_model_path}. "
+                      f"PS2S will be disabled.")
+                self.ps2s_weight = 0.0
+            else:
+                self.ps2s_model = ps2s
+                self.ps2s_meta = meta
+                self.ps2s_loss = torch.nn.CrossEntropyLoss(ignore_index=meta["pad_idx"])
 
+        # phoneme label names
         default_labels = self._load_default_phoneme_labels()
         self.phoneme_labels = phoneme_labels or default_labels
 
+        # metrics
         self.train_loss = MeanMetric()
         self.val_loss = MeanMetric()
         self.test_loss = MeanMetric()
         self.val_cer = MeanMetric()
         self.test_cer = MeanMetric()
+        self._val_example_logged = False
 
-    # ------------------------- utility loaders ------------------------- #
+    # ============================================================
+    #             LOADERS
+    # ============================================================
+
     def _load_gru_weights(self, ckpt_path: str) -> None:
         path = Path(ckpt_path)
         if not path.exists():
+            print(f"[ps2s] GRU checkpoint not found: {path}")
             return
-        try:
-            torch.serialization.add_safe_globals([functools.partial])
-        except Exception:
-            pass
+
+        # safe unpickling globals (PyTorch 2.6+)
+        safe_list = [functools.partial]
+        for cand in ["optim.AdamW", "optim.adamw.AdamW", "optim._adamw.AdamW"]:
+            try:
+                mod = torch
+                for p in cand.split("."):
+                    mod = getattr(mod, p)
+                safe_list.append(mod)
+            except Exception:
+                pass
+        for cls in safe_list:
+            try:
+                torch.serialization.add_safe_globals([cls])
+            except Exception:
+                pass
+
         try:
             ckpt = torch.load(path, map_location="cpu", weights_only=False)
-            state_dict = ckpt.get("state_dict", ckpt)
-            filtered = {k.replace("net.", ""): v for k, v in state_dict.items() if k.startswith("net.")}
-            missing, unexpected = self.net.load_state_dict(filtered, strict=False)
-            if missing:
-                self.print(f"[ps2s] GRU missing keys: {missing}")
-            if unexpected:
-                self.print(f"[ps2s] GRU unexpected keys: {unexpected}")
         except Exception as e:
-            self.print(f"[ps2s] Failed to load GRU weights: {e}")
+            print(f"[ps2s] Error loading GRU checkpoint: {e}")
+            return
 
-    def _load_ps2s(self, ckpt_path: str):
-        ckpt = torch.load(ckpt_path, map_location="cpu")
-        meta = {
-            "phoneme_to_idx": ckpt["phoneme_to_idx"],
-            "idx_to_phoneme": ckpt["idx_to_phoneme"],
-            "pad_idx": int(ckpt["pad_idx"]),
-            "sos_idx": int(ckpt["sos_idx"]),
-            "eos_idx": int(ckpt["eos_idx"]),
-            "max_len": int(ckpt["max_len"]),
-        }
-        model_kwargs = ckpt["model_kwargs"]
-        ps2s = Seq2SeqCorrection(pad_idx=meta["pad_idx"], lookahead=1, **model_kwargs)
-        ps2s.load_state_dict(ckpt["state_dict"], strict=True)
-        return ps2s, meta
+        state = ckpt["state_dict"] if "state_dict" in ckpt else ckpt
+        filtered = {k.replace("net.", ""): v for k, v in state.items() if k.startswith("net.")}
+
+        if not filtered:
+            print("[ps2s] WARNING: no net.* parameters found.")
+            return
+
+        missing, unexpected = self.net.load_state_dict(filtered, strict=False)
+        if missing:
+            print(f"[ps2s] missing: {missing}")
+        if unexpected:
+            print(f"[ps2s] unexpected: {unexpected}")
+        print(f"[ps2s] GRU weights loaded from {path}")
 
     def _load_default_phoneme_labels(self) -> Optional[List[str]]:
+        """
+        Reuse the phoneme label list defined in configs/model/LLMSpeech.yaml.
+        """
         cfg_path = Path(__file__).resolve().parents[2] / "configs" / "model" / "LLMSpeech.yaml"
         if not cfg_path.exists():
             return None
@@ -183,50 +230,85 @@ class SpeechModuleWithPS2S(LightningModule):
             return None
         return None
 
-    # ------------------------- helpers ------------------------- #
-    def _compute_input_lengths(self, neural_lens: torch.Tensor) -> torch.Tensor:
+    # ============= PS2S LOADING ============= #
+
+    def _load_ps2s(self, ckpt_path: str):
+        path = Path(ckpt_path)
+        if not path.exists():
+            raise FileNotFoundError(path)
+
+        ckpt = torch.load(path, map_location="cpu")
+
+        meta = {
+            "phoneme_to_idx": ckpt["phoneme_to_idx"],
+            "idx_to_phoneme": ckpt["idx_to_phoneme"],
+            "pad_idx": int(ckpt["pad_idx"]),
+            "sos_idx": int(ckpt["sos_idx"]),
+            "eos_idx": int(ckpt["eos_idx"]),
+            "max_len": int(ckpt["max_len"]),
+        }
+
+        ps2s = Seq2SeqCorrection(
+            pad_idx=meta["pad_idx"],
+            lookahead=1,
+            **ckpt["model_kwargs"]
+        )
+        ps2s.load_state_dict(ckpt["state_dict"], strict=True)
+        print(f"[ps2s] PS2S weights loaded from {path}")
+        return ps2s, meta
+
+    def _ensure_ps2s_loaded(self, device):
+        """Make sure PS2S is on the right device (parameters are already registered)."""
+        if self.ps2s_weight > 0 and self.ps2s_model is not None:
+            self.ps2s_model.to(device)
+
+    # ============================================================
+    #             HELPER FUNCTIONS
+    # ============================================================
+
+    def _compute_input_lengths(self, neural_lens):
         stride = self.net.strideLen
         kernel = self.net.kernelLen
-        lengths = torch.div(neural_lens - kernel, stride, rounding_mode="floor")
+        lengths = torch.clamp(neural_lens - kernel, min=0)
+        lengths = torch.div(lengths, stride, rounding_mode="floor")
         return lengths.to(torch.int32)
 
-    def _ctc_greedy_decode(
-        self, logits: torch.Tensor, input_lengths: torch.Tensor
-    ) -> List[List[int]]:
+    def _ctc_greedy_decode(self, logits, input_lengths):
         preds = logits.argmax(dim=-1)
-        sequences: List[List[int]] = []
-        for seq, length in zip(preds, input_lengths):
-            trimmed = seq[: int(length)]
-            collapsed = torch.unique_consecutive(trimmed)
-            decoded = [int(t) for t in collapsed.tolist() if int(t) != 0]
-            sequences.append(decoded)
-        return sequences
+        seqs = []
+        for seq, L in zip(preds, input_lengths):
+            seq = seq[: int(L)]
+            seq = torch.unique_consecutive(seq)
+            seq = [int(t) for t in seq if t != 0]
+            seqs.append(seq)
+        return seqs
 
-    def _token_error_rate(
-        self, pred_tokens: List[List[int]], labels: torch.Tensor, label_lens: torch.Tensor
-    ) -> float:
-        total_edit_distance = 0
-        total_seq_length = 0
-        for pred, target, tgt_len in zip(pred_tokens, labels, label_lens):
-            true_seq = target[: int(tgt_len)].tolist()
-            matcher = SequenceMatcher(a=true_seq, b=pred)
-            total_edit_distance += matcher.distance()
-            total_seq_length += len(true_seq)
-        if total_seq_length == 0:
-            return 0.0
-        return total_edit_distance / total_seq_length
+    def _token_error_rate(self, pred, labels, lens):
+        total_ed = 0
+        total_len = 0
+        for p, tgt, L in zip(pred, labels, lens):
+            tgt = tgt[: int(L)].tolist()
+            matcher = SequenceMatcher(a=tgt, b=p)
+            total_ed += matcher.distance()
+            total_len += len(tgt)
+        return 0.0 if total_len == 0 else total_ed / total_len
 
-    def _labels_to_phonemes(self, labels: torch.Tensor, label_lens: torch.Tensor) -> List[List[str]]:
-        phs: List[List[str]] = []
-        for seq, length in zip(labels, label_lens):
-            trimmed = seq[: int(length)].tolist()
-            if self.phoneme_labels:
-                phs.append([self.phoneme_labels[int(t) - 1] if int(t) > 0 and int(t) - 1 < len(self.phoneme_labels) else "<unk>" for t in trimmed])
+    # ============= Convert preds to phonemes ============= #
+
+    def _pred_tokens_to_phonemes(self, pred_tokens: List[int]) -> List[str]:
+        if not self.phoneme_labels:
+            return [str(t) for t in pred_tokens]
+        out = []
+        for t in pred_tokens:
+            if 1 <= t <= len(self.phoneme_labels):
+                out.append(self.phoneme_labels[t - 1])
             else:
-                phs.append([str(int(t)) for t in trimmed])
-        return phs
+                out.append("<unk>")
+        return out
 
-    def _phonemes_to_ps2s_tokens(self, phonemes: List[str]) -> List[int]:
+    # ============= Tokenization ============= #
+
+    def _phonemes_to_ps2s_tokens(self, phonemes: List[str]):
         lookup = self.ps2s_meta["phoneme_to_idx"]
         sos = self.ps2s_meta["sos_idx"]
         eos = self.ps2s_meta["eos_idx"]
@@ -237,107 +319,165 @@ class SpeechModuleWithPS2S(LightningModule):
         toks = toks[: max_len - 2]
         toks = [sos] + toks + [eos]
         toks += [pad] * (max_len - len(toks))
+
         tgt_in = toks[:-1]
         tgt_out = toks[1:]
-        return tgt_in, tgt_out
+        return toks, tgt_in, tgt_out
 
-    def _prepare_ps2s_batch(
-        self, labels: torch.Tensor, label_lens: torch.Tensor, device: torch.device
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        ph_lists = self._labels_to_phonemes(labels, label_lens)
-        src_tokens, tgt_in, tgt_out = [], [], []
-        pad = self.ps2s_meta["pad_idx"]
-        for phs in ph_lists:
-            inp, out = self._phonemes_to_ps2s_tokens(phs)
-            src_tokens.append(inp)
-            tgt_in.append(inp)
-            tgt_out.append(out)
-        src_t = torch.tensor(src_tokens, device=device, dtype=torch.long)
-        tgt_in_t = torch.tensor(tgt_in, device=device, dtype=torch.long)
-        tgt_out_t = torch.tensor(tgt_out, device=device, dtype=torch.long)
-        return src_t, tgt_in_t, tgt_out_t
+    # ============= Build PS2S batch ============= #
 
-    # ------------------------- forward & loss ------------------------- #
-    def forward(self, neural: torch.Tensor, days: torch.Tensor) -> torch.Tensor:
+    def _prepare_ps2s_batch(self, noisy_preds, labels, lens, device):
+        src_list = []
+        tgt_in_list = []
+        tgt_out_list = []
+
+        for noisy, gt_seq, L in zip(noisy_preds, labels, lens):
+            # 1. noisy phonemes from GRU/CTC
+            noisy_phs = self._pred_tokens_to_phonemes(noisy)
+
+            # 2. clean GT phonemes
+            gt_trim = gt_seq[: int(L)].tolist()
+            clean_phs = [
+                self.phoneme_labels[t - 1] if 1 <= t <= len(self.phoneme_labels)
+                else "<unk>"
+                for t in gt_trim
+            ]
+
+            # tokenize both
+            src_full, _, _ = self._phonemes_to_ps2s_tokens(noisy_phs)
+            _, tgt_in, tgt_out = self._phonemes_to_ps2s_tokens(clean_phs)
+
+            src_list.append(src_full)
+            tgt_in_list.append(tgt_in)
+            tgt_out_list.append(tgt_out)
+
+        src = torch.tensor(src_list, device=device, dtype=torch.long)
+        tgt_in = torch.tensor(tgt_in_list, device=device, dtype=torch.long)
+        tgt_out = torch.tensor(tgt_out_list, device=device, dtype=torch.long)
+        return src, tgt_in, tgt_out
+
+    # ============================================================
+    #             FORWARD & LOSS
+    # ============================================================
+
+    def forward(self, neural, days):
         return self.net(neural, days)
 
-    def _compute_loss(
-        self,
-        neural: torch.Tensor,
-        labels: torch.Tensor,
-        neural_lens: torch.Tensor,
-        label_lens: torch.Tensor,
-        days: torch.Tensor,
-    ):
+    def _compute_loss(self, neural, labels, neural_lens, label_lens, days):
         logits = self.forward(neural, days)
         log_probs = logits.log_softmax(dim=-1).transpose(0, 1)
+
         input_lengths = self._compute_input_lengths(neural_lens).to(logits.device)
         label_lens = label_lens.to(logits.device)
+
+        # ------------- CTC -------------
         ctc = self.ctc_loss(log_probs, labels, input_lengths, label_lens)
 
+        # ------------- PS2S -------------
         ps2s_loss = torch.zeros((), device=logits.device)
-        if self.ps2s_weight > 0:
-            self.ps2s_model = self.ps2s_model.to(logits.device)
-            src, tgt_in, tgt_out = self._prepare_ps2s_batch(labels, label_lens, logits.device)
+
+        if self.ps2s_weight > 0 and self.ps2s_model is not None:
+            self._ensure_ps2s_loaded(logits.device)
+
+            # noisy GRU predictions → transformer input
+            noisy_pred = self._ctc_greedy_decode(logits, input_lengths)
+
+            # build PS2S batch
+            src, tgt_in, tgt_out = self._prepare_ps2s_batch(
+                noisy_pred, labels, label_lens, logits.device
+            )
+
             ps2s_logits = self.ps2s_model(src, tgt_in)
-            ps2s_loss = self.ps2s_loss(ps2s_logits.reshape(-1, ps2s_logits.size(-1)), tgt_out.reshape(-1))
+
+            ps2s_loss = self.ps2s_loss(
+                ps2s_logits.reshape(-1, ps2s_logits.size(-1)),
+                tgt_out.reshape(-1),
+            )
 
         total_loss = ctc + self.ps2s_weight * ps2s_loss
         return total_loss, logits, input_lengths, ps2s_loss
 
-    # ------------------------- lightning hooks ------------------------- #
-    def on_train_start(self) -> None:
+    # ============================================================
+    #             LIGHTNING HOOKS
+    # ============================================================
+
+    def on_train_start(self):
         self.train_loss.reset()
         self.val_loss.reset()
         self.test_loss.reset()
         self.val_cer.reset()
         self.test_cer.reset()
+        self._val_example_logged = False
 
-    def training_step(self, batch: Tuple[torch.Tensor, ...], batch_idx: int) -> torch.Tensor:
+    def on_validation_epoch_start(self):
+        self._val_example_logged = False
+
+    def training_step(self, batch, batch_idx):
         neural, labels, neural_lens, label_lens, days = batch
         loss, _, _, ps2s_loss = self._compute_loss(neural, labels, neural_lens, label_lens, days)
         self.train_loss(loss)
         self.log("train/loss", loss, on_step=False, on_epoch=True, prog_bar=True)
-        if self.ps2s_weight > 0:
-            self.log("train/ps2s_loss", ps2s_loss, on_step=False, on_epoch=True, prog_bar=False)
+        if self.ps2s_weight > 0 and self.ps2s_model is not None:
+            self.log("train/ps2s_loss", ps2s_loss, on_step=False, on_epoch=True)
         return loss
 
-    def validation_step(self, batch: Tuple[torch.Tensor, ...], batch_idx: int) -> None:
+    def validation_step(self, batch, batch_idx):
         neural, labels, neural_lens, label_lens, days = batch
         loss, logits, input_lengths, ps2s_loss = self._compute_loss(
             neural, labels, neural_lens, label_lens, days
         )
         self.val_loss(loss)
         self.log("val/loss", self.val_loss, on_step=False, on_epoch=True, prog_bar=True)
-        if self.ps2s_weight > 0:
-            self.log("val/ps2s_loss", ps2s_loss, on_step=False, on_epoch=True, prog_bar=False)
-        with torch.no_grad():
-            pred_tokens = self._ctc_greedy_decode(logits, input_lengths)
-            cer_value = self._token_error_rate(pred_tokens, labels, label_lens)
-            self.val_cer(cer_value)
-            self.log("val/cer", self.val_cer, on_step=False, on_epoch=True, prog_bar=True)
+        if self.ps2s_weight > 0 and self.ps2s_model is not None:
+            self.log("val/ps2s_loss", ps2s_loss, on_step=False, on_epoch=True)
 
-    def test_step(self, batch: Tuple[torch.Tensor, ...], batch_idx: int) -> None:
+        with torch.no_grad():
+            pred = self._ctc_greedy_decode(logits, input_lengths)
+            cer = self._token_error_rate(pred, labels, label_lens)
+            self.val_cer(cer)
+            self.log("val/cer", self.val_cer, on_step=False, on_epoch=True, prog_bar=True)
+            if not self._val_example_logged and pred:
+                tgt_len = int(label_lens[0].item())
+                tgt_seq = labels[0, :tgt_len].tolist()
+                # uncorrected/noisy phonemes (CTC greedy before PS2S)
+                noisy_ph = self._pred_tokens_to_phonemes(pred[0])
+                pred_ph = self._pred_tokens_to_phonemes(pred[0])
+                tgt_ph = [
+                    self.phoneme_labels[t - 1] if self.phoneme_labels and 1 <= t <= len(self.phoneme_labels) else str(t)
+                    for t in tgt_seq
+                ]
+                self.print(f"[val example] noisy: {' '.join(noisy_ph)} | pred: {' '.join(pred_ph)} | target: {' '.join(tgt_ph)}")
+                self._val_example_logged = True
+
+    def test_step(self, batch, batch_idx):
         neural, labels, neural_lens, label_lens, days = batch
         loss, logits, input_lengths, ps2s_loss = self._compute_loss(
             neural, labels, neural_lens, label_lens, days
         )
         self.test_loss(loss)
         self.log("test/loss", self.test_loss, on_step=False, on_epoch=True, prog_bar=True)
-        if self.ps2s_weight > 0:
-            self.log("test/ps2s_loss", ps2s_loss, on_step=False, on_epoch=True, prog_bar=False)
+        if self.ps2s_weight > 0 and self.ps2s_model is not None:
+            self.log("test/ps2s_loss", ps2s_loss, on_step=False, on_epoch=True)
+
         with torch.no_grad():
-            pred_tokens = self._ctc_greedy_decode(logits, input_lengths)
-            cer_value = self._token_error_rate(pred_tokens, labels, label_lens)
-            self.test_cer(cer_value)
+            pred = self._ctc_greedy_decode(logits, input_lengths)
+            cer = self._token_error_rate(pred, labels, label_lens)
+            self.test_cer(cer)
             self.log("test/cer", self.test_cer, on_step=False, on_epoch=True, prog_bar=True)
 
-    def setup(self, stage: str) -> None:
+    def setup(self, stage):
         if self.hparams.compile and stage == "fit":
             self.net = torch.compile(self.net)
 
-    def configure_optimizers(self) -> Dict[str, Any]:
-        optimizer = self.hparams.optimizer(params=self.trainer.model.parameters())
+    # make sure PS2S participates in optimization
+    def configure_optimizers(self):
+        if self.hparams.optimizer is None:
+            return None
+
+        # all trainable parameters, including PS2S
+        params = [p for p in self.parameters() if p.requires_grad]
+
+        optimizer = self.hparams.optimizer(params=params)
         if self.hparams.scheduler is not None:
             scheduler = self.hparams.scheduler(optimizer=optimizer)
             return {
@@ -351,6 +491,39 @@ class SpeechModuleWithPS2S(LightningModule):
             }
         return {"optimizer": optimizer}
 
+    # ensure PS2S follows train/eval modes
+    def train(self, mode: bool = True):
+        super().train(mode)
+        if self.ps2s_model is not None:
+            self.ps2s_model.train(mode)
+        return self
+
+    def eval(self):
+        super().eval()
+        if self.ps2s_model is not None:
+            self.ps2s_model.eval()
+        return self
+
+
+# ============================================================
+#             SANITY CHECK
+# ============================================================
 
 if __name__ == "__main__":
-    _ = SpeechModuleWithPS2S(net=None, optimizer=None, scheduler=None, compile=False)
+    class DummyGRU(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.strideLen = 4
+            self.kernelLen = 16
+            self.gru = torch.nn.GRU(256, 128, batch_first=True)
+            self.fc = torch.nn.Linear(128, 41)
+
+        def forward(self, x, days):
+            h, _ = self.gru(x)
+            return self.fc(h)
+
+    dummy = DummyGRU()
+    _ = SpeechModuleWithPS2S(
+        net=dummy, optimizer=None, scheduler=None, compile=False
+    )
+    print("Sanity check OK.")
