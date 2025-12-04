@@ -4,6 +4,7 @@ _target_: src.models.speech_module.SpeechModule
 lr_start: 0.00025 # adjusted for better performance cer 0.20
 lr_end: 0.0000025
 n_units: 1024
+n_batch: 10000
 n_layers: 5
 n_classes: 40
 n_input_features: 256
