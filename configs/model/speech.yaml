@@ -1,9 +1,9 @@
 _target_: src.models.speech_module.SpeechModule
 
 # general hyperparameters
-lr_start: 0.00025 # adjusted for better performance cer 0.20
-lr_end: 0.0000025
-n_units: 1024
+lr_start: 0.001 # adjusted for better performance cer 0.20
+lr_end: 0.0001
+n_units: 512
 n_batch: 10000
 n_layers: 5
 n_classes: 40

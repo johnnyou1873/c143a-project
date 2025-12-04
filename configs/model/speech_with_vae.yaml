@@ -41,8 +41,8 @@ net:
   neural_dim: ${..n_input_features}
   hidden_dim: ${..n_units}
   hidden_dim_vae: 512
-  latent_global: 18
-  latent_local: 110
+  latent_global: 8
+  latent_local: 120
   layer_dim: ${..n_layers}
   n_classes: ${..n_classes}
   nDays: 24
