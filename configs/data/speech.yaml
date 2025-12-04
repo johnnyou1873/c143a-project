@@ -16,8 +16,8 @@ val_subset_size: null
 test_subset_size: null
 
 # optional augmentations
-white_noise_std: 0.8
-constant_offset_std: 0.2
+white_noise_std: 0.8 # defaults to 0.8
+constant_offset_std: 0.2 # defaults to 0.2
 
 # optional dataset metadata (will be inferred if left null)
 n_classes: 40

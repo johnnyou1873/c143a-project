@@ -4,6 +4,7 @@ from .vae_input_modle import VAEInputModel
 
 from ...utils.augmentations import GaussianSmoothing
 
+import torch.nn.functional as F
 
 class GRUDecoderVAE(nn.Module):
     def __init__(
@@ -55,8 +56,8 @@ class GRUDecoderVAE(nn.Module):
         # self.dayBias = torch.nn.Parameter(torch.zeros(nDays, 1, neural_dim))
         latent_dim = latent_local + latent_global
         self.inputAE = VAEInputModel(input_dim=neural_dim, latent_global=latent_global, latent_local= latent_local, hidden_dim=hidden_dim_vae)
-        self.day_scale = nn.Parameter(torch.ones(nDays, latent_dim))
-        self.day_shift = nn.Parameter(torch.zeros(nDays, latent_dim)) 
+        self.dayWeights = nn.Parameter(torch.ones(nDays, latent_dim))
+        self.dayBias = nn.Parameter(torch.zeros(nDays, latent_dim)) 
         # for x in range(nDays):
         #     self.dayWeights.data[x, :, :] = torch.eye(neural_dim)
 
@@ -110,10 +111,16 @@ class GRUDecoderVAE(nn.Module):
         
         batch, time, channels = neuralInput.shape
 
+        
         day_embed = self.day_embedding(dayIdx) #shape (batch, D_day)
         D_day = day_embed.shape[-1] # shape (batch, D_day)
         day_embed = day_embed.unsqueeze(1).expand(batch, time, D_day) 
+
+        day_onehot = F.one_hot(dayIdx, num_classes = self.nDays).float().to(device)    # (batch, nDays)
+        day_onehot_expanded = day_onehot.unsqueeze(1).expand(batch, time, self.nDays)    # (batch, time, nDays)
+
         neuralInput = torch.cat([neuralInput, day_embed], dim=2) #shape (batch, time, channels + D_day)
+        #flat = neuralInput.reshape(batch * time, channels+self.nDays) #s
         flat = neuralInput.reshape(batch * time, 2*channels) #s
         # Pooled per-sample features for the global encoder: (B, channels)
         global_x = neuralInput.mean(dim=1)
@@ -131,12 +138,13 @@ class GRUDecoderVAE(nn.Module):
             z_global_exp = z_global.unsqueeze(1).expand(batch, time, -1).reshape(batch * time, -1)
             z = torch.cat([z_local, z_global_exp], dim=1)    # B*T x (latent_local + latent_global)
         dayIdx_exp = dayIdx.unsqueeze(1).repeat(1, time).reshape(-1)  # B*T
-        scale = self.day_scale[dayIdx_exp] # B*T x (latent_local + latent_global)
-        shift = self.day_shift[dayIdx_exp] # B*T x (latent_local + latent_global)
-        z = z * scale + shift  # 
+        weight = self.dayWeights[dayIdx_exp] # B*T x (latent_local + latent_global)
+        bias = self.dayBias[dayIdx_exp] # B*T x (latent_local + latent_global)
+        z = z * weight + bias  # 
         z = z.reshape(batch, time, self.latent_global+self.latent_local)  # B x T x (latent_local + latent_global)
         recon_flat = self.inputAE.decode(z)#
-        transformedNeural = recon_flat.view(batch, time, 2*channels)#
+        transformedNeural = recon_flat.view(batch, time, 2*channels)
+        #transformedNeural = recon_flat.view(batch, time, channels+self.nDays)#
         recon = transformedNeural[ :, :, :channels]  
         self.inputLayerNonlinearity(transformedNeural)
         transformedNeural = self.inputLayerNonlinearity(transformedNeural)

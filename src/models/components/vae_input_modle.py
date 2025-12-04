@@ -3,10 +3,11 @@ from torch import nn
 from torch.nn import functional as F
 
 class VAEInputModel(nn.Module):
-    def __init__(self, input_dim=256, latent_global=16, latent_local=32, hidden_dim=128):
+    def __init__(self, input_dim=256, latent_global=16, latent_local=32, hidden_dim=128, nDays=24):
         super(VAEInputModel, self).__init__()
         self.encoder_local = nn.Sequential(
             nn.Linear(2*input_dim, hidden_dim),
+            #nn.Linear(input_dim+nDays, hidden_dim),
             nn.LayerNorm(hidden_dim),
             nn.GELU(),
             nn.Linear(hidden_dim, hidden_dim),
@@ -30,6 +31,7 @@ class VAEInputModel(nn.Module):
 
         self.encoder_global = nn.Sequential(
             nn.Linear(2*input_dim, hidden_dim),
+            #nn.Linear(input_dim+nDays, hidden_dim),
             nn.LayerNorm(hidden_dim),
             nn.GELU(),
             nn.Linear(hidden_dim, hidden_dim),
@@ -59,6 +61,7 @@ class VAEInputModel(nn.Module):
             # nn.LayerNorm(hidden_dim),
             # nn.GELU(),
             nn.Linear(hidden_dim, 2*input_dim),
+            #nn.Linear(hidden_dim, input_dim+nDays),
         )
         self.latent_local = latent_local
         self.latent_global = latent_global
