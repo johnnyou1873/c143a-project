@@ -13,7 +13,7 @@ defaults:
 # all parameters below will be merged with parameters from default configurations set above
 # this allows you to overwrite only specified parameters
 
-tags: ["speech", "gru_decoder", "ps2s"]
+tags: ["speech", "gru", "ps2s", "lm"]
 
 # seed: 0
 
@@ -24,17 +24,17 @@ trainer:
 
 model:
   # override top-level speech model hyperparameters
-  lr_start: 3e-4
-  lr_end: 5e-5
+  lr_start: 1e-3
+  lr_end: 1e-5
   n_units: 512
-  ps2s_weight: 0.5
   ps2s_max_len: 128
   bidirectional: False  # GRU uni-directional
+  lm_finetune_weight: 0.1
   # n_layers: 5
   # dropout: 0.4
-  # gaussian_smooth_width: 2.0
-  # stride_len: 4
-  # kernel_len: 32
+  gaussian_smooth_width: 0.0
+  stride_len: 2
+  kernel_len: 32
   # l2_decay: 1e-5
   # seed: ${seed}
   # compile: False # disable compile for debugging
@@ -42,20 +42,20 @@ model:
 # datamodule overrides
 # data: {}
 data:
-  batch_size: 32
+  batch_size: 16
 #   seq_len: 150
 #   max_time_series_len: 1200
-#   white_noise_std: 0.8
-#   constant_offset_std: 0.2
+  white_noise_std: 0.0
+  constant_offset_std: 0.0
 #   n_classes: 40
 #   n_input_features: 256
 #   seed: ${seed}
-#   num_workers: 8
+  num_workers: 4
 #   persistent_workers: True
 
 logger:
   wandb:
-    name: "GRU512 PS2S"
+    name: "GRU512 with PS2S LM finetune and stride 2"
     tags: ${tags}
     group: "speech"
   aim:

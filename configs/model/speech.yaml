@@ -10,7 +10,7 @@ n_classes: 40
 n_input_features: 256
 dropout: 0.4
 gaussian_smooth_width: 2.0
-stride_len: 4
+stride_len: 4 # defaults
 kernel_len: 32
 bidirectional: False
 l2_decay: 0.1

@@ -5,6 +5,8 @@ from lightning import LightningModule
 from torchmetrics import MeanMetric
 from edit_distance import SequenceMatcher
 
+torch.set_float32_matmul_precision("medium")
+
 
 class SpeechModule(LightningModule):
     """`LightningModule` for BMI speech task.

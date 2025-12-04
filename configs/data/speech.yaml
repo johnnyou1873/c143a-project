@@ -12,6 +12,8 @@ pin_memory: True
 shuffle: True
 persistent_workers: True
 seed: 0
+val_subset_size: null
+test_subset_size: null
 
 # optional augmentations
 white_noise_std: 0.8

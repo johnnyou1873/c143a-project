@@ -1,4 +1,4 @@
-_target_: src.models.speech_module_with_ps2s.SpeechModuleWithPS2S
+_target_: src.models.speech_module_with_ps2s.SpeechModuleCTCWithPS2SLM
 
 # general hyperparameters
 lr_start: 0.0003
@@ -19,7 +19,6 @@ seed: 0
 # ps2s / pretrained paths
 gru_ckpt_path: data/gru512.ckpt
 ps2s_model_path: data/phoneme_seq2seq.pt
-ps2s_weight: 0.5
 ps2s_max_len: 128
 
 optimizer:
