@@ -1,19 +1,18 @@
-_target_: src.models.speech_module.SpeechModule
+_target_: src.models.speech_module_fastconformer_tdt.SpeechModuleFastConformerTDT
 
 # general hyperparameters
-lr_start: 0.00025 # adjusted for better performance cer 0.20
-lr_end: 0.0000025
-n_units: 1024
-n_batch: 10000
-n_layers: 5
+lr_start: 1e-4
+lr_end: 1e-6
+n_units: 512           # used as default d_model for the encoder
+n_layers: 12
 n_classes: 40
 n_input_features: 256
-dropout: 0.4
+dropout: 0.2
 gaussian_smooth_width: 2.0
-stride_len: 4 # defaults
-kernel_len: 32
+stride_len: 2
+kernel_len: 15
 bidirectional: False
-l2_decay: 0.1
+l2_decay: 1e-5
 seed: 0
 
 optimizer:
@@ -29,17 +28,21 @@ scheduler:
   eta_min: ${..lr_end}
 
 net:
-  _target_: src.models.components.gru_decoder.GRUDecoder
+  _target_: src.models.components.fastconformer_tdt.FastConformerTDT
   neural_dim: ${..n_input_features}
   n_classes: ${..n_classes}
-  hidden_dim: ${..n_units}
-  layer_dim: ${..n_layers}
-  nDays: 24
+  d_model: ${..n_units}
+  n_layers: ${..n_layers}
+  nhead: 8
+  ff_expansion: 4.0
+  conv_kernel: 31
   dropout: ${..dropout}
   strideLen: ${..stride_len}
   kernelLen: ${..kernel_len}
   gaussianSmoothWidth: ${..gaussian_smooth_width}
-  bidirectional: ${..bidirectional}
+  nDays: 24
+  attn_lookahead: 0         # streaming / causal by default
+  attn_left_context: null   # full history; set finite value to limit context
 
 # compile model for faster training with pytorch 2.0
-compile: False
+compile: false

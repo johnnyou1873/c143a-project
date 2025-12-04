@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional, Tuple
 from hydra.utils import to_absolute_path
 from lightning import LightningDataModule
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader, Dataset, Subset
 
 from src.utils.augmentations import build_augmentation_pipeline
 from src.data.components.speech_dataset import SpeechDataset, speech_collate_fn
@@ -65,6 +65,8 @@ class SpeechDataModule(LightningDataModule):
         n_classes: Optional[int] = None,
         n_input_features: Optional[int] = None,
         n_days: Optional[int] = None,
+        val_subset_size: Optional[int] = None,
+        test_subset_size: Optional[int] = None,
     ) -> None:
         super().__init__()
 
@@ -80,6 +82,8 @@ class SpeechDataModule(LightningDataModule):
         self.n_classes = n_classes
         self.n_input_features = n_input_features
         self.n_days = n_days
+        self.val_subset_size = val_subset_size
+        self.test_subset_size = test_subset_size
 
         self.transforms = build_augmentation_pipeline(white_noise_std, constant_offset_std)
 
@@ -114,6 +118,13 @@ class SpeechDataModule(LightningDataModule):
         self.data_train = SpeechDataset(data["train"], transform=self.transforms)
         self.data_val = SpeechDataset(data["test"])
         self.data_test = SpeechDataset(data["test"]) # the actual test set is only available during evaluation phase
+
+        if self.val_subset_size is not None and self.val_subset_size > 0:
+            n = min(self.val_subset_size, len(self.data_val))
+            self.data_val = Subset(self.data_val, range(n))
+        if self.test_subset_size is not None and self.test_subset_size > 0:
+            n = min(self.test_subset_size, len(self.data_test))
+            self.data_test = Subset(self.data_test, range(n))
 
         self.n_days = self.n_days or self.data_train.n_days
 

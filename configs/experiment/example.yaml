@@ -5,7 +5,7 @@
 
 defaults:
   - override /data: speech
-  - override /model: speech_with_asr
+  - override /model: speech_diphone
   - override /callbacks: default
   - override /trainer: default
   - override /logger: wandb
@@ -13,50 +13,52 @@ defaults:
 # all parameters below will be merged with parameters from default configurations set above
 # this allows you to overwrite only specified parameters
 
-tags: ["speech", "gru_decoder", "parakeet"]
+tags: ["speech", "gru-diphone"]
 
 # seed: 0
 
 trainer:
   min_epochs: 1 # prevents early stopping
-  max_epochs: 100
+  max_epochs: 200
+  # limit_val_batches: 10
+  # limit_test_batches: 10
+  # num_sanity_val_steps: 0
   # gradient_clip_val: 0.5
 
-model:
+model: {}
   # override top-level speech model hyperparameters
-  lr_start: 1e-3
-  lr_end: 1e-5
-  n_units: 512
-  asr_model_id: nvidia/parakeet-tdt-0.6b-v2
-  # set to False to fine-tune the ASR encoder
-  freeze_asr: True
-  # n_layers: 5
-  # dropout: 0.4
-  # gaussian_smooth_width: 2.0
-  # stride_len: 4
-  # kernel_len: 32
-  # bidirectional: False
-  # l2_decay: 0.1
+  # lr_start: 3e-4
+  # lr_end: 5e-5
+  # n_units: 384          # d_model inside FastConformerTDT
+  # n_layers: 8
+  # nhead: 6
+  # dropout: 0.2
+  # gaussian_smooth_width: 0.0
+  # stride_len: 2         # temporal subsampling stride
+  # kernel_len: 15        # temporal subsampling kernel
+  # l2_decay: 1e-5      # inherited from model config
   # seed: ${seed}
   # compile: False # disable compile for debugging
 
 # datamodule overrides
 # data: {}
 data:
-  batch_size: 16
-#   seq_len: 150
-#   max_time_series_len: 1200
-#   white_noise_std: 0.8
-#   constant_offset_std: 0.2
-#   n_classes: 40
-#   n_input_features: 256
-#   seed: ${seed}
-#   num_workers: 8
-#   persistent_workers: True
+  batch_size: 32
+  # val_subset_size: 32
+  # test_subset_size: 32
+  #   seq_len: 150
+  #   max_time_series_len: 1200
+  # white_noise_std: 0.0
+  # constant_offset_std: 0.0
+  #   n_classes: 40
+  #   n_input_features: 256
+  #   seed: ${seed}
+  num_workers: 2
+  #   persistent_workers: True
 
 logger:
   wandb:
-    name: "GRU512 TF ASR Freeze"
+    name: "GRU Diphone"
     tags: ${tags}
     group: "speech"
   aim:

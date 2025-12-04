@@ -1,20 +1,25 @@
-_target_: src.models.speech_module.SpeechModule
+_target_: src.models.speech_module_with_ps2s.SpeechModuleCTCWithPS2SLM
 
 # general hyperparameters
-lr_start: 0.00025 # adjusted for better performance cer 0.20
-lr_end: 0.0000025
-n_units: 1024
+lr_start: 0.0003
+lr_end: 0.00005
+n_units: 512
 n_batch: 10000
 n_layers: 5
 n_classes: 40
 n_input_features: 256
 dropout: 0.4
 gaussian_smooth_width: 2.0
-stride_len: 4 # defaults
+stride_len: 4
 kernel_len: 32
 bidirectional: False
-l2_decay: 0.1
+l2_decay: 1e-5
 seed: 0
+
+# ps2s / pretrained paths
+gru_ckpt_path: data/gru512.ckpt
+ps2s_model_path: data/phoneme_seq2seq.pt
+ps2s_max_len: 128
 
 optimizer:
   _target_: torch.optim.AdamW
@@ -42,4 +47,4 @@ net:
   bidirectional: ${..bidirectional}
 
 # compile model for faster training with pytorch 2.0
-compile: False
+compile: false
