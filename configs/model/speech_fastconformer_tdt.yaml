@@ -1,0 +1,48 @@
+_target_: src.models.speech_module_fastconformer_tdt.SpeechModuleFastConformerTDT
+
+# general hyperparameters
+lr_start: 0.0003
+lr_end: 0.00005
+n_units: 384           # used as default d_model for the encoder
+n_layers: 8
+n_classes: 40
+n_input_features: 256
+dropout: 0.2
+gaussian_smooth_width: 1.5
+stride_len: 2
+kernel_len: 15
+bidirectional: False
+l2_decay: 1e-5
+seed: 0
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: ${..lr_start}
+  weight_decay: ${..l2_decay}
+
+scheduler:
+  _target_: torch.optim.lr_scheduler.CosineAnnealingLR
+  _partial_: true
+  T_max: ${trainer.max_epochs}
+  eta_min: ${..lr_end}
+
+net:
+  _target_: src.models.components.fastconformer_tdt.FastConformerTDT
+  neural_dim: ${..n_input_features}
+  n_classes: ${..n_classes}
+  d_model: ${..n_units}
+  n_layers: ${..n_layers}
+  nhead: 6
+  ff_expansion: 4.0
+  conv_kernel: 15
+  dropout: ${..dropout}
+  strideLen: ${..stride_len}
+  kernelLen: ${..kernel_len}
+  gaussianSmoothWidth: ${..gaussian_smooth_width}
+  nDays: 24
+  attn_lookahead: 0         # streaming / causal by default
+  attn_left_context: null   # full history; set finite value to limit context
+
+# compile model for faster training with pytorch 2.0
+compile: false

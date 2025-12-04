@@ -5,7 +5,7 @@
 
 defaults:
   - override /data: speech
-  - override /model: speech_with_ps2s
+  - override /model: speech_fastconformer_tdt
   - override /callbacks: default
   - override /trainer: default
   - override /logger: wandb
@@ -13,29 +13,30 @@ defaults:
 # all parameters below will be merged with parameters from default configurations set above
 # this allows you to overwrite only specified parameters
 
-tags: ["speech", "gru", "ps2s", "lm"]
+tags: ["speech", "fastconformer-tdt"]
 
 # seed: 0
 
 trainer:
   min_epochs: 1 # prevents early stopping
   max_epochs: 100
+  # limit_val_batches: 10
+  # limit_test_batches: 10
+  num_sanity_val_steps: 0
   # gradient_clip_val: 0.5
 
 model:
   # override top-level speech model hyperparameters
-  lr_start: 1e-3
-  lr_end: 1e-5
-  n_units: 512
-  ps2s_max_len: 128
-  bidirectional: False  # GRU uni-directional
-  lm_finetune_weight: 0.1
-  # n_layers: 5
-  # dropout: 0.4
-  gaussian_smooth_width: 0.0
-  stride_len: 2
-  kernel_len: 32
-  # l2_decay: 1e-5
+  # lr_start: 3e-4
+  # lr_end: 5e-5
+  # n_units: 384          # d_model inside FastConformerTDT
+  # n_layers: 8
+  # nhead: 6
+  # dropout: 0.2
+  # gaussian_smooth_width: 1.5
+  # stride_len: 2         # temporal subsampling stride
+  # kernel_len: 15        # temporal subsampling kernel
+  # l2_decay: 1e-5      # inherited from model config
   # seed: ${seed}
   # compile: False # disable compile for debugging
 
@@ -43,6 +44,8 @@ model:
 # data: {}
 data:
   batch_size: 16
+  # val_subset_size: 32
+  # test_subset_size: 32
 #   seq_len: 150
 #   max_time_series_len: 1200
   white_noise_std: 0.0
@@ -50,12 +53,12 @@ data:
 #   n_classes: 40
 #   n_input_features: 256
 #   seed: ${seed}
-  num_workers: 4
+  num_workers: 2
 #   persistent_workers: True
 
 logger:
   wandb:
-    name: "GRU512 with PS2S LM finetune and stride 2"
+    name: "FastConformer-TDT streaming"
     tags: ${tags}
     group: "speech"
   aim:
