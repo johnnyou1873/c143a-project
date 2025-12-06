@@ -28,14 +28,6 @@ scheduler:
   T_max: ${trainer.max_epochs}
   eta_min: ${..lr_end}
 
-# scheduler:
-#   _target_: torch.optim.lr_scheduler.LinearLR
-#   _partial_: true
-#   start_factor: 1.0
-#   end_factor: 0.1
-#   total_iters: ${..n_batch}
-  
-
 net:
   _target_: src.models.components.gru_decoder.GRUDecoder
   neural_dim: ${..n_input_features}
