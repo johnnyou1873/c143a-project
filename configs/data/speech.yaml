@@ -18,7 +18,7 @@ test_subset_size: null
 # optional augmentations
 white_noise_std: 0.8
 constant_offset_std: 0.2
-channel_dropout_p: 0.1
+# channel_dropout_p: 0.1
 
 # optional dataset metadata (will be inferred if left null)
 n_classes: 40
