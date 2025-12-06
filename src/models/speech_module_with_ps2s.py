@@ -1,57 +1,69 @@
+# ============================================
+#   GRU → frozen inference-only
+#   Seq2Seq Transformer → trainable denoising LM
+#   Training: NO teacher forcing (autoregressive)
+#   Validation: decode ALL examples and compute CER
+# ============================================
+
 from typing import Any, Dict, List, Optional, Tuple
-from pathlib import Path
+import math
 import functools
 
 import torch
 from torch import nn
-torch.set_float32_matmul_precision("medium")
 from lightning import LightningModule
 from torchmetrics import MeanMetric
 from edit_distance import SequenceMatcher
-import yaml
 
-from .components.gru_diphone import (
-    DiphoneCodec,
-    PHONEME_LABELS as DIPHONE_PHONEMES,
-    diphones_to_monophones,
-)
+from .components.gru_diphone import PHONEME_LABELS
+
+torch.set_float32_matmul_precision("medium")
 
 
-# ============================================================
-#              PS2S TRANSFORMER (LOADED AS LM)
-# ============================================================
+# ------------------ utility masks ------------------ #
+def _generate_square_subsequent_mask(sz: int, device: torch.device) -> torch.Tensor:
+    """Standard causal mask (no attention to future positions)."""
+    mask = torch.full((sz, sz), float("-inf"), device=device)
+    mask = torch.triu(mask, diagonal=1)
+    mask.fill_diagonal_(0.0)
+    return mask
 
+
+def _generate_limited_future_mask(
+    sz: int, device: torch.device, lookahead: int = 1
+) -> torch.Tensor:
+    """
+    Allow attention to current position and up to `lookahead` future steps;
+    disallow further lookahead.
+    """
+    i = torch.arange(sz, device=device).unsqueeze(1)
+    j = torch.arange(sz, device=device)
+    return torch.where(j - i > lookahead, float("-inf"), 0.0)
+
+
+# ------------------ positional encoding ------------------ #
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model: int, max_len: int = 5000) -> None:
         super().__init__()
         pe = torch.zeros(max_len, d_model)
-        position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
-        div_term = torch.exp(
-            torch.arange(0, d_model, 2).float() * (-torch.log(torch.tensor(10000.0)) / d_model)
-        )
-        pe[:, 0::2] = torch.sin(position * div_term)
-        pe[:, 1::2] = torch.cos(position * div_term)
+        pos = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
+        div = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))
+        pe[:, 0::2] = torch.sin(pos * div)
+        pe[:, 1::2] = torch.cos(pos * div)
         self.register_buffer("pe", pe.unsqueeze(0), persistent=False)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # x: (B, T, D)
+        # x: [B, T, D]
         return x + self.pe[:, : x.size(1)]
 
 
-def generate_square_subsequent_mask(sz: int, device: torch.device) -> torch.Tensor:
-    # no-op mask (causality disabled)
-    return None
-
-
-def generate_limited_future_mask(sz: int, device: torch.device, lookahead: int = 1) -> torch.Tensor:
-    # no-op mask (causality disabled)
-    return None
-
-
+# ------------------ Seq2Seq Transformer ------------------ #
 class Seq2SeqTransformer(nn.Module):
     """
-    Same architecture as your original PS2S phoneme seq2seq model,
-    used here as a phoneme LM / denoiser.
+    Transformer encoder-decoder used as a phoneme-to-phoneme correction LM.
+
+    - src: noisy phoneme tokens (already in LM vocab)
+    - tgt: (optionally) clean phoneme tokens (LM vocab)
     """
 
     def __init__(
@@ -63,25 +75,27 @@ class Seq2SeqTransformer(nn.Module):
         num_decoder_layers: int,
         dim_feedforward: int,
         dropout: float,
-        bidirectional: bool = True,  # used for encoder mask
-        pad_idx: int = 0,
+        pad_idx: int,
+        attention_mode: str = "limited",  # 'bidir', 'limited', or 'causal'
+        lookahead: int = 1,
     ) -> None:
         super().__init__()
-        self.bidirectional = bidirectional
         self.pad_idx = pad_idx
+        self.attention_mode = attention_mode
+        self.lookahead = lookahead
 
         self.src_emb = nn.Embedding(vocab_size, d_model, padding_idx=pad_idx)
         self.tgt_emb = nn.Embedding(vocab_size, d_model, padding_idx=pad_idx)
         self.pos_enc = PositionalEncoding(d_model)
 
-        encoder_layer = nn.TransformerEncoderLayer(
+        enc_layer = nn.TransformerEncoderLayer(
             d_model=d_model,
             nhead=nhead,
             dim_feedforward=dim_feedforward,
             dropout=dropout,
             batch_first=True,
         )
-        decoder_layer = nn.TransformerDecoderLayer(
+        dec_layer = nn.TransformerDecoderLayer(
             d_model=d_model,
             nhead=nhead,
             dim_feedforward=dim_feedforward,
@@ -89,759 +103,356 @@ class Seq2SeqTransformer(nn.Module):
             batch_first=True,
         )
 
-        self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_encoder_layers)
-        self.decoder = nn.TransformerDecoder(decoder_layer, num_layers=num_decoder_layers)
-        self.proj = nn.Linear(d_model, vocab_size)
+        self.encoder = nn.TransformerEncoder(enc_layer, num_layers=num_encoder_layers)
+        self.decoder = nn.TransformerDecoder(dec_layer, num_layers=num_decoder_layers)
+        self.output_proj = nn.Linear(d_model, vocab_size)
 
-    def encode(self, src: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
-        """
-        src: (B, S) token ids
-        returns: memory (B, S, D), src_key_padding_mask (B, S)
-        """
-        src_key_padding_mask = src == self.pad_idx
-        src_mask = None  # remove causal/limited-future masking
+    # ----- masks -----
+    def _make_src_mask(self, src: torch.Tensor) -> Optional[torch.Tensor]:
+        T = src.size(1)
+        if self.attention_mode == "bidir":
+            return None
+        if self.attention_mode == "limited":
+            return _generate_limited_future_mask(T, src.device, self.lookahead)
+        return _generate_square_subsequent_mask(T, src.device)
 
-        src_emb = self.pos_enc(self.src_emb(src))
-        memory = self.encoder(
-            src_emb,
-            mask=src_mask,
-            src_key_padding_mask=src_key_padding_mask,
+    def _make_tgt_mask(self, tgt: torch.Tensor) -> Optional[torch.Tensor]:
+        T = tgt.size(1)
+        if self.attention_mode == "bidir":
+            return None
+        if self.attention_mode == "limited":
+            return _generate_limited_future_mask(T, tgt.device, self.lookahead)
+        return _generate_square_subsequent_mask(T, tgt.device)
+
+    # ----- convenience encode / decode -----
+    def encode(self, src: torch.Tensor) -> torch.Tensor:
+        src_pad_mask = src == self.pad_idx
+        src_h = self.encoder(
+            self.pos_enc(self.src_emb(src)),
+            mask=self._make_src_mask(src),
+            src_key_padding_mask=src_pad_mask,
         )
-        return memory, src_key_padding_mask
+        return src_h
 
-    def forward(self, src: torch.Tensor, tgt_in: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self,
+        src: torch.Tensor,
+        tgt_in: torch.Tensor,
+    ) -> torch.Tensor:
         """
-        src: (B, S) noisy tokens
-        tgt_in: (B, T) shifted-clean tokens (with <sos> at position 0)
-        returns: logits (B, T, V)
+        Standard teacher-forced forward (not used for training in this LM fine-tune
+        path, but kept for compatibility / debugging).
         """
-        memory, src_key_padding_mask = self.encode(src)
-        tgt_key_padding_mask = tgt_in == self.pad_idx
-        tgt_mask = None  # remove causal mask on decoder
+        src_pad_mask = src == self.pad_idx
+        tgt_pad_mask = tgt_in == self.pad_idx
+        tgt_mask = self._make_tgt_mask(tgt_in)
 
-        tgt_emb = self.pos_enc(self.tgt_emb(tgt_in))
-        out = self.decoder(
-            tgt=tgt_emb,
-            memory=memory,
+        src_h = self.encoder(
+            self.pos_enc(self.src_emb(src)),
+            mask=self._make_src_mask(src),
+            src_key_padding_mask=src_pad_mask,
+        )
+        tgt_h = self.decoder(
+            self.pos_enc(self.tgt_emb(tgt_in)),
+            src_h,
             tgt_mask=tgt_mask,
-            tgt_key_padding_mask=tgt_key_padding_mask,
-            memory_key_padding_mask=src_key_padding_mask,
+            tgt_key_padding_mask=tgt_pad_mask,
+            memory_key_padding_mask=src_pad_mask,
         )
-        return self.proj(out)
+        return self.output_proj(tgt_h)
 
 
 # ============================================================
-#                  MAIN LIGHTNING MODULE
+#     MAIN LIGHTNING MODULE: GRU frozen → seq2seq trainable
 # ============================================================
-
 class SpeechModuleCTCWithPS2SLM(LightningModule):
     """
-    Modern-style architecture:
+    LightningModule that:
 
-      - Acoustic model: GRU-based CTC network (pretrained, loadable from .ckpt)
-      - Text prior: PS2S Transformer trained on massive text (phoneme-level)
-
-    Training:
-      - CTC loss on GRU logits.
-      - Optional LM fine-tuning loss on PS2S using only labels (phoneme text-only).
-
-    Decoding (val/test):
-      - If use_shallow_fusion:
-          * CTC beam search → N-best sequences (CTC scores)
-          * PS2S LM scores each candidate given a fixed noisy anchor
-          * fused score = log P_CTC + lm_weight * log P_LM
-      - Else if PS2S exists:
-          * Greedy CTC → PS2S post-correction.
-      - Else:
-          * Plain greedy CTC.
-
-    CER is computed on the final decoded sequence.
+    1. Uses a frozen GRU CTC model to map neural features → noisy phoneme IDs.
+    2. Uses a trainable seq2seq Transformer LM to denoise / correct phoneme sequences.
+    3. Trains the LM WITHOUT teacher forcing (autoregressive decoding).
+    4. Validation decodes every example in the batch and logs CER.
     """
 
     def __init__(
         self,
-        net: torch.nn.Module,
-        optimizer: Any,
-        scheduler: Any,
-        compile: bool,
-        lr_start: float = 0.02,
-        lr_end: float = 0.02,
-        n_batch: int = 10000,
-        n_units: int = 1024,
-        n_layers: int = 5,
-        n_classes: int = 40,
-        n_input_features: int = 256,
-        dropout: float = 0.4,
-        gaussian_smooth_width: float = 2.0,
-        stride_len: int = 4,
-        kernel_len: int = 32,
-        bidirectional: bool = False,
-        l2_decay: float = 1e-5,
-        seed: int = 0,
-        # GRU checkpoint (pretrained diphone model)
-        gru_ckpt_path: str = "data/gru1024-diphone.ckpt",
-        # PS2S checkpoint (from your notebook)
-        ps2s_model_path: str = "data/phoneme_seq2seq.pt",
+        net: nn.Module,
+        optimizer,
+        scheduler=None,
+        gru_ckpt_path: str = "",
+        ps2s_model_path: str = "",
         ps2s_max_len: int = 128,
+        attention_mode: str = "bidir",
+        lookahead: int = 1,
         phoneme_labels: Optional[List[str]] = None,
-        # decoding / LM integration
-        use_shallow_fusion: bool = False,
-        beam_size: int = 8,
-        lm_weight: float = 0.0,          # shallow-fusion LM weight (decoding)
-        lm_finetune_weight: float = 0.0, # training-time LM fine-tuning weight
+        **kwargs,
     ) -> None:
         super().__init__()
 
-        if net is None:
-            raise ValueError("`net` must be provided.")
+        # Save hydra-configurable hyperparameters, excluding the instantiated GRU net.
+        self.save_hyperparameters(ignore=["net"])
 
-        self.save_hyperparameters(logger=False, ignore=["net"])
+        # -----------------------------
+        # 1. Load and freeze GRU backbone
+        # -----------------------------
         self.net = net
+        if gru_ckpt_path:
+            self._load_gru_weights(gru_ckpt_path)
+        self._freeze_gru()
 
-        # ---------------- GRU LOADING -----------------
-        self._load_gru_weights(gru_ckpt_path)
+        # -----------------------------
+        # 2. Load trainable seq2seq LM
+        # -----------------------------
+        (
+            self.seq2seq,
+            self.phoneme_to_idx,
+            self.idx_to_phoneme,
+            self.pad_idx,
+            self.sos_idx,
+            self.eos_idx,
+            ckpt_max_len,
+        ) = self._load_ps2s(ps2s_model_path, attention_mode, lookahead)
 
-        # ---------------- CTC -----------------
-        self.ctc_loss = nn.CTCLoss(blank=0, reduction="mean", zero_infinity=True)
+        # fine-tuning length cap
+        self.max_len = min(ps2s_max_len, ckpt_max_len)
 
-        # ---------------- PS2S LM -----------------
-        self.ps2s_model_path = ps2s_model_path
-        self.ps2s_max_len = ps2s_max_len
+        # Train ONLY the seq2seq LM
+        for p in self.seq2seq.parameters():
+            p.requires_grad = True
 
-        self.ps2s_model: Optional[Seq2SeqTransformer] = None
-        self.ps2s_meta: Optional[Dict[str, Any]] = None
+        self.criterion = nn.CrossEntropyLoss(ignore_index=self.pad_idx)
 
-        # load PS2S as LM (initially frozen)
-        self._load_ps2s_as_lm(self.ps2s_model_path)
+        # phoneme labels from CTC space (GRU outputs)
+        self.phoneme_labels = phoneme_labels or PHONEME_LABELS
 
-        # If LM fine-tuning is requested, unfreeze PS2S parameters
-        if self.hparams.lm_finetune_weight > 0.0 and self.ps2s_model is not None:
-            for p in self.ps2s_model.parameters():
-                p.requires_grad = True
-            print("[ctc+lm] PS2S LM will be fine-tuned (lm_finetune_weight > 0).")
-        else:
-            if self.ps2s_model is not None:
-                for p in self.ps2s_model.parameters():
-                    p.requires_grad = False
-
-        # phoneme label names for CTC ids (1..n_classes)
-        default_labels = self._load_default_phoneme_labels()
-        self.phoneme_labels = phoneme_labels or default_labels or list(DIPHONE_PHONEMES)
-        # diphone codec for conversions (monophone labels used for LM scoring)
-        self.codec = DiphoneCodec(self.phoneme_labels)
-
-        # metrics
+        # Metrics
         self.train_loss = MeanMetric()
         self.val_loss = MeanMetric()
-        self.test_loss = MeanMetric()
         self.val_cer = MeanMetric()
-        self.test_cer = MeanMetric()
-        self._val_example_logged = False
 
     # ============================================================
-    #             LOADERS
+    #  GRU: load & freeze
     # ============================================================
-
-    def _load_gru_weights(self, ckpt_path: str) -> None:
-        path = Path(ckpt_path)
-        if not path.exists():
-            print(f"[ctc+lm] GRU checkpoint not found: {path}")
-            return
-
-        # safe unpickling globals (PyTorch 2.6+)
-        safe_list = [functools.partial]
-        for cand in ["optim.AdamW", "optim.adamw.AdamW", "optim._adamw.AdamW"]:
-            try:
-                mod = torch
-                for p in cand.split("."):
-                    mod = getattr(mod, p)
-                safe_list.append(mod)
-            except Exception:
-                pass
-        for cls in safe_list:
-            try:
-                torch.serialization.add_safe_globals([cls])
-            except Exception:
-                pass
-
+    def _load_gru_weights(self, path: str) -> None:
         try:
-            ckpt = torch.load(path, map_location="cpu", weights_only=False)
-        except Exception as e:
-            print(f"[ctc+lm] Error loading GRU checkpoint: {e}")
-            return
-
-        state = ckpt.get("state_dict", ckpt)
-        filtered = {k.replace("net.", ""): v for k, v in state.items() if k.startswith("net.")}
-
-        if not filtered:
-            print("[ctc+lm] WARNING: no net.* parameters found in checkpoint.")
-            return
-
-        missing, unexpected = self.net.load_state_dict(filtered, strict=False)
-        if missing:
-            print(f"[ctc+lm] GRU missing keys: {missing}")
-        if unexpected:
-            print(f"[ctc+lm] GRU unexpected keys: {unexpected}")
-        print(f"[ctc+lm] GRU weights loaded from {path}")
-
-    def _load_default_phoneme_labels(self) -> Optional[List[str]]:
-        """
-        Reuse the phoneme label list defined in configs/model/LLMSpeech.yaml.
-        """
-        cfg_path = Path(__file__).resolve().parents[2] / "configs" / "model" / "LLMSpeech.yaml"
-        if not cfg_path.exists():
-            return None
-        try:
-            with cfg_path.open("r", encoding="utf-8") as f:
-                data = yaml.safe_load(f)
-            labels = data.get("phoneme_labels") if isinstance(data, dict) else None
-            if isinstance(labels, list):
-                return labels
+            with torch.serialization.safe_globals([functools.partial]):
+                ckpt = torch.load(path, map_location="cpu", weights_only=False)
         except Exception:
-            return None
-        return None
+            torch.serialization.add_safe_globals([functools.partial])
+            ckpt = torch.load(path, map_location="cpu", weights_only=False)
 
-    def _load_ps2s_as_lm(self, ckpt_path: str) -> None:
-        path = Path(ckpt_path)
-        if not path.exists():
-            print(f"[ctc+lm] WARNING: PS2S checkpoint not found at {path}. LM will be disabled.")
-            return
+        state_dict = ckpt["state_dict"]
+        clean = {k.replace("net.", ""): v for k, v in state_dict.items() if k.startswith("net.")}
+        self.net.load_state_dict(clean, strict=False)
 
-        ckpt = torch.load(path, map_location="cpu")
+    def _freeze_gru(self) -> None:
+        for p in self.net.parameters():
+            p.requires_grad = False
+        self.net.eval()
+
+    # ============================================================
+    #  PS2S loading
+    # ============================================================
+    def _load_ps2s(
+        self,
+        path: str,
+        attention_mode: str,
+        lookahead: int,
+    ) -> Tuple[Seq2SeqTransformer, Dict[str, int], Dict[int, str], int, int, int, int]:
+        try:
+            with torch.serialization.safe_globals([functools.partial]):
+                ckpt = torch.load(path, map_location="cpu", weights_only=False)
+        except Exception:
+            torch.serialization.add_safe_globals([functools.partial])
+            ckpt = torch.load(path, map_location="cpu", weights_only=False)
+
+        model_kwargs = ckpt["model_kwargs"]
+        pad_idx = ckpt["pad_idx"]
+
+        model = Seq2SeqTransformer(
+            vocab_size=model_kwargs["vocab_size"],
+            d_model=model_kwargs["d_model"],
+            nhead=model_kwargs["nhead"],
+            num_encoder_layers=model_kwargs["num_encoder_layers"],
+            num_decoder_layers=model_kwargs["num_decoder_layers"],
+            dim_feedforward=model_kwargs["dim_feedforward"],
+            dropout=model_kwargs["dropout"],
+            pad_idx=pad_idx,
+            attention_mode=attention_mode,
+            lookahead=lookahead,
+        )
+        sd = ckpt["state_dict"]
+        remapped = {}
+        for k, v in sd.items():
+            if k.startswith("proj."):
+                remapped[k.replace("proj.", "output_proj.")] = v
+            else:
+                remapped[k] = v
+        model.load_state_dict(remapped, strict=False)
 
         phoneme_to_idx: Dict[str, int] = ckpt["phoneme_to_idx"]
-        idx_to_phoneme = ckpt["idx_to_phoneme"]
-        pad_idx = int(ckpt["pad_idx"])
-        sos_idx = int(ckpt["sos_idx"])
-        eos_idx = int(ckpt["eos_idx"])
-        max_len = int(ckpt["max_len"])
-        model_kwargs = ckpt["model_kwargs"]
-
-        vocab_size = model_kwargs["vocab_size"]
-        d_model = model_kwargs["d_model"]
-        nhead = model_kwargs["nhead"]
-        num_encoder_layers = model_kwargs["num_encoder_layers"]
-        num_decoder_layers = model_kwargs["num_decoder_layers"]
-        dim_feedforward = model_kwargs["dim_feedforward"]
-        dropout = model_kwargs["dropout"]
-
-        ps2s = Seq2SeqTransformer(
-            vocab_size=vocab_size,
-            d_model=d_model,
-            nhead=nhead,
-            num_encoder_layers=num_encoder_layers,
-            num_decoder_layers=num_decoder_layers,
-            dim_feedforward=dim_feedforward,
-            dropout=dropout,
-            bidirectional=True,
-            pad_idx=pad_idx,
-        )
-        ps2s.load_state_dict(ckpt["state_dict"], strict=True)
-        ps2s.eval()
-
-        self.ps2s_model = ps2s
-        self.ps2s_meta = {
-            "phoneme_to_idx": phoneme_to_idx,
-            "idx_to_phoneme": idx_to_phoneme,
-            "pad_idx": pad_idx,
-            "sos_idx": sos_idx,
-            "eos_idx": eos_idx,
-            "max_len": max_len,
+        # Ensure idx_to_phoneme keys are int
+        idx_to_phoneme: Dict[int, str] = {
+            int(k): v for k, v in ckpt["idx_to_phoneme"].items()
         }
-        print(f"[ctc+lm] Loaded PS2S LM from {path}")
 
-    def _ensure_ps2s_on_device(self, device: torch.device) -> None:
-        if self.ps2s_model is not None:
-            self.ps2s_model.to(device)
+        sos_idx = ckpt["sos_idx"]
+        eos_idx = ckpt["eos_idx"]
+        max_len = ckpt.get("max_len", 128)
+
+        return model, phoneme_to_idx, idx_to_phoneme, pad_idx, sos_idx, eos_idx, max_len
 
     # ============================================================
-    #             HELPER FUNCTIONS
+    #  Core length + decoding utilities
     # ============================================================
-
-    def _compute_input_lengths(self, neural_lens: torch.Tensor) -> torch.Tensor:
-        stride = self.net.strideLen
-        kernel = self.net.kernelLen
-        lengths = torch.clamp(neural_lens - kernel, min=0)
-        lengths = torch.div(lengths, stride, rounding_mode="floor")
-        return lengths.to(torch.int32)
-
-    def _ctc_greedy_decode(
-        self,
-        logits: torch.Tensor,
-        input_lengths: torch.Tensor,
-    ) -> List[List[int]]:
+    def _compute_output_lengths(self, neural_lens: torch.Tensor) -> torch.Tensor:
         """
-        Standard greedy CTC decoding on acoustic logits.
-        logits: (B, T, C)
-        returns: list of token-id sequences (no blanks, collapsed)
+        Map input neural_lens (pre-conv/GRU) to output CTC time-steps.
+
+        Assumes self.net has attributes:
+          - strideLen
+          - kernelLen
         """
-        preds = logits.argmax(dim=-1)  # (B, T)
+        stride = getattr(self.net, "strideLen", 1)
+        kernel = getattr(self.net, "kernelLen", 1)
+        effective = torch.clamp(neural_lens - kernel, min=0)
+        return torch.div(effective, stride, rounding_mode="floor")
+
+    def _ctc_decode(self, logits: torch.Tensor, lengths: torch.Tensor) -> List[List[int]]:
+        """
+        Simple greedy CTC decode with collapsing repeats and dropping blank (0).
+        """
+        preds = logits.argmax(-1)  # [B, T]
         seqs: List[List[int]] = []
-        for seq, L in zip(preds, input_lengths):
+        for seq, L in zip(preds, lengths):
             seq = seq[: int(L)]
             seq = torch.unique_consecutive(seq)
-            seq = [int(t) for t in seq if t != 0]  # drop blank
-            seqs.append(seq)
+            seqs.append([int(x) for x in seq.tolist() if int(x) != 0])
         return seqs
 
-    def _collapse_tokens(self, tokens: List[int]) -> List[int]:
+    def _phoneme_labels_lookup(self, idx: int) -> Optional[str]:
         """
-        Collapse consecutive duplicates (CTC-style) but keep tokens otherwise unchanged.
+        Map CTC label ID → phoneme string using PHONEME_LABELS.
+        Assumes:
+           - 0 is blank, so phonemes start at 1.
+           - PHONEME_LABELS[0] corresponds to label 1, etc.
         """
-        collapsed: List[int] = []
-        for t in tokens:
-            if not collapsed or t != collapsed[-1]:
-                collapsed.append(t)
-        return collapsed
+        zero = idx - 1
+        if 0 <= zero < len(self.phoneme_labels):
+            return self.phoneme_labels[zero]
+        return None
 
-    def _collapse_batch(self, batch_tokens: List[List[int]]) -> List[List[int]]:
-        return [self._collapse_tokens(seq) for seq in batch_tokens]
-
-    def _token_error_rate(
-        self,
-        pred_tokens: List[List[int]],
-        labels: torch.Tensor,
-        label_lens: torch.Tensor,
-    ) -> float:
-        total_ed = 0
-        total_len = 0
-        for p, tgt, L in zip(pred_tokens, labels, label_lens):
-            tgt_seq = tgt[: int(L)].tolist()
-            matcher = SequenceMatcher(a=tgt_seq, b=p)
-            total_ed += matcher.distance()
-            total_len += len(tgt_seq)
-        return 0.0 if total_len == 0 else total_ed / total_len
-
-    # ============= MAPPING BETWEEN CTC IDS & PHONEMES ============= #
-
-    def _ctc_ids_to_phonemes(self, token_ids: List[int]) -> List[str]:
+    def _ids_to_seq2seq_tokens(self, ctc_ids: List[int]) -> List[int]:
         """
-        Diphone CTC label IDs (1..N_diphones) → monophone strings.
+        Convert a sequence of CTC label IDs → seq2seq LM token IDs.
+        Drops any labels that cannot be mapped into the LM vocab.
         """
-        labels = self.phoneme_labels or list(DIPHONE_PHONEMES)
-        try:
-            mono_ids = self.codec.diphone_ids_to_mono_ids(token_ids)
-            mono_ids = self.codec.clean_mono_ids(mono_ids, remove_sil=True, collapse_repeats=False)
-        except Exception:
-            return [str(t) for t in token_ids]
-
-        out: List[str] = []
-        for mid in mono_ids:
-            if 0 <= mid < len(labels):
-                out.append(labels[mid])
-            else:
-                out.append("<unk>")
-        return out
-
-    def _phonemes_to_ctc_ids(self, phonemes: List[str]) -> List[int]:
-        """
-        Monophone strings → diphone CTC label IDs (encoded pairs).
-        """
-        if not self.phoneme_labels:
-            return []
-        mapping = {ph: i for i, ph in enumerate(self.phoneme_labels)}
-        mono_ids: List[int] = []
-        for ph in phonemes:
-            if ph in mapping:
-                mono_ids.append(mapping[ph])
-        # build diphone ids from mono ids
-        diphone_ids: List[int] = []
-        if len(mono_ids) >= 2:
-            for a, b in zip(mono_ids[:-1], mono_ids[1:]):
-                diphone_ids.append(a * len(self.phoneme_labels) + b)
-        return diphone_ids
-
-    def _diphone_to_mono_ctc_ids(self, diphone_seq: List[int]) -> List[int]:
-        """
-        Convert a diphone ID sequence back to monophone CTC ids (1-based, blank=0).
-        """
-        if not self.phoneme_labels:
-            return []
-        mono_ids = self.codec.diphone_ids_to_mono_ids(diphone_seq)
-        mono_ids = self.codec.clean_mono_ids(mono_ids, remove_sil=True, collapse_repeats=True)
-        # map 0-based mono_ids to CTC ids (1..N)
         out: List[int] = []
-        for mid in mono_ids:
-            if 0 <= mid < len(self.phoneme_labels):
-                out.append(mid + 1)
+        for t in ctc_ids:
+            if t <= 0:
+                continue
+            ph = self._phoneme_labels_lookup(t)
+            if ph is None:
+                continue
+            idx = self.phoneme_to_idx.get(ph)
+            if idx is not None:
+                out.append(idx)
         return out
 
-    # ============= PS2S TOKENIZATION HELPERS ============= #
-
-    def _phonemes_to_ps2s_src(self, phonemes: List[str]) -> List[int]:
+    def _build_src_batch(self, noisy_ids: List[List[int]], device: torch.device) -> torch.Tensor:
         """
-        Map phoneme strings (e.g. ["DH", "AH", ...]) to PS2S token ids for src.
+        Build src batch for LM from list of noisy CTC ID sequences.
+        Each sequence is:
+            [tokens mapped to LM vocab] + [eos]
         """
-        assert self.ps2s_meta is not None
-        phoneme_to_idx: Dict[str, int] = self.ps2s_meta["phoneme_to_idx"]
-        pad_idx = self.ps2s_meta["pad_idx"]
-        max_len = min(self.ps2s_max_len, self.ps2s_meta["max_len"])
+        src_list: List[List[int]] = []
+        max_len = 0
+        for seq in noisy_ids:
+            toks = self._ids_to_seq2seq_tokens(seq)
+            toks = toks[: self.max_len - 1]  # leave room for EOS
+            toks.append(self.eos_idx)
+            src_list.append(toks)
+            max_len = max(max_len, len(toks))
 
-        toks = [phoneme_to_idx.get(ph, pad_idx) for ph in phonemes]
-        toks = toks[: max_len]
-        if not toks:
-            toks = [pad_idx]
-        return toks
+        src = torch.full(
+            (len(src_list), max_len),
+            self.pad_idx,
+            dtype=torch.long,
+            device=device,
+        )
+        for i, s in enumerate(src_list):
+            src[i, : len(s)] = torch.tensor(s, device=device)
+        return src
 
     # ============================================================
-    #             PS2S GREEDY CORRECTION (POST-CORRECTOR)
+    #  Autoregressive LM forward (NO teacher forcing)
     # ============================================================
-
-    def _ps2s_greedy_correct(
+    def _autoregressive_forward(
         self,
-        noisy_phonemes: List[str],
-        device: torch.device,
-    ) -> List[str]:
+        src: torch.Tensor,
+        return_tokens: bool = False,
+    ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
         """
-        Use PS2S as a denoising LM:
+        Autoregressive decoding:
 
-          noisy phonemes (from CTC) → PS2S → corrected phoneme sequence
+        - Encode src once.
+        - Start from <sos>.
+        - At each step, feed previous predictions back in.
+        - Stop when all sequences emitted <eos> or reach self.max_len.
 
-        - src = PS2S tokens from noisy_phonemes
-        - decoder runs autoregressively with <sos> → <eos>
+        Returns:
+            logits: [B, T_pred, V]
+            token_seqs (optional): [B, T_pred] int tensor (without <sos>)
         """
+        device = src.device
+        src_pad_mask = src == self.pad_idx
 
-        if self.ps2s_model is None or self.ps2s_meta is None:
-            # no LM available
-            return noisy_phonemes
+        memory = self.seq2seq.encoder(
+            self.seq2seq.pos_enc(self.seq2seq.src_emb(src)),
+            mask=self.seq2seq._make_src_mask(src),
+            src_key_padding_mask=src_pad_mask,
+        )
 
-        self._ensure_ps2s_on_device(device)
-        self.ps2s_model.eval()
+        B = src.size(0)
+        ys = torch.full(
+            (B, 1), self.sos_idx, dtype=torch.long, device=device
+        )  # [B, 1] with <sos>
+        logits_steps: List[torch.Tensor] = []
 
-        meta = self.ps2s_meta
-        phoneme_to_idx: Dict[str, int] = meta["phoneme_to_idx"]
-        idx_to_phoneme = meta["idx_to_phoneme"]
-        pad_idx = meta["pad_idx"]
-        sos_idx = meta["sos_idx"]
-        eos_idx = meta["eos_idx"]
-        max_len = min(self.ps2s_max_len, meta["max_len"])
+        for _ in range(self.max_len):
+            tgt_mask = self.seq2seq._make_tgt_mask(ys)
+            tgt_pad_mask = ys == self.pad_idx
 
-        # ----- src tokens from noisy phonemes -----
-        src_tokens = self._phonemes_to_ps2s_src(noisy_phonemes)
-        src = torch.tensor(src_tokens, device=device, dtype=torch.long).unsqueeze(0)  # (1, S)
-
-        # ----- greedy autoregressive decoding -----
-        T = max_len
-        tgt_tokens = [sos_idx]  # start with <sos>
-
-        with torch.no_grad():
-            for _ in range(T - 1):
-                tgt_in = torch.tensor(tgt_tokens, device=device, dtype=torch.long).unsqueeze(0)  # (1, t)
-                logits = self.ps2s_model(src, tgt_in)  # (1, t, V)
-                next_logits = logits[0, -1, :]
-                next_tok = int(next_logits.argmax(dim=-1).item())
-                if next_tok == eos_idx:
-                    break
-                if next_tok == pad_idx:
-                    break
-                tgt_tokens.append(next_tok)
-
-        # map PS2S token ids back to phoneme strings
-        corrected: List[str] = []
-        for tok in tgt_tokens[1:]:  # skip <sos>
-            if tok in (sos_idx, eos_idx, pad_idx):
-                continue
-            if isinstance(idx_to_phoneme, dict):
-                ph = idx_to_phoneme.get(tok, "<unk>")
-            else:
-                if 0 <= tok < len(idx_to_phoneme):
-                    ph = idx_to_phoneme[tok]
-                else:
-                    ph = "<unk>"
-            corrected.append(ph)
-
-        if not corrected:
-            return noisy_phonemes
-        return corrected
-
-    def _decode_with_ps2s_post(
-        self,
-        logits: torch.Tensor,
-        input_lengths: torch.Tensor,
-    ) -> Tuple[List[List[int]], List[List[int]]]:
-        """
-        Simple pipeline:
-            logits → greedy CTC → noisy phonemes → PS2S greedy → corrected phonemes → CTC ids
-        """
-        noisy_ids_batch = self._ctc_greedy_decode(logits, input_lengths)
-
-        if self.ps2s_model is None or self.ps2s_meta is None:
-            return noisy_ids_batch, noisy_ids_batch
-
-        corrected_ids_batch: List[List[int]] = []
-        device = logits.device
-
-        for noisy_ids in noisy_ids_batch:
-            noisy_ph = self._ctc_ids_to_phonemes(noisy_ids)
-            corrected_ph = self._ps2s_greedy_correct(noisy_ph, device=device)
-            corrected_ids = self._phonemes_to_ctc_ids(corrected_ph)
-            corrected_ids_batch.append(corrected_ids)
-
-        return noisy_ids_batch, corrected_ids_batch
-
-    # ============================================================
-    #       PS2S SEQUENCE LOGPROB (FOR SHALLOW FUSION)
-    # ============================================================
-
-    def _ps2s_sequence_logprob(
-        self,
-        candidate_phonemes: List[str],
-        anchor_phonemes: List[str],
-        device: torch.device,
-    ) -> float:
-        """
-        Compute log P_LM(candidate | anchor) under PS2S using teacher forcing.
-
-        - src = noisy anchor phonemes (e.g., greedy CTC output)
-        - tgt = candidate sequence we want to score
-        """
-        if self.ps2s_model is None or self.ps2s_meta is None:
-            return 0.0
-
-        self._ensure_ps2s_on_device(device)
-        meta = self.ps2s_meta
-        phoneme_to_idx: Dict[str, int] = meta["phoneme_to_idx"]
-        pad_idx = meta["pad_idx"]
-        sos_idx = meta["sos_idx"]
-        eos_idx = meta["eos_idx"]
-        max_len = min(self.ps2s_max_len, meta["max_len"])
-
-        # ---- src from anchor ----
-        src_tokens = self._phonemes_to_ps2s_src(anchor_phonemes)
-        src_tensor = torch.tensor(src_tokens, device=device, dtype=torch.long).unsqueeze(0)  # (1, S)
-
-        # ---- target tokens from candidate ----
-        toks = [phoneme_to_idx.get(ph, pad_idx) for ph in candidate_phonemes]
-        if not toks:
-            return float("-inf")
-
-        toks = toks[: max_len - 1]  # leave room for <eos>
-        tgt_in = [sos_idx] + toks
-        tgt_out = toks + [eos_idx]
-        T = len(tgt_out)
-
-        tgt_in_tensor = torch.tensor(tgt_in, device=device, dtype=torch.long).unsqueeze(0)
-        logits = self.ps2s_model(src_tensor, tgt_in_tensor)  # (1, T_in, V)
-        log_probs = logits.log_softmax(dim=-1)
-
-        T_model = log_probs.size(1)
-        T_eff = min(T, T_model)
-        tgt_out_tensor = torch.tensor(tgt_out[:T_eff], device=device, dtype=torch.long).unsqueeze(0)
-
-        # gather log probs at target tokens
-        # shape: (1, T_eff)
-        log_p = torch.gather(log_probs[:, :T_eff, :], 2, tgt_out_tensor.unsqueeze(-1)).squeeze(-1)
-        return float(log_p.sum().item())
-
-    # ============================================================
-    #       CTC BEAM SEARCH + SHALLOW FUSION RESCORING
-    # ============================================================
-
-    def _ctc_beam_search_one_utt(
-        self,
-        log_probs: torch.Tensor,  # (T, C) log-softmaxed
-        input_len: int,
-        beam_size: int,
-        blank_idx: int = 0,
-    ) -> List[Tuple[List[int], float]]:
-        """
-        Simple CTC beam search that keeps a beam of candidate token prefixes.
-        Approximate but practical; sequences are built by appending non-blank tokens.
-        """
-        T, C = log_probs.shape
-        T = int(input_len)
-
-        # beam: dict[prefix tuple] = log_score
-        beam: Dict[Tuple[int, ...], float] = {(): 0.0}
-
-        for t in range(T):
-            frame = log_probs[t]  # (C,)
-            # restrict to top-K symbols for efficiency
-            top_k = min(beam_size, C)
-            vals, idxs = frame.topk(top_k)
-            vals = vals.tolist()
-            idxs = idxs.tolist()
-
-            new_beam: Dict[Tuple[int, ...], float] = {}
-
-            for prefix, score in beam.items():
-                for c, log_p in zip(idxs, vals):
-                    c = int(c)
-                    if c == blank_idx:
-                        # staying in same prefix
-                        new_score = score + log_p
-                        prev = new_beam.get(prefix, float("-inf"))
-                        new_beam[prefix] = float(torch.logaddexp(
-                            torch.tensor(prev), torch.tensor(new_score)
-                        ).item())
-                    else:
-                        new_prefix = prefix + (c,)
-                        new_score = score + log_p
-                        prev = new_beam.get(new_prefix, float("-inf"))
-                        new_beam[new_prefix] = float(torch.logaddexp(
-                            torch.tensor(prev), torch.tensor(new_score)
-                        ).item())
-
-            # prune beam
-            beam = dict(sorted(new_beam.items(), key=lambda kv: kv[1], reverse=True)[:beam_size])
-
-        # convert prefixes to sequences (they already exclude blanks here)
-        results: List[Tuple[List[int], float]] = []
-        for prefix, score in beam.items():
-            seq = list(prefix)
-            results.append((seq, score))
-        return results
-
-    def _decode_shallow_fusion(
-        self,
-        logits: torch.Tensor,
-        input_lengths: torch.Tensor,
-    ) -> Tuple[List[List[int]], List[List[int]]]:
-        """
-        Shallow-fusion decoding:
-
-          - For each utterance:
-              * run CTC beam search -> N best sequences with acoustic scores
-              * get a greedy CTC decode as noisy anchor
-              * compute PS2S log P_LM(candidate | anchor)
-              * fused_score = log P_CTC + lm_weight * log P_LM
-              * choose best fused candidate
-        """
-        device = logits.device
-        log_probs = logits.log_softmax(dim=-1)  # (B, T, C)
-        batch_size = logits.size(0)
-
-        # greedy decode for noisy anchors
-        greedy_ids_batch = self._ctc_greedy_decode(logits, input_lengths)
-        greedy_ph_batch = [self._ctc_ids_to_phonemes(seq) for seq in greedy_ids_batch]
-
-        final_ids_batch: List[List[int]] = []
-
-        for i in range(batch_size):
-            T_i = int(input_lengths[i].item())
-            lp_i = log_probs[i, :T_i, :]  # (T_i, C)
-
-            # pure CTC beam
-            candidates = self._ctc_beam_search_one_utt(
-                lp_i,
-                input_len=T_i,
-                beam_size=self.hparams.beam_size,
-                blank_idx=0,
+            dec_h = self.seq2seq.decoder(
+                self.seq2seq.pos_enc(self.seq2seq.tgt_emb(ys)),
+                memory,
+                tgt_mask=tgt_mask,
+                tgt_key_padding_mask=tgt_pad_mask,
+                memory_key_padding_mask=src_pad_mask,
             )
+            step_logits = self.seq2seq.output_proj(dec_h[:, -1:])  # [B, 1, V]
+            logits_steps.append(step_logits)
 
-            anchor_ph = greedy_ph_batch[i]
-            best_score = float("-inf")
-            best_seq = greedy_ids_batch[i]  # fallback
+            next_token = step_logits.argmax(-1)  # [B, 1]
 
-            for seq_ids, ctc_score in candidates:
-                cand_ph = self._ctc_ids_to_phonemes(seq_ids)
-                if self.ps2s_model is not None and self.ps2s_meta is not None and self.hparams.lm_weight != 0.0:
-                    lm_logprob = self._ps2s_sequence_logprob(
-                        candidate_phonemes=cand_ph,
-                        anchor_phonemes=anchor_ph,
-                        device=device,
-                    )
-                else:
-                    lm_logprob = 0.0
+            ys = torch.cat([ys, next_token], dim=1)  # append predicted token
+            # If all sequences predicted EOS, we can stop early
+            if (next_token == self.eos_idx).all():
+                break
 
-                fused_score = ctc_score + self.hparams.lm_weight * lm_logprob
-                if fused_score > best_score:
-                    best_score = fused_score
-                    best_seq = seq_ids
+        logits = torch.cat(logits_steps, dim=1)  # [B, T_pred, V]
 
-            final_ids_batch.append(best_seq)
+        if not return_tokens:
+            return logits, None
 
-        return greedy_ids_batch, final_ids_batch
+        # Remove the leading <sos>, keep everything up to T_pred tokens
+        token_seqs = ys[:, 1 : 1 + logits.size(1)]  # [B, T_pred]
+        return logits, token_seqs
 
     # ============================================================
-    #        LM FINE-TUNING LOSS (TEXT-ONLY, ON LABELS)
+    #  Compute LM loss (no teacher forcing)
     # ============================================================
-
-    def _compute_lm_finetune_loss(
-        self,
-        labels: torch.Tensor,
-        label_lens: torch.Tensor,
-        device: torch.device,
-    ) -> torch.Tensor:
-        """
-        Optional text-only LM fine-tuning on PS2S using BMI phoneme labels.
-
-        For each sample:
-          - Convert label IDs -> phoneme strings.
-          - Map to PS2S vocab tokens.
-          - Use identity mapping (src = clean phonemes) for adaptation.
-          - Teacher-forced NLL over target sequence.
-        """
-        if (
-            self.ps2s_model is None
-            or self.ps2s_meta is None
-            or self.hparams.lm_finetune_weight <= 0.0
-        ):
-            return torch.zeros((), device=device)
-
-        self._ensure_ps2s_on_device(device)
-        meta = self.ps2s_meta
-        phoneme_to_idx: Dict[str, int] = meta["phoneme_to_idx"]
-        pad_idx = meta["pad_idx"]
-        sos_idx = meta["sos_idx"]
-        eos_idx = meta["eos_idx"]
-        max_len = min(self.ps2s_max_len, meta["max_len"])
-
-        total_nll = torch.zeros((), device=device)
-        total_tokens = 0
-
-        for seq, L in zip(labels, label_lens):
-            ids = seq[: int(L)].tolist()
-            phs = self._ctc_ids_to_phonemes(ids)
-            toks = [phoneme_to_idx.get(ph, pad_idx) for ph in phs]
-            if not toks:
-                continue
-
-            toks = toks[: max_len - 1]  # leave room for eos
-            tgt_in = [sos_idx] + toks
-            tgt_out = toks + [eos_idx]
-            T = len(tgt_out)
-
-            src_tokens = toks[: max_len]  # identity source for adaptation
-
-            src_tensor = torch.tensor(src_tokens, device=device, dtype=torch.long).unsqueeze(0)
-            tgt_in_tensor = torch.tensor(tgt_in, device=device, dtype=torch.long).unsqueeze(0)
-
-            logits = self.ps2s_model(src_tensor, tgt_in_tensor)
-            log_probs = logits.log_softmax(dim=-1)
-
-            T_model = log_probs.size(1)
-            T_eff = min(T, T_model)
-            if T_eff <= 0:
-                continue
-
-            tgt_out_tensor = torch.tensor(tgt_out[:T_eff], device=device, dtype=torch.long).unsqueeze(0)
-            # NLL for this sample
-            log_p = torch.gather(
-                log_probs[:, :T_eff, :],
-                2,
-                tgt_out_tensor.unsqueeze(-1),
-            ).squeeze(-1)  # (1, T_eff)
-            nll = -log_p.sum()
-
-            total_nll = total_nll + nll
-            total_tokens += T_eff
-
-        if total_tokens == 0:
-            return torch.zeros((), device=device)
-
-        return total_nll / total_tokens
-
-    # ============================================================
-    #             FORWARD & LOSS
-    # ============================================================
-
-    def forward(self, neural: torch.Tensor, days: torch.Tensor) -> torch.Tensor:
-        """
-        Forward through the GRU acoustic model.
-        """
-        return self.net(neural, days)
-
     def _compute_loss(
         self,
         neural: torch.Tensor,
@@ -849,204 +460,160 @@ class SpeechModuleCTCWithPS2SLM(LightningModule):
         neural_lens: torch.Tensor,
         label_lens: torch.Tensor,
         days: torch.Tensor,
-    ):
+        return_preds: bool = False,
+    ) -> Tuple[torch.Tensor, List[List[int]], List[List[int]], torch.Tensor, Optional[torch.Tensor]]:
         """
-        Training loss:
+        End-to-end forward for a batch:
 
-          L_total = L_CTC + lm_finetune_weight * L_LM   (if enabled)
+        1. Frozen GRU produces CTC logits.
+        2. We greedy-decode logits into CTC label IDs (noisy phonemes).
+        3. We map both noisy (from GRU) and clean (labels) into LM vocab.
+        4. We run NO-TEACHER-FORCING autoregressive LM forward.
+        5. We compute CE loss against clean LM tokens.
         """
-        logits = self.forward(neural, days)  # (B, T, C)
-        log_probs = logits.log_softmax(dim=-1).transpose(0, 1)  # (T, B, C) for CTC
+        device = neural.device
 
-        input_lengths = self._compute_input_lengths(neural_lens).to(logits.device)
-        label_lens = label_lens.to(logits.device)
-
-        ctc = self.ctc_loss(log_probs, labels, input_lengths, label_lens)
-
-        lm_loss = torch.zeros((), device=logits.device)
-        if self.training and self.hparams.lm_finetune_weight > 0.0:
-            lm_loss = self._compute_lm_finetune_loss(labels, label_lens, logits.device)
-
-        total_loss = ctc + self.hparams.lm_finetune_weight * lm_loss
-        return total_loss, logits, input_lengths, ctc, lm_loss
-
-    # ============================================================
-    #             LIGHTNING HOOKS
-    # ============================================================
-
-    def on_train_start(self) -> None:
-        self.train_loss.reset()
-        self.val_loss.reset()
-        self.test_loss.reset()
-        self.val_cer.reset()
-        self.test_cer.reset()
-        self._val_example_logged = False
-
-    def on_validation_epoch_start(self) -> None:
-        self._val_example_logged = False
-
-    def training_step(self, batch, batch_idx):
-        neural, labels, neural_lens, label_lens, days = batch
-        total_loss, _, _, ctc_loss, lm_loss = self._compute_loss(
-            neural, labels, neural_lens, label_lens, days
-        )
-        self.train_loss(total_loss)
-        self.log("train/loss", total_loss, on_step=False, on_epoch=True, prog_bar=True)
-        self.log("train/ctc_loss", ctc_loss, on_step=False, on_epoch=True)
-        if self.hparams.lm_finetune_weight > 0.0 and self.ps2s_model is not None:
-            self.log("train/lm_loss", lm_loss, on_step=False, on_epoch=True)
-        return total_loss
-
-    def validation_step(self, batch, batch_idx):
-        neural, labels, neural_lens, label_lens, days = batch
-        total_loss, logits, input_lengths, _, _ = self._compute_loss(
-            neural, labels, neural_lens, label_lens, days
-        )
-        self.val_loss(total_loss)
-        self.log("val/loss", self.val_loss, on_step=False, on_epoch=True, prog_bar=True)
-
+        # ---- 1) GRU forward (no grad) ----
         with torch.no_grad():
-            # choose decoding mode
-            if (
-                self.ps2s_model is not None
-                and self.ps2s_meta is not None
-                and self.hparams.use_shallow_fusion
-                and self.hparams.lm_weight != 0.0
-            ):
-                noisy_ids_batch, final_ids_batch = self._decode_shallow_fusion(logits, input_lengths)
-            elif self.ps2s_model is not None and self.ps2s_meta is not None:
-                noisy_ids_batch, final_ids_batch = self._decode_with_ps2s_post(
-                    logits, input_lengths
-                )
-            else:
-                noisy_ids_batch = self._ctc_greedy_decode(logits, input_lengths)
-                final_ids_batch = noisy_ids_batch
+            ctc_logits = self.net(neural, days)  # [B, T_ctc, C_ctc]
+            out_lengths = self._compute_output_lengths(neural_lens)
+            noisy_ctc_ids = self._ctc_decode(ctc_logits, out_lengths)
 
-            # Convert diphone predictions to monophone CTC ids for CER
-            final_ids_batch = [self._diphone_to_mono_ctc_ids(seq) for seq in final_ids_batch]
+        # ---- 2) Convert clean labels into LM token IDs ----
+        target_lm_ids: List[List[int]] = []
+        for seq, L in zip(labels, label_lens):
+            # labels are CTC IDs; convert to list and truncate to length L
+            seq_ids = [int(t) for t in seq[: int(L)] if int(t) > 0]
+            target_lm_ids.append(self._ids_to_seq2seq_tokens(seq_ids))
 
-            cer = self._token_error_rate(final_ids_batch, labels, label_lens)
+        # ---- 3) Build LM src batch ----
+        src_batch = self._build_src_batch(noisy_ctc_ids, device=device)  # [B, T_src]
+
+        # ---- 4) Autoregressive LM forward ----
+        self.seq2seq.train()
+        pred_logits, pred_token_seqs = self._autoregressive_forward(
+            src_batch, return_tokens=return_preds
+        )  # [B, T_pred, V]
+
+        # ---- 5) Build target tensor aligned to predicted length ----
+        B, T_pred, V = pred_logits.shape
+        tgt_batch = torch.full(
+            (B, T_pred),
+            self.pad_idx,
+            dtype=torch.long,
+            device=device,
+        )
+        for i, tgt_ids in enumerate(target_lm_ids):
+            truncated = tgt_ids[:T_pred]
+            if len(truncated) == 0:
+                continue
+            tgt_batch[i, : len(truncated)] = torch.tensor(truncated, device=device)
+
+        loss = self.criterion(
+            pred_logits.reshape(-1, V),
+            tgt_batch.reshape(-1),
+        )
+
+        return loss, noisy_ctc_ids, target_lm_ids, src_batch, pred_token_seqs
+
+    # ============================================================
+    #  Training / Validation steps
+    # ============================================================
+    def training_step(self, batch: Tuple[Any, ...], batch_idx: int) -> torch.Tensor:
+        loss, _, _, _, _ = self._compute_loss(*batch, return_preds=False)
+        self.train_loss(loss)
+        self.log("train/loss", self.train_loss, prog_bar=True, on_epoch=True)
+        return loss
+
+    def validation_step(self, batch: Tuple[Any, ...], batch_idx: int) -> None:
+        # Compute loss and token-level predictions
+        loss, noisy_ctc_ids, target_lm_ids, src_batch, pred_token_seqs = self._compute_loss(
+            *batch, return_preds=True
+        )
+        self.val_loss(loss)
+        self.log("val/loss", self.val_loss, prog_bar=True, on_epoch=True)
+
+        # If we have predicted token sequences, compute CER
+        if pred_token_seqs is not None:
+            preds_as_lists: List[List[int]] = []
+            for row in pred_token_seqs:
+                seq: List[int] = []
+                for t in row.tolist():
+                    if t in (self.pad_idx, self.sos_idx, self.eos_idx):
+                        if t == self.eos_idx:
+                            break
+                        continue
+                    seq.append(int(t))
+                preds_as_lists.append(seq)
+
+            cer = self._compute_cer(preds_as_lists, target_lm_ids)
             self.val_cer(cer)
-            self.log("val/cer", self.val_cer, on_step=False, on_epoch=True, prog_bar=True)
+            self.log("val/cer", self.val_cer, prog_bar=True, on_epoch=True)
 
-            # Example logging for inspection
-            if not self._val_example_logged and final_ids_batch:
-                tgt_len = int(label_lens[0].item())
-                tgt_seq = labels[0, :tgt_len].tolist()
-
-                noisy_ph = self._ctc_ids_to_phonemes(noisy_ids_batch[0])
-                final_ph = [
-                    self.phoneme_labels[t - 1] if self.phoneme_labels and 1 <= t <= len(self.phoneme_labels) else str(t)
-                    for t in final_ids_batch[0]
-                ]
-                tgt_ph = [
-                    self.phoneme_labels[t - 1]
-                    if self.phoneme_labels and 1 <= t <= len(self.phoneme_labels)
-                    else str(t)
-                    for t in tgt_seq
-                ]
-
-                self.print(
-                    "[val example] noisy:     " + " ".join(noisy_ph)
-                    + "\n[val example] decoded:  " + " ".join(final_ph)
-                    + "\n[val example] target:   " + " ".join(tgt_ph)
+            # Log first example in batch
+            if len(src_batch) > 0 and len(target_lm_ids) > 0 and len(preds_as_lists) > 0:
+                noisy_txt = " ".join(self._map_ids_to_symbols(src_batch[0]))
+                tgt_txt = " ".join(
+                    self.idx_to_phoneme.get(t, f"<{t}>") for t in target_lm_ids[0]
                 )
-                self._val_example_logged = True
+                pred_txt = " ".join(
+                    self.idx_to_phoneme.get(t, f"<{t}>") for t in preds_as_lists[0]
+                )
 
-    def test_step(self, batch, batch_idx):
-        neural, labels, neural_lens, label_lens, days = batch
-        total_loss, logits, input_lengths, _, _ = self._compute_loss(
-            neural, labels, neural_lens, label_lens, days
-        )
-        self.test_loss(total_loss)
-        self.log("test/loss", self.test_loss, on_step=False, on_epoch=True, prog_bar=True)
+                self.print(f"[val] noisy: {noisy_txt}")
+                self.print(f"[val] pred : {pred_txt}")
+                self.print(f"[val] tgt  : {tgt_txt}")
 
-        with torch.no_grad():
-            if (
-                self.ps2s_model is not None
-                and self.ps2s_meta is not None
-                and self.hparams.use_shallow_fusion
-                and self.hparams.lm_weight != 0.0
-            ):
-                _, final_ids_batch = self._decode_shallow_fusion(logits, input_lengths)
-            elif self.ps2s_model is not None and self.ps2s_meta is not None:
-                _, final_ids_batch = self._decode_with_ps2s_post(logits, input_lengths)
-            else:
-                final_ids_batch = self._ctc_greedy_decode(logits, input_lengths)
+    # ============================================================
+    #  CER + mapping utilities
+    # ============================================================
+    def _compute_cer(
+        self,
+        preds: List[List[int]],
+        tgts: List[List[int]],
+    ) -> float:
+        """
+        Character (here: token/phoneme) error rate:
+            total edit distance / total target length
+        """
+        total_d = 0
+        total_l = 0
+        for p, t in zip(preds, tgts):
+            if len(t) == 0:
+                continue
+            d = SequenceMatcher(a=t, b=p).distance()
+            total_d += d
+            total_l += len(t)
+        return 0.0 if total_l == 0 else total_d / total_l
 
-            final_ids_batch = [self._diphone_to_mono_ctc_ids(seq) for seq in final_ids_batch]
+    def _map_ids_to_symbols(self, row: torch.Tensor) -> List[str]:
+        """
+        Map LM vocab IDs → phoneme strings, dropping pad/sos/eos.
+        """
+        out: List[str] = []
+        for t in row.tolist():
+            if t in (self.pad_idx, self.sos_idx, self.eos_idx):
+                continue
+            out.append(self.idx_to_phoneme.get(int(t), f"<{t}>"))
+        return out
 
-            cer = self._token_error_rate(final_ids_batch, labels, label_lens)
-            self.test_cer(cer)
-            self.log("test/cer", self.test_cer, on_step=False, on_epoch=True, prog_bar=True)
-
-    def setup(self, stage: str) -> None:
-        if self.hparams.compile and stage == "fit":
-            self.net = torch.compile(self.net)
-
+    # ============================================================
+    #  Optimizer / scheduler
+    # ============================================================
     def configure_optimizers(self):
-        if self.hparams.optimizer is None:
-            return None
+        """
+        Expect hydra config to pass in:
 
-        # all trainable parameters: GRU + (optionally) PS2S
-        params = [p for p in self.parameters() if p.requires_grad]
-        optimizer = self.hparams.optimizer(params=params)
-        if self.hparams.scheduler is not None:
-            scheduler = self.hparams.scheduler(optimizer=optimizer)
-            return {
-                "optimizer": optimizer,
-                "lr_scheduler": {
-                    "scheduler": scheduler,
-                    "monitor": "val/loss",
-                    "interval": "epoch",
-                    "frequency": 1,
-                },
-            }
-        return {"optimizer": optimizer}
+            optimizer: a callable taking parameters → torch.optim.Optimizer
+            scheduler: (optional) a callable taking optimizer → lr_scheduler
 
-    def train(self, mode: bool = True):
-        super().train(mode)
-        # keep PS2S in train/eval depending on whether we're fine-tuning it
-        if self.ps2s_model is not None:
-            if self.hparams.lm_finetune_weight > 0.0:
-                self.ps2s_model.train(mode)
-            else:
-                self.ps2s_model.eval()
-        return self
-
-    def eval(self):
-        super().eval()
-        if self.ps2s_model is not None:
-            self.ps2s_model.eval()
-        return self
-
-
-# ============================================================
-#             SANITY CHECK
-# ============================================================
-
-if __name__ == "__main__":
-    class DummyGRU(nn.Module):
-        def __init__(self):
-            super().__init__()
-            self.strideLen = 4
-            self.kernelLen = 16
-            self.gru = nn.GRU(256, 128, batch_first=True)
-            self.fc = nn.Linear(128, 41)  # 0 = blank, 1..40 = phonemes
-
-        def forward(self, x, days):
-            h, _ = self.gru(x)
-            return self.fc(h)
-
-    dummy = DummyGRU()
-    _ = SpeechModuleCTCWithPS2SLM(
-        net=dummy,
-        optimizer=None,
-        scheduler=None,
-        compile=False,
-        use_shallow_fusion=True,
-        beam_size=8,
-        lm_weight=0.3,
-        lm_finetune_weight=0.0,
-    )
-    print("Sanity check OK (CTC + PS2S LM with shallow fusion & optional LM fine-tuning).")
+        Only the seq2seq LM parameters are trainable / optimized.
+        """
+        opt = self.hparams.optimizer(self.seq2seq.parameters())
+        if self.hparams.scheduler is None:
+            return opt
+        sch = self.hparams.scheduler(opt)
+        return {
+            "optimizer": opt,
+            "lr_scheduler": sch,
+        }

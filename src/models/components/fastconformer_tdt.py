@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import List, Optional
 import torch
 from torch import nn
 from torch.nn import functional as F
 from ...utils.augmentations import GaussianSmoothing
+from .gru_diphone import DiphoneCodec, PHONEME_LABELS
 
 
 # ============================================================
@@ -191,11 +192,16 @@ class FastConformerTDT(nn.Module):
         gaussianSmoothWidth: float = 0.0,
         attn_lookahead: int = 0,
         attn_left_context: Optional[int] = None,
+        use_diphone: bool = False,
+        phoneme_labels: Optional[List[str]] = None,
     ):
         super().__init__()
 
         self.strideLen = strideLen
         self.kernelLen = kernelLen
+        self.use_diphone = use_diphone
+        self.phoneme_labels = phoneme_labels or list(PHONEME_LABELS)
+        self.codec = DiphoneCodec(self.phoneme_labels) if self.use_diphone else None
 
         # optional gaussian smoothing
         self.gaussianSmoother = (
@@ -246,7 +252,8 @@ class FastConformerTDT(nn.Module):
         )
 
         self.final_norm = nn.LayerNorm(d_model)
-        self.fc_out = nn.Linear(d_model, n_classes + 1)
+        out_classes = self.codec.n_diphone_classes if self.codec is not None else n_classes
+        self.fc_out = nn.Linear(d_model, out_classes + 1)  # +1 for CTC blank
 
     # ============================================================
     #                    FORWARD PASS (PATCHED)
