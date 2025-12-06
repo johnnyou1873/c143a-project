@@ -5,7 +5,7 @@
 
 defaults:
   - override /data: speech
-  - override /model: speech_diphone
+  - override /model: speech_diphone  # uses SpeechModuleCTCWithPS2SLM
   - override /callbacks: default
   - override /trainer: default
   - override /logger: wandb
@@ -13,13 +13,13 @@ defaults:
 # all parameters below will be merged with parameters from default configurations set above
 # this allows you to overwrite only specified parameters
 
-tags: ["speech", "gru-diphone"]
+tags: ["speech", "ps2s"]
 
 # seed: 0
 
 trainer:
   min_epochs: 1 # prevents early stopping
-  max_epochs: 200
+  max_epochs: 50
   # limit_val_batches: 10
   # limit_test_batches: 10
   # num_sanity_val_steps: 0
@@ -27,38 +27,31 @@ trainer:
 
 model:
   # override top-level speech model hyperparameters
-  # lr_start: 3e-4
-  # lr_end: 5e-5
+  lr_start: 1e-5
+  lr_end: 1e-6
   n_units: 1024
   # n_layers: 8
   # nhead: 6
   # dropout: 0.2
-  # gaussian_smooth_width: 0.0
+  gaussian_smooth_width: 2.0
   # stride_len: 2         # temporal subsampling stride
   # kernel_len: 15        # temporal subsampling kernel
   # l2_decay: 1e-5      # inherited from model config
   # seed: ${seed}
   # compile: False # disable compile for debugging
+  # Explicitly set pretrained checkpoints for GRU and PS2S
+  gru_ckpt_path: data/gru1024-diphone.ckpt
+  ps2s_model_path: data/phoneme_seq2seq.pt
 
-# datamodule overrides
-# data: {}
 data:
-  batch_size: 64
-  # val_subset_size: 32
-  # test_subset_size: 32
-  #   seq_len: 150
-  #   max_time_series_len: 1200
-  # white_noise_std: 0.0
-  # constant_offset_std: 0.0
-  #   n_classes: 40
-  #   n_input_features: 256
-  #   seed: ${seed}
-  num_workers: 6
-  #   persistent_workers: True
+  batch_size: 32
+  white_noise_std: 0.8
+  constant_offset_std: 0.2
+  num_workers: 4
 
 logger:
   wandb:
-    name: "GRU1024 Diphone with Beam Search"
+    name: "GRU1024 Diphone with PS2S"
     tags: ${tags}
     group: "speech"
   aim:

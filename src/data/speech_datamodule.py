@@ -62,6 +62,7 @@ class SpeechDataModule(LightningDataModule):
         seed: int = 0,
         white_noise_std: float = 0.0,
         constant_offset_std: float = 0.0,
+        channel_dropout_p: float = 0.0,
         n_classes: Optional[int] = None,
         n_input_features: Optional[int] = None,
         n_days: Optional[int] = None,
@@ -85,7 +86,11 @@ class SpeechDataModule(LightningDataModule):
         self.val_subset_size = val_subset_size
         self.test_subset_size = test_subset_size
 
-        self.transforms = build_augmentation_pipeline(white_noise_std, constant_offset_std)
+        self.transforms = build_augmentation_pipeline(
+            white_noise_std=white_noise_std,
+            constant_offset_std=constant_offset_std,
+            channel_dropout_p=channel_dropout_p,
+        )
 
         self.data_train: Optional[Dataset] = None
         self.data_val: Optional[Dataset] = None

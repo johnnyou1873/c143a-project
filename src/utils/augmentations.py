@@ -24,6 +24,20 @@ class MeanDriftNoise(nn.Module):
         noise = torch.randn(1, C) * self.std
         return x + noise
 
+class ChannelDropout(nn.Module):
+    """Randomly zero out whole channels (electrodes) for robustness."""
+
+    def __init__(self, drop_prob: float = 0.1):
+        super().__init__()
+        self.drop_prob = drop_prob
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if self.drop_prob <= 0:
+            return x
+        # x: (T, C) or (B, T, C); build a channel mask broadcastable over time (and batch if present)
+        mask = (torch.rand(x.shape[-1], device=x.device) > self.drop_prob).to(x.dtype)
+        return x * mask
+
 class GaussianSmoothing(nn.Module):
     """
     Apply gaussian smoothing on a
@@ -92,7 +106,9 @@ class GaussianSmoothing(nn.Module):
 
 
 def build_augmentation_pipeline(
-    white_noise_std: float = 0.0, constant_offset_std: float = 0.0
+    white_noise_std: float = 0.0,
+    constant_offset_std: float = 0.0,
+    channel_dropout_p: float = 0.0,
 ) -> nn.Module:
     """Build a simple sequential augmentation pipeline for neural features."""
     augmentations = []
@@ -102,6 +118,9 @@ def build_augmentation_pipeline(
 
     if constant_offset_std > 0:
         augmentations.append(MeanDriftNoise(std=constant_offset_std))
+
+    if channel_dropout_p > 0:
+        augmentations.append(ChannelDropout(drop_prob=channel_dropout_p))
 
     if not augmentations:
         return nn.Identity()

@@ -10,6 +10,12 @@ from torchmetrics import MeanMetric
 from edit_distance import SequenceMatcher
 import yaml
 
+from .components.gru_diphone import (
+    DiphoneCodec,
+    PHONEME_LABELS as DIPHONE_PHONEMES,
+    diphones_to_monophones,
+)
+
 
 # ============================================================
 #              PS2S TRANSFORMER (LOADED AS LM)
@@ -33,18 +39,13 @@ class PositionalEncoding(nn.Module):
 
 
 def generate_square_subsequent_mask(sz: int, device: torch.device) -> torch.Tensor:
-    # standard causal mask for decoder
-    mask = torch.full((sz, sz), float("-inf"), device=device)
-    mask = torch.triu(mask, diagonal=1)
-    mask.fill_diagonal_(0.0)
-    return mask
+    # no-op mask (causality disabled)
+    return None
 
 
 def generate_limited_future_mask(sz: int, device: torch.device, lookahead: int = 1) -> torch.Tensor:
-    # allow attention to current and up to `lookahead` future steps
-    i = torch.arange(sz, device=device).unsqueeze(1)
-    j = torch.arange(sz, device=device)
-    return torch.where(j - i > lookahead, float("-inf"), 0.0)
+    # no-op mask (causality disabled)
+    return None
 
 
 class Seq2SeqTransformer(nn.Module):
@@ -98,10 +99,7 @@ class Seq2SeqTransformer(nn.Module):
         returns: memory (B, S, D), src_key_padding_mask (B, S)
         """
         src_key_padding_mask = src == self.pad_idx
-        if self.bidirectional:
-            src_mask = generate_limited_future_mask(src.size(1), src.device, lookahead=1)
-        else:
-            src_mask = generate_square_subsequent_mask(src.size(1), src.device)
+        src_mask = None  # remove causal/limited-future masking
 
         src_emb = self.pos_enc(self.src_emb(src))
         memory = self.encoder(
@@ -119,7 +117,7 @@ class Seq2SeqTransformer(nn.Module):
         """
         memory, src_key_padding_mask = self.encode(src)
         tgt_key_padding_mask = tgt_in == self.pad_idx
-        tgt_mask = generate_square_subsequent_mask(tgt_in.size(1), tgt_in.device)
+        tgt_mask = None  # remove causal mask on decoder
 
         tgt_emb = self.pos_enc(self.tgt_emb(tgt_in))
         out = self.decoder(
@@ -180,8 +178,8 @@ class SpeechModuleCTCWithPS2SLM(LightningModule):
         bidirectional: bool = False,
         l2_decay: float = 1e-5,
         seed: int = 0,
-        # GRU checkpoint
-        gru_ckpt_path: str = "data/gru512.ckpt",
+        # GRU checkpoint (pretrained diphone model)
+        gru_ckpt_path: str = "data/gru1024-diphone.ckpt",
         # PS2S checkpoint (from your notebook)
         ps2s_model_path: str = "data/phoneme_seq2seq.pt",
         ps2s_max_len: int = 128,
@@ -228,7 +226,9 @@ class SpeechModuleCTCWithPS2SLM(LightningModule):
 
         # phoneme label names for CTC ids (1..n_classes)
         default_labels = self._load_default_phoneme_labels()
-        self.phoneme_labels = phoneme_labels or default_labels
+        self.phoneme_labels = phoneme_labels or default_labels or list(DIPHONE_PHONEMES)
+        # diphone codec for conversions (monophone labels used for LM scoring)
+        self.codec = DiphoneCodec(self.phoneme_labels)
 
         # metrics
         self.train_loss = MeanMetric()
@@ -416,37 +416,54 @@ class SpeechModuleCTCWithPS2SLM(LightningModule):
 
     def _ctc_ids_to_phonemes(self, token_ids: List[int]) -> List[str]:
         """
-        CTC label IDs (1..N) → phoneme strings from self.phoneme_labels.
+        Diphone CTC label IDs (1..N_diphones) → monophone strings.
         """
-        if not self.phoneme_labels:
+        labels = self.phoneme_labels or list(DIPHONE_PHONEMES)
+        try:
+            mono_ids = self.codec.diphone_ids_to_mono_ids(token_ids)
+            mono_ids = self.codec.clean_mono_ids(mono_ids, remove_sil=True, collapse_repeats=False)
+        except Exception:
             return [str(t) for t in token_ids]
+
         out: List[str] = []
-        for t in token_ids:
-            if 1 <= t <= len(self.phoneme_labels):
-                out.append(self.phoneme_labels[t - 1])
+        for mid in mono_ids:
+            if 0 <= mid < len(labels):
+                out.append(labels[mid])
             else:
                 out.append("<unk>")
         return out
 
     def _phonemes_to_ctc_ids(self, phonemes: List[str]) -> List[int]:
         """
-        Phoneme strings → CTC label IDs (1..N). Unknowns are skipped.
+        Monophone strings → diphone CTC label IDs (encoded pairs).
         """
         if not self.phoneme_labels:
-            # fallback: assume phonemes are stringified ints
-            out: List[int] = []
-            for ph in phonemes:
-                try:
-                    out.append(int(ph))
-                except ValueError:
-                    continue
-            return out
-
-        mapping = {ph: i + 1 for i, ph in enumerate(self.phoneme_labels)}
-        out: List[int] = []
+            return []
+        mapping = {ph: i for i, ph in enumerate(self.phoneme_labels)}
+        mono_ids: List[int] = []
         for ph in phonemes:
             if ph in mapping:
-                out.append(mapping[ph])
+                mono_ids.append(mapping[ph])
+        # build diphone ids from mono ids
+        diphone_ids: List[int] = []
+        if len(mono_ids) >= 2:
+            for a, b in zip(mono_ids[:-1], mono_ids[1:]):
+                diphone_ids.append(a * len(self.phoneme_labels) + b)
+        return diphone_ids
+
+    def _diphone_to_mono_ctc_ids(self, diphone_seq: List[int]) -> List[int]:
+        """
+        Convert a diphone ID sequence back to monophone CTC ids (1-based, blank=0).
+        """
+        if not self.phoneme_labels:
+            return []
+        mono_ids = self.codec.diphone_ids_to_mono_ids(diphone_seq)
+        mono_ids = self.codec.clean_mono_ids(mono_ids, remove_sil=True, collapse_repeats=True)
+        # map 0-based mono_ids to CTC ids (1..N)
+        out: List[int] = []
+        for mid in mono_ids:
+            if 0 <= mid < len(self.phoneme_labels):
+                out.append(mid + 1)
         return out
 
     # ============= PS2S TOKENIZATION HELPERS ============= #
@@ -696,6 +713,7 @@ class SpeechModuleCTCWithPS2SLM(LightningModule):
 
         # greedy decode for noisy anchors
         greedy_ids_batch = self._ctc_greedy_decode(logits, input_lengths)
+        greedy_ph_batch = [self._ctc_ids_to_phonemes(seq) for seq in greedy_ids_batch]
 
         final_ids_batch: List[List[int]] = []
 
@@ -711,7 +729,7 @@ class SpeechModuleCTCWithPS2SLM(LightningModule):
                 blank_idx=0,
             )
 
-            anchor_ph = self._ctc_ids_to_phonemes(greedy_ids_batch[i])
+            anchor_ph = greedy_ph_batch[i]
             best_score = float("-inf")
             best_seq = greedy_ids_batch[i]  # fallback
 
@@ -895,9 +913,7 @@ class SpeechModuleCTCWithPS2SLM(LightningModule):
                 and self.hparams.use_shallow_fusion
                 and self.hparams.lm_weight != 0.0
             ):
-                noisy_ids_batch, final_ids_batch = self._decode_shallow_fusion(
-                    logits, input_lengths
-                )
+                noisy_ids_batch, final_ids_batch = self._decode_shallow_fusion(logits, input_lengths)
             elif self.ps2s_model is not None and self.ps2s_meta is not None:
                 noisy_ids_batch, final_ids_batch = self._decode_with_ps2s_post(
                     logits, input_lengths
@@ -906,8 +922,8 @@ class SpeechModuleCTCWithPS2SLM(LightningModule):
                 noisy_ids_batch = self._ctc_greedy_decode(logits, input_lengths)
                 final_ids_batch = noisy_ids_batch
 
-            # Ensure sequences are CTC-collapsed before scoring.
-            final_ids_batch = self._collapse_batch(final_ids_batch)
+            # Convert diphone predictions to monophone CTC ids for CER
+            final_ids_batch = [self._diphone_to_mono_ctc_ids(seq) for seq in final_ids_batch]
 
             cer = self._token_error_rate(final_ids_batch, labels, label_lens)
             self.val_cer(cer)
@@ -919,7 +935,10 @@ class SpeechModuleCTCWithPS2SLM(LightningModule):
                 tgt_seq = labels[0, :tgt_len].tolist()
 
                 noisy_ph = self._ctc_ids_to_phonemes(noisy_ids_batch[0])
-                final_ph = self._ctc_ids_to_phonemes(final_ids_batch[0])
+                final_ph = [
+                    self.phoneme_labels[t - 1] if self.phoneme_labels and 1 <= t <= len(self.phoneme_labels) else str(t)
+                    for t in final_ids_batch[0]
+                ]
                 tgt_ph = [
                     self.phoneme_labels[t - 1]
                     if self.phoneme_labels and 1 <= t <= len(self.phoneme_labels)
@@ -955,7 +974,7 @@ class SpeechModuleCTCWithPS2SLM(LightningModule):
             else:
                 final_ids_batch = self._ctc_greedy_decode(logits, input_lengths)
 
-            final_ids_batch = self._collapse_batch(final_ids_batch)
+            final_ids_batch = [self._diphone_to_mono_ctc_ids(seq) for seq in final_ids_batch]
 
             cer = self._token_error_rate(final_ids_batch, labels, label_lens)
             self.test_cer(cer)
