@@ -27,6 +27,6 @@ ollama          # local LLM inference
 transformers    # simplify setup for warm up in LR scheduler
 # sh            # for running bash commands in some tests (linux/macos only)
 transformers>=4.40.0
-huggingface_hub>=0.23.0
+huggingface_hub>=1.11.0
 sentencepiece>=0.1.99
 nemo_toolkit[asr]>=2.5.0
